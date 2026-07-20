@@ -339,4 +339,4 @@ Internet → CDN (Cloudflare) → Reverse Proxy (nginx, TLS) → FastAPI → Dat
 
 ---
 
-*For security vulnerabilities, please report via the process described in `SECURITY.md`.*
+*For security vulnerabilities, please report via the process described in `security.md`.*

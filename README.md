@@ -44,7 +44,7 @@ Built for the **OneInbox AI Engineer Internship Hackathon 2026**
 
 ---
 
-# 📌 Short Description
+#  Short Description
 
 ExtractIQ Engine is a production-inspired AI extraction system that transforms noisy customer support tickets into clean, structured JSON.
 
@@ -315,10 +315,32 @@ ExtractIQ-Engine/
 │
 ├── docs/
 │   ├── architecture.png      # Architecture diagram
+│   ├── architecture.md       # Architecture documentation
+│   ├── api.md                # API documentation
+│   ├── api_examples.md       # API examples
 │   ├── banner.png            # Project banner
+│   ├── changelog.md          # Release history
+│   ├── code_of_conduct.md    # Code of conduct
+│   ├── contributing.md       # Contributing guide
+│   ├── deployment.md         # Deployment guide
 │   ├── logo.png              # Project logo
+│   ├── model-card.md         # Model card
+│   ├── observability.md      # Observability guide
+│   ├── roadmap.md            # Roadmap
 │   ├── screenshots/          # Application screenshots
-│   └── api.md                # API documentation
+│   ├── security.md           # Security guide
+│   ├── workflow.md           # Workflow documentation
+│   ├── adr/                  # Architecture decision records
+│   └── reports/              # Documentation reports
+│       ├── audit_report.md
+│       ├── benchmark.md
+│       ├── evaluation.md
+│       ├── failure_analysis.md
+│       ├── metric_verification_report.md
+│       ├── performance.md
+│       └── project_metrics.md
+│
+├── reports/                  # Generated outputs
 │
 ├── .github/
 │   └── workflows/
@@ -328,11 +350,8 @@ ExtractIQ-Engine/
 ├── .pre-commit-config.yaml   # Pre-commit hooks
 ├── .editorconfig             # Editor configuration
 ├── .gitignore                # Git ignore rules
+├── .dockerignore             # Docker ignore rules
 ├── README.md                 # This file
-├── CHANGELOG.md              # Release history
-├── CONTRIBUTING.md           # Contributing guide
-├── CODE_OF_CONDUCT.md        # Code of conduct
-├── SECURITY.md               # Security policy
 └── LICENSE                   # MIT License
 ```
 
@@ -407,7 +426,7 @@ npm run dev
 
 ## 🔌 API Reference
 
-> **Note on example responses:** The JSON response bodies below show the expected structure and field types. Numeric values (response times, latency, confidence) are illustrative and will vary based on provider, network conditions, and input complexity. See `reports/benchmark.md` for actual measured values.
+> **Note on example responses:** The JSON response bodies below show the expected structure and field types. Numeric values (response times, latency, confidence) are illustrative and will vary based on provider, network conditions, and input complexity. See `docs/reports/benchmark.md` for actual measured values.
 
 ### Health Check
 
@@ -679,7 +698,7 @@ B.Tech CSE | AI/ML Engineer
 
 ## 🤝 Contributing
 
-Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduct and the process for submitting pull requests.
+Please read [CONTRIBUTING.md](docs/contributing.md) for details on our code of conduct and the process for submitting pull requests.
 
 ---
 

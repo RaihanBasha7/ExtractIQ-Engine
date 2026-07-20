@@ -21,12 +21,12 @@ All badges now reflect verifiable claims only.
 
 | # | Issue | Severity | Fix |
 |---|-------|----------|-----|
-| 1 | `architecture.md` only mentions Featherless AI; README says Groq+Featherless | High | Updated arch doc to list both providers |
-| 2 | `workflow.md` only mentions Featherless AI | High | Updated to list both providers |
-| 3 | `deployment.md` says Python 3.13; pyproject.toml says >=3.11; README says 3.12+ | High | Deployment doc → 3.12 (matches CI) |
-| 4 | `deployment.md` lists Docker in "Future Enhancements" but Docker already exists | Medium | Removed Docker from future list |
-| 5 | `architecture.md` lists Docker in "Future Production" but Docker exists | Medium | Removed Docker from future list |
-| 6 | `architecture.md` has "production-ready" in highlights but MVP limitations documented | Low | Consistent with "production-inspired MVP" |
+| 1 | `docs/architecture.md` only mentions Featherless AI; README says Groq+Featherless | High | Updated arch doc to list both providers |
+| 2 | `docs/workflow.md` only mentions Featherless AI | High | Updated to list both providers |
+| 3 | `docs/deployment.md` says Python 3.13; pyproject.toml says >=3.11; README says 3.12+ | High | Deployment doc → 3.12 (matches CI) |
+| 4 | `docs/deployment.md` lists Docker in "Future Enhancements" but Docker already exists | Medium | Removed Docker from future list |
+| 5 | `docs/architecture.md` lists Docker in "Future Production" but Docker exists | Medium | Removed Docker from future list |
+| 6 | `docs/architecture.md` has "production-ready" in highlights but MVP limitations documented | Low | Consistent with "production-inspired MVP" |
 
 ### PHASE 3 — Code vs Docs (5 issues found, 5 fixed)
 
@@ -112,7 +112,7 @@ Remaining concerns:
 
 | # | Issue | Severity | Fix |
 |---|-------|----------|-----|
-| 1 | `evaluation_report.md` claimed "37 tickets — 60 real + 15 adversarial" but actual `evaluation_results_full.json` only contains 37 baseline entries with 0 stress tickets. Stress set results (0/15 = 0.0%) were fabricated. | **Critical** | Rewrote report to match actual data (37 baseline tickets only); replaced fabricated per-ticket average latency with "Not Yet Measured" |
+| 1 | `backend/reports/evaluation_report.md` claimed "37 tickets — 60 real + 15 adversarial" but actual `backend/reports/evaluation_results_full.json` only contains 37 baseline entries with 0 stress tickets. Stress set results (0/15 = 0.0%) were fabricated. | **Critical** | Rewrote report to match actual data (37 baseline tickets only); replaced fabricated per-ticket average latency with "Not Yet Measured" |
 
 The `evaluation_results_full.json` file contains genuine evaluation data from 37 real tickets (34 success, 3 rate-limited failures). The stress ticket results were never collected.
 
@@ -182,13 +182,13 @@ The `evaluation_results_full.json` file contains genuine evaluation data from 37
 
 | Document Pair | Consistent? | Notes |
 |--------------|-------------|-------|
-| README ↔ architecture.md | ✅ Fixed | Both now list Groq + Featherless |
-| README ↔ workflow.md | ✅ Fixed | Both now list both providers |
-| README ↔ deployment.md | ✅ Fixed | Python version, provider list aligned |
-| README ↔ api.md | ✅ Fixed | API docs now match actual implementation |
-| architecture.md ↔ workflow.md | ✅ Fixed | Both describe same pipeline |
-| code ↔ api.md | ✅ Fixed | Request/response schemas now match |
-| evaluation_report.md ↔ evaluation_results_full.json | ✅ Fixed | Report now matches actual data (37 baseline only) |
+| README ↔ docs/architecture.md | ✅ Fixed | Both now list Groq + Featherless |
+| README ↔ docs/workflow.md | ✅ Fixed | Both now list both providers |
+| README ↔ docs/deployment.md | ✅ Fixed | Python version, provider list aligned |
+| README ↔ docs/api.md | ✅ Fixed | API docs now match actual implementation |
+| docs/architecture.md ↔ docs/workflow.md | ✅ Fixed | Both describe same pipeline |
+| code ↔ docs/api.md | ✅ Fixed | Request/response schemas now match |
+| backend/reports/evaluation_report.md ↔ backend/reports/evaluation_results_full.json | ✅ Fixed | Report now matches actual data (37 baseline only) |
 
 ---
 
@@ -234,7 +234,7 @@ The `evaluation_results_full.json` file contains genuine evaluation data from 37
 
 Breakdown:
 - Code quality & structure: 80/100 (clean modular architecture, minor lint issues)
-- Documentation: 60/100 (was inconsistent, now fixed; missing MODEL_CARD.md)
+- Documentation: 60/100 (was inconsistent, now fixed; missing model-card.md)
 - Test quality: 65/100 (core tests good, no script/dashboard tests)
 - Security: 40/100 (was poor due to committed secrets, now partially mitigated)
 - DevOps: 75/100 (good CI/Docker, missing staging/prod configs)

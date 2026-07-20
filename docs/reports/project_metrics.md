@@ -97,21 +97,21 @@
 
 | Document | Location | Pages (est.) |
 |----------|----------|-------------|
-| Architecture | `docs/architecture.md` | 8 |
-| API Reference | `docs/api.md` | 9 |
-| Deployment Guide | `docs/deployment.md` | 7 |
-| Workflow Guide | `docs/workflow.md` | 5 |
-| API Examples | `docs/api_examples.md` | 7 |
-| Security Guide | `docs/security.md` | 6 |
-| Observability Guide | `docs/observability.md` | 6 |
-| Model Card | `MODEL_CARD.md` | 5 |
-| Roadmap | `ROADMAP.md` | 4 |
-| ADR-001: Repair Loop | `docs/adr/ADR-001-repair-loop.md` | 2 |
-| ADR-002: Why Pydantic | `docs/adr/ADR-002-why-pydantic.md` | 2 |
-| ADR-003: SQLite for MVP | `docs/adr/ADR-003-sqlite-for-mvp.md` | 2 |
-| ADR-004: Why No Regex | `docs/adr/ADR-004-why-no-regex.md` | 2 |
-| ADR-005: Why Instructor | `docs/adr/ADR-005-why-instructor.md` | 2 |
-| README | `README.md` | 15 |
+| Architecture | `../architecture.md` | 8 |
+| API Reference | `../api.md` | 9 |
+| Deployment Guide | `../deployment.md` | 7 |
+| Workflow Guide | `../workflow.md` | 5 |
+| API Examples | `../api_examples.md` | 7 |
+| Security Guide | `../security.md` | 6 |
+| Observability Guide | `../observability.md` | 6 |
+| Model Card | `../model-card.md` | 5 |
+| Roadmap | `../roadmap.md` | 4 |
+| ADR-001: Repair Loop | `../adr/ADR-001-repair-loop.md` | 2 |
+| ADR-002: Why Pydantic | `../adr/ADR-002-why-pydantic.md` | 2 |
+| ADR-003: SQLite for MVP | `../adr/ADR-003-sqlite-for-mvp.md` | 2 |
+| ADR-004: Why No Regex | `../adr/ADR-004-why-no-regex.md` | 2 |
+| ADR-005: Why Instructor | `../adr/ADR-005-why-instructor.md` | 2 |
+| README | `../../README.md` | 15 |
 
 ---
 
@@ -119,11 +119,11 @@
 
 | Report | Location | Description |
 |--------|----------|-------------|
-| Benchmark Report | `reports/benchmark.md` | Latency, retries, cost, methodology |
-| Failure Analysis | `reports/failure_analysis.md` | Error taxonomy, root causes, mitigations |
-| Performance Report | `reports/performance.md` | Memory, CPU, cold start, throughput |
-| Evaluation Report | `reports/evaluation.md` | Full technical evaluation writeup |
-| Project Metrics | `reports/project_metrics.md` | This file |
+| Benchmark Report | `benchmark.md` | Latency, retries, cost, methodology |
+| Failure Analysis | `failure_analysis.md` | Error taxonomy, root causes, mitigations |
+| Performance Report | `performance.md` | Memory, CPU, cold start, throughput |
+| Evaluation Report | `evaluation.md` | Full technical evaluation writeup |
+| Project Metrics | `project_metrics.md` | This file |
 
 ---
 

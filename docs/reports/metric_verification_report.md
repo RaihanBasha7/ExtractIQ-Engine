@@ -1,7 +1,7 @@
 # Metric Verification Report — ExtractIQ Engine
 
 **Date:** 2026-07-20  
-**Scope:** Every numeric metric claim in `reports/`, `MODEL_CARD.md`, `README.md`  
+**Scope:** Every numeric metric claim in `docs/reports/`, `docs/model-card.md`, `README.md` (paths relative to repo root)  
 **Method:** Cross-reference each claim against actual evaluation data, source code, and test infrastructure.
 
 ---
@@ -10,16 +10,16 @@
 
 | Document | Status | Fabricated Metrics Found |
 |----------|--------|------------------------|
-| `reports/benchmark.md` | **FAIL** | 12 fabricated values |
-| `reports/evaluation.md` | **FAIL** | 56 fabricated values |
-| `reports/performance.md` | **FAIL** | 28 fabricated values |
-| `reports/project_metrics.md` | **PASS** | Within tolerance (~5% variance) |
-| `MODEL_CARD.md` | **FAIL** | 8 fabricated metrics in Evaluation Metrics table |
-| `README.md` | **WARN** | Example response values are illustrative, not measured |
+| `benchmark.md` | **FAIL** | 12 fabricated values |
+| `evaluation.md` | **FAIL** | 56 fabricated values |
+| `performance.md` | **FAIL** | 28 fabricated values |
+| `project_metrics.md` | **PASS** | Within tolerance (~5% variance) |
+| `../model-card.md` | **FAIL** | 8 fabricated metrics in Evaluation Metrics table |
+| `../../README.md` | **WARN** | Example response values are illustrative, not measured |
 
 ---
 
-## 1. `reports/benchmark.md` — Detailed Findings
+## 1. `benchmark.md` — Detailed Findings
 
 ### 1.1 Latency Benchmarks (Lines 19-28)
 
@@ -110,12 +110,12 @@
 
 ---
 
-## 2. `reports/evaluation.md` — Detailed Findings
+## 2. `evaluation.md` — Detailed Findings
 
 ### 2.1 Abstract (Line 12)
 
 **Claimed:** 94.1% schema-valid, 90.2% macro field accuracy, 2.84s median latency  
-**Actual:** See benchmark.md findings. All three numbers are unsupported.
+**Actual:** See benchmark.md §1.1. All three numbers are unsupported.
 
 **Verdict: FABRICATED.**
 
@@ -129,7 +129,7 @@
 ### 2.3 Schema Compliance (Lines 131-137)
 
 **Claimed:** Initial SVR 69.3%, Final SVR 94.1%, improvement +24.8pp  
-**Actual:** See benchmark.md §1.5 and §1.7.
+**Actual:** See §1.5 and §1.7.
 
 **Verdict: FABRICATED.**
 
@@ -150,27 +150,27 @@
 ### 2.6 Repair Loop Analysis (Lines 177-194)
 
 **Claimed:** Attempt 1=52, Attempt 2=11, Attempt 3=4, Attempt 4=2  
-**Actual:** See benchmark.md §1.3 and §1.5. No repair loop was exercised in the real evaluation run.
+**Actual:** See §1.3 and §1.5. No repair loop was exercised in the real evaluation run.
 
 **Verdict: FABRICATED.**
 
 ### 2.7 Latency (Lines 197-206)
 
 **Claimed:** Same as benchmark.md — P50=2.84s, P90=5.67s, etc.  
-**Actual:** See benchmark.md §1.1.
+**Actual:** See §1.1.
 
 **Verdict: FABRICATED.**
 
 ### 2.8 Cost Analysis (Lines 210-215)
 
 **Claimed:** $0.0105/LLM call, $0.0027/repair, $0.0015/infra, $0.0147 total  
-**Actual:** See benchmark.md §1.11. No token counting or cost tracking exists.
+**Actual:** See §1.11. No token counting or cost tracking exists.
 
 **Verdict: FABRICATED.**
 
 ---
 
-## 3. `reports/performance.md` — Detailed Findings
+## 3. `performance.md` — Detailed Findings
 
 ### 3.1 Memory Usage (Lines 13-18)
 
@@ -237,7 +237,7 @@
 
 ---
 
-## 4. `reports/project_metrics.md` — Detailed Findings
+## 4. `project_metrics.md` — Detailed Findings
 
 ### 4.1 Codebase LOC (Lines 11-18)
 
@@ -280,9 +280,9 @@
 
 ---
 
-## 5. `MODEL_CARD.md` — Detailed Findings
+## 5. `../model-card.md` — Detailed Findings
 
-### 5.1 Evaluation Metrics Table (Lines 128-138)
+### 5.1 Evaluation Metrics Table (Lines 130-138)
 
 | Metric | Claimed | Verdict |
 |--------|---------|---------|
@@ -313,7 +313,7 @@
 
 ---
 
-## 6. `README.md` — Detailed Findings
+## 6. `../../README.md` — Detailed Findings
 
 ### 6.1 Health Check Example (Lines 417-428)
 
@@ -379,12 +379,12 @@
 
 | File | Action |
 |------|--------|
-| `reports/benchmark.md` | Replaced all fabricated numbers with "Not Yet Measured" labels and methodology descriptions |
-| `reports/evaluation.md` | Replaced all fabricated metrics with methodology descriptions |
-| `reports/performance.md` | Relabeled all values as reasoned estimates with explicit caveats |
-| `MODEL_CARD.md` | Removed unsupported evaluation metrics; replaced with running actual numbers and methodology note |
-| `README.md` | Added caveat that example response values are illustrative |
-| `METRIC_VERIFICATION_REPORT.md` | This file — created to document the audit |
+| `benchmark.md` | Replaced all fabricated numbers with "Not Yet Measured" labels and methodology descriptions |
+| `evaluation.md` | Replaced all fabricated metrics with methodology descriptions |
+| `performance.md` | Relabeled all values as reasoned estimates with explicit caveats |
+| `../model-card.md` | Removed unsupported evaluation metrics; replaced with running actual numbers and methodology note |
+| `../../README.md` | Added caveat that example response values are illustrative |
+| `metric_verification_report.md` | This file — created to document the audit |
 
 ---
 

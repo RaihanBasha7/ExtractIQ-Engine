@@ -96,7 +96,7 @@ Note: These are estimates. Actual memory usage depends on LLM response sizes, co
 
 ### 4.1 End-to-End Latency
 
-**Measured from 37 Groq evaluation tickets** (see `reports/evaluation_results_full.json`):
+**Measured from 37 Groq evaluation tickets** (see `backend/reports/evaluation_results_full.json`):
 
 | Percentile | Duration |
 |------------|----------|
@@ -170,4 +170,4 @@ Note: These are estimates. Actual memory usage depends on LLM response sizes, co
 
 ---
 
-*All values in this report are reasoned estimates or single-run measurements unless explicitly marked as measured. Formal performance benchmarking is planned. See `METRIC_VERIFICATION_REPORT.md` for detailed audit findings.*
+*All values in this report are reasoned estimates or single-run measurements unless explicitly marked as measured. Formal performance benchmarking is planned. See `metric_verification_report.md` for detailed audit findings.*

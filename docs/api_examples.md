@@ -527,4 +527,4 @@ curl -X POST http://localhost:8000/v1/extract \
 
 ---
 
-*For the complete API specification, see `docs/api.md`.*
+*For the complete API specification, see `api.md`.*

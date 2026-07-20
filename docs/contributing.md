@@ -4,7 +4,7 @@ Thank you for considering contributing! We welcome contributions of all kinds.
 
 ## Code of Conduct
 
-Please read and follow our [Code of Conduct](CODE_OF_CONDUCT.md).
+Please read and follow our [Code of Conduct](code_of_conduct.md).
 
 ## How to Contribute
 

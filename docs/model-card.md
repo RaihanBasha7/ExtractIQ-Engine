@@ -145,7 +145,7 @@ The following metrics are **not yet available** — they require connecting the 
 | Repair success rate | Pending | Run evaluation on adversarial tickets that trigger schema violations |
 | Cost per 1K tickets | Pending | Add token counting (`tiktoken`) and apply provider pricing |
 
-Full methodology in `reports/benchmark.md` and `METRIC_VERIFICATION_REPORT.md`.
+Full methodology in `docs/reports/benchmark.md` and `docs/reports/metric_verification_report.md`.
 
 ---
 
@@ -165,7 +165,7 @@ Note: Failure taxonomy is based on a single 37-ticket evaluation run. A larger, 
 2. **PII leakage:** Not yet measured — requires targeted adversarial testing with non-standard PII formats
 3. **Missing critical entity:** Not yet measured — requires field-level accuracy evaluation
 
-Detailed analysis in `reports/failure_analysis.md`.
+Detailed analysis in `docs/reports/failure_analysis.md`.
 
 ---
 
@@ -225,7 +225,7 @@ Detailed analysis in `reports/failure_analysis.md`.
 
 For questions about this model card or the ExtractIQ Engine:
 - GitHub Issues: https://github.com/shaikraihanbasha/extractiq-engine/issues
-- Security: See `SECURITY.md`
+- Security: See `security.md`
 
 ---
 
