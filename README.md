@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🚀 ExtractIQ Engine
+#  ExtractIQ Engine
 
 ### AI-Powered Structured Information Extraction Engine for Noisy Customer Support Data
 
@@ -46,7 +46,7 @@ Built for the **OneInbox AI Engineer Internship Hackathon 2026**
 
 ---
 
-# 📌 Short Description
+#  Short Description
 
 ExtractIQ Engine is a production-inspired AI extraction system that transforms noisy customer support tickets into clean, structured JSON.
 
