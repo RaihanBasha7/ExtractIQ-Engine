@@ -1,0 +1,12 @@
+fastapi>=0.115
+uvicorn[standard]>=0.30
+pydantic>=2.9
+sqlalchemy>=2.0
+instructor>=1.5
+groq>=0.11
+python-dotenv>=1.0
+langdetect==1.0.9
+openai>=1.0
+pandas>=2.2
+streamlit>=1.35
+plotly>=5.20

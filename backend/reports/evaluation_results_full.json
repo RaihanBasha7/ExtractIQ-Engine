@@ -1,0 +1,1278 @@
+[
+  {
+    "ticket_id": "1825",
+    "source": "baseline",
+    "success": true,
+    "retry_count": 0,
+    "failure_category": null,
+    "latency_seconds": 1.1393006998114288,
+    "attempts": [
+      {
+        "attempt": 1,
+        "success": true,
+        "error": null
+      }
+    ],
+    "output": {
+      "ticket_id": "1825",
+      "customer": {
+        "name": "Anna Moore",
+        "account_id": null
+      },
+      "issue": {
+        "category": "technical",
+        "subcategory": null,
+        "product_or_service": "GoPro Hero",
+        "urgency": "medium"
+      },
+      "sentiment": "neutral",
+      "entities": {
+        "order_ids": [],
+        "dates_mentioned": [],
+        "amounts_mentioned": []
+      },
+      "requested_action": "assist",
+      "resolution_status": "unresolved"
+    }
+  },
+  {
+    "ticket_id": "410",
+    "source": "baseline",
+    "success": true,
+    "retry_count": 0,
+    "failure_category": null,
+    "latency_seconds": 0.7141748999711126,
+    "attempts": [
+      {
+        "attempt": 1,
+        "success": true,
+        "error": null
+      }
+    ],
+    "output": {
+      "ticket_id": "410",
+      "customer": {
+        "name": "Dustin Flores",
+        "account_id": null
+      },
+      "issue": {
+        "category": "technical",
+        "subcategory": "data recovery",
+        "product_or_service": "Roomba Robot Vacuum",
+        "urgency": "medium"
+      },
+      "sentiment": "frustrated",
+      "entities": {
+        "order_ids": [],
+        "dates_mentioned": [],
+        "amounts_mentioned": []
+      },
+      "requested_action": "data recovery",
+      "resolution_status": "unresolved"
+    }
+  },
+  {
+    "ticket_id": "4507",
+    "source": "baseline",
+    "success": true,
+    "retry_count": 0,
+    "failure_category": null,
+    "latency_seconds": 0.9183600000105798,
+    "attempts": [
+      {
+        "attempt": 1,
+        "success": true,
+        "error": null
+      }
+    ],
+    "output": {
+      "ticket_id": "4507",
+      "customer": {
+        "name": "James Stein",
+        "account_id": null
+      },
+      "issue": {
+        "category": "technical",
+        "subcategory": "software bug",
+        "product_or_service": "Autodesk AutoCAD",
+        "urgency": "medium"
+      },
+      "sentiment": "frustrated",
+      "entities": {
+        "order_ids": [],
+        "dates_mentioned": [],
+        "amounts_mentioned": []
+      },
+      "requested_action": "resolve the issue",
+      "resolution_status": "unresolved"
+    }
+  },
+  {
+    "ticket_id": "4013",
+    "source": "baseline",
+    "success": true,
+    "retry_count": 0,
+    "failure_category": null,
+    "latency_seconds": 0.5684191000182182,
+    "attempts": [
+      {
+        "attempt": 1,
+        "success": true,
+        "error": null
+      }
+    ],
+    "output": {
+      "ticket_id": "4013",
+      "customer": {
+        "name": "Antonio Thompson",
+        "account_id": null
+      },
+      "issue": {
+        "category": "technical",
+        "subcategory": "device not turning on",
+        "product_or_service": "Microsoft Xbox Controller",
+        "urgency": "medium"
+      },
+      "sentiment": "frustrated",
+      "entities": {
+        "order_ids": [],
+        "dates_mentioned": [],
+        "amounts_mentioned": []
+      },
+      "requested_action": null,
+      "resolution_status": "unresolved"
+    }
+  },
+  {
+    "ticket_id": "3658",
+    "source": "baseline",
+    "success": true,
+    "retry_count": 0,
+    "failure_category": null,
+    "latency_seconds": 0.6445033000782132,
+    "attempts": [
+      {
+        "attempt": 1,
+        "success": true,
+        "error": null
+      }
+    ],
+    "output": {
+      "ticket_id": "3658",
+      "customer": {
+        "name": "Theresa Rivera",
+        "account_id": null
+      },
+      "issue": {
+        "category": "technical",
+        "subcategory": null,
+        "product_or_service": "Bose QuietComfort",
+        "urgency": "medium"
+      },
+      "sentiment": "frustrated",
+      "entities": {
+        "order_ids": [],
+        "dates_mentioned": [
+          "January 10th"
+        ],
+        "amounts_mentioned": []
+      },
+      "requested_action": "assist",
+      "resolution_status": "unresolved"
+    }
+  },
+  {
+    "ticket_id": "2287",
+    "source": "baseline",
+    "success": true,
+    "retry_count": 0,
+    "failure_category": null,
+    "latency_seconds": 0.8558020999189466,
+    "attempts": [
+      {
+        "attempt": 1,
+        "success": true,
+        "error": null
+      }
+    ],
+    "output": {
+      "ticket_id": "2287",
+      "customer": {
+        "name": "Valerie Kane",
+        "account_id": null
+      },
+      "issue": {
+        "category": "technical",
+        "subcategory": "network connection issue",
+        "product_or_service": "Nintendo Switch Pro Controller",
+        "urgency": "medium"
+      },
+      "sentiment": "frustrated",
+      "entities": {
+        "order_ids": [],
+        "dates_mentioned": [],
+        "amounts_mentioned": []
+      },
+      "requested_action": "troubleshoot network problem",
+      "resolution_status": "unresolved"
+    }
+  },
+  {
+    "ticket_id": "1680",
+    "source": "baseline",
+    "success": true,
+    "retry_count": 0,
+    "failure_category": null,
+    "latency_seconds": 0.5468530999496579,
+    "attempts": [
+      {
+        "attempt": 1,
+        "success": true,
+        "error": null
+      }
+    ],
+    "output": {
+      "ticket_id": "1680",
+      "customer": {
+        "name": "Timothy Brown",
+        "account_id": null
+      },
+      "issue": {
+        "category": "technical",
+        "subcategory": "battery life",
+        "product_or_service": "Microsoft Surface",
+        "urgency": "medium"
+      },
+      "sentiment": "neutral",
+      "entities": {
+        "order_ids": [],
+        "dates_mentioned": [],
+        "amounts_mentioned": []
+      },
+      "requested_action": "assist",
+      "resolution_status": "unresolved"
+    }
+  },
+  {
+    "ticket_id": "1425",
+    "source": "baseline",
+    "success": true,
+    "retry_count": 0,
+    "failure_category": null,
+    "latency_seconds": 1.1741284001618624,
+    "attempts": [
+      {
+        "attempt": 1,
+        "success": true,
+        "error": null
+      }
+    ],
+    "output": {
+      "ticket_id": "1425",
+      "customer": {
+        "name": "Tyler Chambers",
+        "account_id": null
+      },
+      "issue": {
+        "category": "technical",
+        "subcategory": "firmware update issue",
+        "product_or_service": "Bose QuietComfort",
+        "urgency": "medium"
+      },
+      "sentiment": "frustrated",
+      "entities": {
+        "order_ids": [],
+        "dates_mentioned": [],
+        "amounts_mentioned": []
+      },
+      "requested_action": "assist with payment issue",
+      "resolution_status": "unresolved"
+    }
+  },
+  {
+    "ticket_id": "6913",
+    "source": "baseline",
+    "success": true,
+    "retry_count": 0,
+    "failure_category": null,
+    "latency_seconds": 0.5223479999694973,
+    "attempts": [
+      {
+        "attempt": 1,
+        "success": true,
+        "error": null
+      }
+    ],
+    "output": {
+      "ticket_id": "6913",
+      "customer": {
+        "name": "Matthew Barrett",
+        "account_id": null
+      },
+      "issue": {
+        "category": "technical",
+        "subcategory": null,
+        "product_or_service": "Sony 4K HDR TV",
+        "urgency": "medium"
+      },
+      "sentiment": "frustrated",
+      "entities": {
+        "order_ids": [],
+        "dates_mentioned": [],
+        "amounts_mentioned": []
+      },
+      "requested_action": "assist",
+      "resolution_status": "unresolved"
+    }
+  },
+  {
+    "ticket_id": "521",
+    "source": "baseline",
+    "success": true,
+    "retry_count": 0,
+    "failure_category": null,
+    "latency_seconds": 0.6448818000499159,
+    "attempts": [
+      {
+        "attempt": 1,
+        "success": true,
+        "error": null
+      }
+    ],
+    "output": {
+      "ticket_id": "521",
+      "customer": {
+        "name": "Ashley Rojas",
+        "account_id": null
+      },
+      "issue": {
+        "category": "technical",
+        "subcategory": "software bug",
+        "product_or_service": "LG Smart TV",
+        "urgency": "medium"
+      },
+      "sentiment": "neutral",
+      "entities": {
+        "order_ids": [],
+        "dates_mentioned": [],
+        "amounts_mentioned": []
+      },
+      "requested_action": "assist",
+      "resolution_status": "unresolved"
+    }
+  },
+  {
+    "ticket_id": "489",
+    "source": "baseline",
+    "success": true,
+    "retry_count": 0,
+    "failure_category": null,
+    "latency_seconds": 0.5921204001642764,
+    "attempts": [
+      {
+        "attempt": 1,
+        "success": true,
+        "error": null
+      }
+    ],
+    "output": {
+      "ticket_id": "489",
+      "customer": {
+        "name": "Lucas Bell",
+        "account_id": null
+      },
+      "issue": {
+        "category": "technical",
+        "subcategory": null,
+        "product_or_service": "Canon DSLR Camera",
+        "urgency": "medium"
+      },
+      "sentiment": "frustrated",
+      "entities": {
+        "order_ids": [],
+        "dates_mentioned": [],
+        "amounts_mentioned": []
+      },
+      "requested_action": "assist",
+      "resolution_status": "unresolved"
+    }
+  },
+  {
+    "ticket_id": "1536",
+    "source": "baseline",
+    "success": true,
+    "retry_count": 0,
+    "failure_category": null,
+    "latency_seconds": 1.1360102999024093,
+    "attempts": [
+      {
+        "attempt": 1,
+        "success": true,
+        "error": null
+      }
+    ],
+    "output": {
+      "ticket_id": "1536",
+      "customer": {
+        "name": "Lisa Zhang",
+        "account_id": null
+      },
+      "issue": {
+        "category": "technical",
+        "subcategory": "login failure",
+        "product_or_service": "Bose QuietComfort",
+        "urgency": "medium"
+      },
+      "sentiment": "frustrated",
+      "entities": {
+        "order_ids": [],
+        "dates_mentioned": [],
+        "amounts_mentioned": []
+      },
+      "requested_action": "regain access to my account",
+      "resolution_status": "unresolved"
+    }
+  },
+  {
+    "ticket_id": "3583",
+    "source": "baseline",
+    "success": true,
+    "retry_count": 0,
+    "failure_category": null,
+    "latency_seconds": 1.2467338000424206,
+    "attempts": [
+      {
+        "attempt": 1,
+        "success": true,
+        "error": null
+      }
+    ],
+    "output": {
+      "ticket_id": "3583",
+      "customer": {
+        "name": "Jeremy Schwartz",
+        "account_id": null
+      },
+      "issue": {
+        "category": "technical",
+        "subcategory": "refund",
+        "product_or_service": "Microsoft Xbox Controller",
+        "urgency": "medium"
+      },
+      "sentiment": "frustrated",
+      "entities": {
+        "order_ids": [],
+        "dates_mentioned": [],
+        "amounts_mentioned": [
+          "$55.00"
+        ]
+      },
+      "requested_action": "refund",
+      "resolution_status": "unresolved"
+    }
+  },
+  {
+    "ticket_id": "3812",
+    "source": "baseline",
+    "success": true,
+    "retry_count": 0,
+    "failure_category": null,
+    "latency_seconds": 0.5657696998678148,
+    "attempts": [
+      {
+        "attempt": 1,
+        "success": true,
+        "error": null
+      }
+    ],
+    "output": {
+      "ticket_id": "3812",
+      "customer": {
+        "name": "Terry Buchanan",
+        "account_id": null
+      },
+      "issue": {
+        "category": "technical",
+        "subcategory": "installation issue",
+        "product_or_service": "Microsoft Office",
+        "urgency": "medium"
+      },
+      "sentiment": "neutral",
+      "entities": {
+        "order_ids": [],
+        "dates_mentioned": [],
+        "amounts_mentioned": []
+      },
+      "requested_action": "assist with installation issue",
+      "resolution_status": "unresolved"
+    }
+  },
+  {
+    "ticket_id": "8280",
+    "source": "baseline",
+    "success": true,
+    "retry_count": 0,
+    "failure_category": null,
+    "latency_seconds": 0.6177242000121623,
+    "attempts": [
+      {
+        "attempt": 1,
+        "success": true,
+        "error": null
+      }
+    ],
+    "output": {
+      "ticket_id": "8280",
+      "customer": {
+        "name": "Brandon Patterson",
+        "account_id": null
+      },
+      "issue": {
+        "category": "technical",
+        "subcategory": null,
+        "product_or_service": "Amazon Echo",
+        "urgency": "medium"
+      },
+      "sentiment": "neutral",
+      "entities": {
+        "order_ids": [],
+        "dates_mentioned": [],
+        "amounts_mentioned": []
+      },
+      "requested_action": "assist with installation issue",
+      "resolution_status": "unresolved"
+    }
+  },
+  {
+    "ticket_id": "435",
+    "source": "baseline",
+    "success": true,
+    "retry_count": 0,
+    "failure_category": null,
+    "latency_seconds": 0.4499044001568109,
+    "attempts": [
+      {
+        "attempt": 1,
+        "success": true,
+        "error": null
+      }
+    ],
+    "output": {
+      "ticket_id": "435",
+      "customer": {
+        "name": "Michael Matthews",
+        "account_id": null
+      },
+      "issue": {
+        "category": "technical",
+        "subcategory": "login failure",
+        "product_or_service": "MacBook Pro",
+        "urgency": "medium"
+      },
+      "sentiment": "frustrated",
+      "entities": {
+        "order_ids": [],
+        "dates_mentioned": [],
+        "amounts_mentioned": []
+      },
+      "requested_action": "regain access to my account",
+      "resolution_status": "unresolved"
+    }
+  },
+  {
+    "ticket_id": "3258",
+    "source": "baseline",
+    "success": true,
+    "retry_count": 0,
+    "failure_category": null,
+    "latency_seconds": 0.46380809997208416,
+    "attempts": [
+      {
+        "attempt": 1,
+        "success": true,
+        "error": null
+      }
+    ],
+    "output": {
+      "ticket_id": "3258",
+      "customer": {
+        "name": "Joyce Pierce",
+        "account_id": null
+      },
+      "issue": {
+        "category": "technical",
+        "subcategory": "login failure",
+        "product_or_service": "Dell XPS",
+        "urgency": "medium"
+      },
+      "sentiment": "frustrated",
+      "entities": {
+        "order_ids": [],
+        "dates_mentioned": [],
+        "amounts_mentioned": []
+      },
+      "requested_action": "recover account",
+      "resolution_status": "unresolved"
+    }
+  },
+  {
+    "ticket_id": "6874",
+    "source": "baseline",
+    "success": true,
+    "retry_count": 0,
+    "failure_category": null,
+    "latency_seconds": 0.5381419002078474,
+    "attempts": [
+      {
+        "attempt": 1,
+        "success": true,
+        "error": null
+      }
+    ],
+    "output": {
+      "ticket_id": "6874",
+      "customer": {
+        "name": "Elizabeth Miller",
+        "account_id": null
+      },
+      "issue": {
+        "category": "technical",
+        "subcategory": "hardware issue",
+        "product_or_service": "GoPro Hero",
+        "urgency": "high"
+      },
+      "sentiment": "frustrated",
+      "entities": {
+        "order_ids": [],
+        "dates_mentioned": [],
+        "amounts_mentioned": []
+      },
+      "requested_action": "help with installation support",
+      "resolution_status": "unresolved"
+    }
+  },
+  {
+    "ticket_id": "3612",
+    "source": "baseline",
+    "success": true,
+    "retry_count": 0,
+    "failure_category": null,
+    "latency_seconds": 0.6477550999261439,
+    "attempts": [
+      {
+        "attempt": 1,
+        "success": true,
+        "error": null
+      }
+    ],
+    "output": {
+      "ticket_id": "3612",
+      "customer": {
+        "name": "Erin Swanson",
+        "account_id": null
+      },
+      "issue": {
+        "category": "technical",
+        "subcategory": "display issue",
+        "product_or_service": "Asus ROG",
+        "urgency": "medium"
+      },
+      "sentiment": "frustrated",
+      "entities": {
+        "order_ids": [],
+        "dates_mentioned": [],
+        "amounts_mentioned": []
+      },
+      "requested_action": "assist",
+      "resolution_status": "unresolved"
+    }
+  },
+  {
+    "ticket_id": "7360",
+    "source": "baseline",
+    "success": true,
+    "retry_count": 0,
+    "failure_category": null,
+    "latency_seconds": 0.5867602999787778,
+    "attempts": [
+      {
+        "attempt": 1,
+        "success": true,
+        "error": null
+      }
+    ],
+    "output": {
+      "ticket_id": "7360",
+      "customer": {
+        "name": "Julia Ferguson",
+        "account_id": null
+      },
+      "issue": {
+        "category": "technical",
+        "subcategory": null,
+        "product_or_service": "Nintendo Switch Pro Controller",
+        "urgency": "medium"
+      },
+      "sentiment": "frustrated",
+      "entities": {
+        "order_ids": [],
+        "dates_mentioned": [],
+        "amounts_mentioned": []
+      },
+      "requested_action": "assist",
+      "resolution_status": "unresolved"
+    }
+  },
+  {
+    "ticket_id": "4558",
+    "source": "baseline",
+    "success": true,
+    "retry_count": 0,
+    "failure_category": null,
+    "latency_seconds": 0.701813300140202,
+    "attempts": [
+      {
+        "attempt": 1,
+        "success": true,
+        "error": null
+      }
+    ],
+    "output": {
+      "ticket_id": "4558",
+      "customer": {
+        "name": "Tyler Wilson",
+        "account_id": null
+      },
+      "issue": {
+        "category": "technical",
+        "subcategory": null,
+        "product_or_service": "LG Smart TV",
+        "urgency": "medium"
+      },
+      "sentiment": "neutral",
+      "entities": {
+        "order_ids": [],
+        "dates_mentioned": [],
+        "amounts_mentioned": []
+      },
+      "requested_action": "assist",
+      "resolution_status": "unresolved"
+    }
+  },
+  {
+    "ticket_id": "107",
+    "source": "baseline",
+    "success": true,
+    "retry_count": 0,
+    "failure_category": null,
+    "latency_seconds": 0.6458178998436779,
+    "attempts": [
+      {
+        "attempt": 1,
+        "success": true,
+        "error": null
+      }
+    ],
+    "output": {
+      "ticket_id": "107",
+      "customer": {
+        "name": "Miranda Morales",
+        "account_id": null
+      },
+      "issue": {
+        "category": "technical",
+        "subcategory": null,
+        "product_or_service": "Nintendo Switch",
+        "urgency": "medium"
+      },
+      "sentiment": "neutral",
+      "entities": {
+        "order_ids": [],
+        "dates_mentioned": [],
+        "amounts_mentioned": []
+      },
+      "requested_action": "assist",
+      "resolution_status": "unresolved"
+    }
+  },
+  {
+    "ticket_id": "2616",
+    "source": "baseline",
+    "success": true,
+    "retry_count": 0,
+    "failure_category": null,
+    "latency_seconds": 0.8436227000784129,
+    "attempts": [
+      {
+        "attempt": 1,
+        "success": true,
+        "error": null
+      }
+    ],
+    "output": {
+      "ticket_id": "2616",
+      "customer": {
+        "name": "Lindsey Jones",
+        "account_id": null
+      },
+      "issue": {
+        "category": "technical",
+        "subcategory": null,
+        "product_or_service": "Google Nest",
+        "urgency": "medium"
+      },
+      "sentiment": "neutral",
+      "entities": {
+        "order_ids": [],
+        "dates_mentioned": [],
+        "amounts_mentioned": []
+      },
+      "requested_action": "assist",
+      "resolution_status": "unresolved"
+    }
+  },
+  {
+    "ticket_id": "6925",
+    "source": "baseline",
+    "success": true,
+    "retry_count": 0,
+    "failure_category": null,
+    "latency_seconds": 2.9944164000917226,
+    "attempts": [
+      {
+        "attempt": 1,
+        "success": true,
+        "error": null
+      }
+    ],
+    "output": {
+      "ticket_id": "6925",
+      "customer": {
+        "name": "John Graham",
+        "account_id": null
+      },
+      "issue": {
+        "category": "technical",
+        "subcategory": null,
+        "product_or_service": "Nest Thermostat",
+        "urgency": "medium"
+      },
+      "sentiment": "frustrated",
+      "entities": {
+        "order_ids": [],
+        "dates_mentioned": [],
+        "amounts_mentioned": []
+      },
+      "requested_action": "assist",
+      "resolution_status": "unresolved"
+    }
+  },
+  {
+    "ticket_id": "5575",
+    "source": "baseline",
+    "success": true,
+    "retry_count": 0,
+    "failure_category": null,
+    "latency_seconds": 3.7243991000577807,
+    "attempts": [
+      {
+        "attempt": 1,
+        "success": true,
+        "error": null
+      }
+    ],
+    "output": {
+      "ticket_id": "5575",
+      "customer": {
+        "name": "Leslie Casey",
+        "account_id": null
+      },
+      "issue": {
+        "category": "technical",
+        "subcategory": null,
+        "product_or_service": "HP Pavilion",
+        "urgency": "medium"
+      },
+      "sentiment": "neutral",
+      "entities": {
+        "order_ids": [],
+        "dates_mentioned": [],
+        "amounts_mentioned": []
+      },
+      "requested_action": "assist",
+      "resolution_status": "unresolved"
+    }
+  },
+  {
+    "ticket_id": "4553",
+    "source": "baseline",
+    "success": true,
+    "retry_count": 0,
+    "failure_category": null,
+    "latency_seconds": 2.7992259000893682,
+    "attempts": [
+      {
+        "attempt": 1,
+        "success": true,
+        "error": null
+      }
+    ],
+    "output": {
+      "ticket_id": "4553",
+      "customer": {
+        "name": "Deanna Hayes",
+        "account_id": null
+      },
+      "issue": {
+        "category": "technical",
+        "subcategory": "data recovery",
+        "product_or_service": "Microsoft Surface",
+        "urgency": "high"
+      },
+      "sentiment": "frustrated",
+      "entities": {
+        "order_ids": [],
+        "dates_mentioned": [],
+        "amounts_mentioned": []
+      },
+      "requested_action": "recover deleted files",
+      "resolution_status": "unresolved"
+    }
+  },
+  {
+    "ticket_id": "2548",
+    "source": "baseline",
+    "success": true,
+    "retry_count": 0,
+    "failure_category": null,
+    "latency_seconds": 2.989326399983838,
+    "attempts": [
+      {
+        "attempt": 1,
+        "success": true,
+        "error": null
+      }
+    ],
+    "output": {
+      "ticket_id": "2548",
+      "customer": {
+        "name": "Terri Howard",
+        "account_id": null
+      },
+      "issue": {
+        "category": "technical",
+        "subcategory": "display issue",
+        "product_or_service": "Adobe Photoshop",
+        "urgency": "high"
+      },
+      "sentiment": "frustrated",
+      "entities": {
+        "order_ids": [],
+        "dates_mentioned": [],
+        "amounts_mentioned": []
+      },
+      "requested_action": "assistance",
+      "resolution_status": "unresolved"
+    }
+  },
+  {
+    "ticket_id": "3528",
+    "source": "baseline",
+    "success": true,
+    "retry_count": 0,
+    "failure_category": null,
+    "latency_seconds": 2.694459500024095,
+    "attempts": [
+      {
+        "attempt": 1,
+        "success": true,
+        "error": null
+      }
+    ],
+    "output": {
+      "ticket_id": "3528",
+      "customer": {
+        "name": "John Escobar",
+        "account_id": null
+      },
+      "issue": {
+        "category": "technical",
+        "subcategory": "software glitch",
+        "product_or_service": "Canon DSLR Camera",
+        "urgency": "medium"
+      },
+      "sentiment": "frustrated",
+      "entities": {
+        "order_ids": [],
+        "dates_mentioned": [],
+        "amounts_mentioned": []
+      },
+      "requested_action": "provide a solution",
+      "resolution_status": "unresolved"
+    }
+  },
+  {
+    "ticket_id": "5515",
+    "source": "baseline",
+    "success": true,
+    "retry_count": 0,
+    "failure_category": null,
+    "latency_seconds": 3.9164778001140803,
+    "attempts": [
+      {
+        "attempt": 1,
+        "success": true,
+        "error": null
+      }
+    ],
+    "output": {
+      "ticket_id": "5515",
+      "customer": {
+        "name": "Emma Bell",
+        "account_id": null
+      },
+      "issue": {
+        "category": "technical",
+        "subcategory": "software bug",
+        "product_or_service": "Bose QuietComfort app",
+        "urgency": "medium"
+      },
+      "sentiment": "frustrated",
+      "entities": {
+        "order_ids": [],
+        "dates_mentioned": [],
+        "amounts_mentioned": []
+      },
+      "requested_action": "resolve the issue",
+      "resolution_status": "unresolved"
+    }
+  },
+  {
+    "ticket_id": "1675",
+    "source": "baseline",
+    "success": true,
+    "retry_count": 0,
+    "failure_category": null,
+    "latency_seconds": 2.599305599927902,
+    "attempts": [
+      {
+        "attempt": 1,
+        "success": true,
+        "error": null
+      }
+    ],
+    "output": {
+      "ticket_id": "1675",
+      "customer": {
+        "name": "David Weaver",
+        "account_id": null
+      },
+      "issue": {
+        "category": "technical",
+        "subcategory": "payment issue",
+        "product_or_service": "Fitbit Charge",
+        "urgency": "medium"
+      },
+      "sentiment": "frustrated",
+      "entities": {
+        "order_ids": [],
+        "dates_mentioned": [],
+        "amounts_mentioned": []
+      },
+      "requested_action": "assist",
+      "resolution_status": "unresolved"
+    }
+  },
+  {
+    "ticket_id": "1520",
+    "source": "baseline",
+    "success": true,
+    "retry_count": 0,
+    "failure_category": null,
+    "latency_seconds": 3.6189770000055432,
+    "attempts": [
+      {
+        "attempt": 1,
+        "success": true,
+        "error": null
+      }
+    ],
+    "output": {
+      "ticket_id": "1520",
+      "customer": {
+        "name": "Eric Myers",
+        "account_id": null
+      },
+      "issue": {
+        "category": "technical",
+        "subcategory": "login failure",
+        "product_or_service": "LG Washing Machine account",
+        "urgency": "medium"
+      },
+      "sentiment": "frustrated",
+      "entities": {
+        "order_ids": [],
+        "dates_mentioned": [],
+        "amounts_mentioned": []
+      },
+      "requested_action": "unlock account",
+      "resolution_status": "unresolved"
+    }
+  },
+  {
+    "ticket_id": "6225",
+    "source": "baseline",
+    "success": true,
+    "retry_count": 0,
+    "failure_category": null,
+    "latency_seconds": 2.784902699990198,
+    "attempts": [
+      {
+        "attempt": 1,
+        "success": true,
+        "error": null
+      }
+    ],
+    "output": {
+      "ticket_id": "6225",
+      "customer": {
+        "name": "James Butler",
+        "account_id": null
+      },
+      "issue": {
+        "category": "technical",
+        "subcategory": "software bug",
+        "product_or_service": "Sony 4K HDR TV",
+        "urgency": "medium"
+      },
+      "sentiment": "neutral",
+      "entities": {
+        "order_ids": [],
+        "dates_mentioned": [],
+        "amounts_mentioned": []
+      },
+      "requested_action": "assist",
+      "resolution_status": "unresolved"
+    }
+  },
+  {
+    "ticket_id": "1585",
+    "source": "baseline",
+    "success": true,
+    "retry_count": 0,
+    "failure_category": null,
+    "latency_seconds": 3.7128251001704484,
+    "attempts": [
+      {
+        "attempt": 1,
+        "success": true,
+        "error": null
+      }
+    ],
+    "output": {
+      "ticket_id": "1585",
+      "customer": {
+        "name": "Andrew Nguyen",
+        "account_id": null
+      },
+      "issue": {
+        "category": "technical",
+        "subcategory": "software bug",
+        "product_or_service": "Nintendo Switch Pro Controller",
+        "urgency": "high"
+      },
+      "sentiment": "frustrated",
+      "entities": {
+        "order_ids": [],
+        "dates_mentioned": [],
+        "amounts_mentioned": []
+      },
+      "requested_action": "updates or fixes",
+      "resolution_status": "unresolved"
+    }
+  },
+  {
+    "ticket_id": "5882",
+    "source": "baseline",
+    "success": true,
+    "retry_count": 0,
+    "failure_category": null,
+    "latency_seconds": 2.788505799835548,
+    "attempts": [
+      {
+        "attempt": 1,
+        "success": true,
+        "error": null
+      }
+    ],
+    "output": {
+      "ticket_id": "5882",
+      "customer": {
+        "name": "Tara Roberts",
+        "account_id": null
+      },
+      "issue": {
+        "category": "technical",
+        "subcategory": "software bug",
+        "product_or_service": "Asus ROG app",
+        "urgency": "medium"
+      },
+      "sentiment": "frustrated",
+      "entities": {
+        "order_ids": [],
+        "dates_mentioned": [],
+        "amounts_mentioned": []
+      },
+      "requested_action": "guide me through the steps",
+      "resolution_status": "unresolved"
+    }
+  },
+  {
+    "ticket_id": "5636",
+    "source": "baseline",
+    "success": false,
+    "retry_count": 0,
+    "failure_category": "infra_rate_limited",
+    "latency_seconds": 0.12235000007785857,
+    "attempts": [
+      {
+        "attempt": 1,
+        "success": false,
+        "error": "Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01kp04kap9f0qr2e1esvqxf7gj` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99724, Requested 1077. Please try again in 11m32.064s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}"
+      }
+    ],
+    "output": null
+  },
+  {
+    "ticket_id": "4334",
+    "source": "baseline",
+    "success": false,
+    "retry_count": 0,
+    "failure_category": "infra_rate_limited",
+    "latency_seconds": 0.23674910003319383,
+    "attempts": [
+      {
+        "attempt": 1,
+        "success": false,
+        "error": "Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01kp04kap9f0qr2e1esvqxf7gj` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99721, Requested 1092. Please try again in 11m42.432s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}"
+      }
+    ],
+    "output": null
+  },
+  {
+    "ticket_id": "712",
+    "source": "baseline",
+    "success": false,
+    "retry_count": 0,
+    "failure_category": "infra_rate_limited",
+    "latency_seconds": 0.13099059998057783,
+    "attempts": [
+      {
+        "attempt": 1,
+        "success": false,
+        "error": "Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01kp04kap9f0qr2e1esvqxf7gj` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99718, Requested 1076. Please try again in 11m26.016s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}"
+      }
+    ],
+    "output": null
+  }
+]
