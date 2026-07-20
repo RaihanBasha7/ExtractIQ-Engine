@@ -1,0 +1,21 @@
+{
+  "ticket_id": "long_ticket",
+  "customer": {
+    "name": "Priya Patel",
+    "account_id": "ACC-TECHFLOW-88472"
+  },
+  "issue": {
+    "category": "technical",
+    "subcategory": "incorrect dashboard data and revenue reporting",
+    "product_or_service": "enterprise analytics platform",
+    "urgency": "critical"
+  },
+  "sentiment": "angry",
+  "entities": {
+    "order_ids": ["TKT-001482", "TKT-002194"],
+    "dates_mentioned": ["September 1 2025", "November 15 2025", "Nov 16 2025", "Nov 18 2025", "Nov 22 2025", "Nov 30 2025", "Dec 10 2025", "Dec 15 2025", "Dec 20 2025", "Dec 28 2025", "Jan 3 2026", "Jan 10 2026", "Jan 15 2026", "Jan 22 2026", "Feb 1 2026", "Feb 10 2026", "Feb 15 2026", "4 months"],
+    "amounts_mentioned": ["$2,499", "$7,497", "$150/hour", "$6,000"]
+  },
+  "requested_action": "Fix data pipeline, refund $7,497 for three months of unusable service, provide written explanation and engineering contact, compensate $6,000 for wasted engineering hours",
+  "resolution_status": "unresolved"
+}

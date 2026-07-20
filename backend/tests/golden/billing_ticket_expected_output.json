@@ -1,0 +1,21 @@
+{
+  "ticket_id": "billing_ticket",
+  "customer": {
+    "name": "Sarah Mitchell",
+    "account_id": "ORD-78492-Z"
+  },
+  "issue": {
+    "category": "billing",
+    "subcategory": "duplicate charge",
+    "product_or_service": "premium subscription",
+    "urgency": "high"
+  },
+  "sentiment": "frustrated",
+  "entities": {
+    "order_ids": ["ORD-78492-Z"],
+    "dates_mentioned": ["March 3 2026", "March 5 2026", "2022"],
+    "amounts_mentioned": ["$149.99", "$149.99"]
+  },
+  "requested_action": "Refund $149.99 for duplicate charge and ensure it does not happen again",
+  "resolution_status": "unresolved"
+}

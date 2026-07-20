@@ -1,0 +1,21 @@
+{
+  "ticket_id": "multiple_issue_ticket",
+  "customer": {
+    "name": "James T. Kirk",
+    "account_id": "ACC-88472-M"
+  },
+  "issue": {
+    "category": "billing",
+    "subcategory": "multiple issues: double charge, locked account, unshipped order, damaged product",
+    "product_or_service": "blue widget model BW-2000",
+    "urgency": "high"
+  },
+  "sentiment": "angry",
+  "entities": {
+    "order_ids": ["ORD-99834-B"],
+    "dates_mentioned": ["Dec 15 2025", "january 5 2026"],
+    "amounts_mentioned": ["$199", "$89.97"]
+  },
+  "requested_action": "Refund $199 double charge, unlock account, ship order ORD-99834-B or refund, send replacement for damaged BW-2000",
+  "resolution_status": "unresolved"
+}

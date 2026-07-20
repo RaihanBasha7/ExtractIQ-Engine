@@ -1,0 +1,21 @@
+{
+  "ticket_id": "account_ticket",
+  "customer": {
+    "name": "Emily Wilson",
+    "account_id": "SUB-GOLD-88472"
+  },
+  "issue": {
+    "category": "account",
+    "subcategory": "cannot login account locked",
+    "product_or_service": "legacy gold plan",
+    "urgency": "high"
+  },
+  "sentiment": "frustrated",
+  "entities": {
+    "order_ids": [],
+    "dates_mentioned": ["2019", "2 weeks"],
+    "amounts_mentioned": []
+  },
+  "requested_action": "Reset account and send new password or unlock existing account",
+  "resolution_status": "unresolved"
+}

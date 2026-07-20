@@ -20,8 +20,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from app import storage
 from app.config import GROQ_MODEL
+from app.database.repository import ExtractionRepository, RawTicketRepository
 from app.extraction import extract_ticket, _get_client
 from app.preprocessing import preprocess
 
@@ -54,13 +54,18 @@ def main():
         pre = preprocess(ticket["raw_text"])
         result = extract_ticket(ticket["ticket_id"], pre.clean_text, client=client)
 
-        storage.save_extraction(
+        raw_repo = RawTicketRepository()
+        ext_repo = ExtractionRepository()
+        raw_repo.save(
             ticket_id=ticket["ticket_id"],
             raw_text=ticket["raw_text"],
+            cleaned_text=pre.clean_text,
             language=pre.language,
-            pii_redacted_count=pre.pii_redacted_count,
-            success=result.success,
-            output_json=result.data.model_dump() if result.data else None,
+        )
+        ext_repo.save(
+            ticket_id=ticket["ticket_id"],
+            structured_json=result.data.model_dump() if result.data else None,
+            schema_valid=result.success,
             retry_count=result.retry_count,
             failure_category=result.failure_category,
             latency_seconds=result.latency_seconds,

@@ -4,10 +4,19 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from groq import Groq
+from openai import OpenAI
 from sqlalchemy import text
 
 from app.api.models import HealthCheckDetail, HealthResponse
-from app.config import DB_PATH, GROQ_API_KEY, GROQ_MODEL, LLM_PROVIDER
+from app.config import (
+    DB_PATH,
+    FEATHERLESS_API_KEY,
+    FEATHERLESS_BASE_URL,
+    FEATHERLESS_MODEL,
+    GROQ_API_KEY,
+    GROQ_MODEL,
+    LLM_PROVIDER,
+)
 from app.database.database import engine
 from app.logging import get_logger, log_event
 
@@ -35,7 +44,7 @@ class HealthService:
         checks: dict[str, HealthCheckDetail] = {
             "api": self._run_check(self._check_api, request_id=request_id),
             "database": self._run_check(self._check_database, request_id=request_id),
-            "groq": self._run_check(self._check_groq, request_id=request_id),
+            "llm_provider": self._run_check(self._check_llm_provider, request_id=request_id),
             "disk": self._run_check(self._check_disk, request_id=request_id),
         }
 
@@ -104,13 +113,19 @@ class HealthService:
         return {"database_type": "sqlite"}
 
     @staticmethod
-    def _check_groq() -> dict:
-        if LLM_PROVIDER != "groq":
+    def _check_llm_provider() -> dict:
+        if LLM_PROVIDER == "groq":
+            if not GROQ_API_KEY:
+                raise RuntimeError("GROQ_API_KEY is not configured")
+            Groq(api_key=GROQ_API_KEY)
+            return {"provider": "groq", "model": GROQ_MODEL}
+        elif LLM_PROVIDER == "featherless":
+            if not FEATHERLESS_API_KEY:
+                raise RuntimeError("FEATHERLESS_API_KEY is not configured")
+            OpenAI(api_key=FEATHERLESS_API_KEY, base_url=FEATHERLESS_BASE_URL)
+            return {"provider": "featherless", "model": FEATHERLESS_MODEL}
+        else:
             return {"provider": LLM_PROVIDER}
-        if not GROQ_API_KEY:
-            raise RuntimeError("GROQ_API_KEY is not configured")
-        Groq(api_key=GROQ_API_KEY)
-        return {"provider": "groq", "model": GROQ_MODEL}
 
     @staticmethod
     def _check_disk() -> dict:

@@ -1,0 +1,21 @@
+{
+  "ticket_id": "very_noisy_ticket",
+  "customer": {
+    "name": "Robert Thompson",
+    "account_id": "84759302847593028475"
+  },
+  "issue": {
+    "category": "technical",
+    "subcategory": "file upload size limit incorrect",
+    "product_or_service": "portal upload system",
+    "urgency": "high"
+  },
+  "sentiment": "angry",
+  "entities": {
+    "order_ids": [],
+    "dates_mentioned": ["FEBRUARY 14 2026"],
+    "amounts_mentioned": []
+  },
+  "requested_action": "Fix file upload size limit or provide refund",
+  "resolution_status": "unresolved"
+}

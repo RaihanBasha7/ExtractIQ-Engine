@@ -3,20 +3,67 @@ venv/
 .venv/
 __pycache__/
 *.pyc
+*.pyo
+*.pyd
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Database
 *.db
 *.sqlite3
+*.sqlite
+
+# Logs
 *.log
+*.log.*
+
+# Test & Coverage
 .pytest_cache/
 .coverage
+.coverage.*
+coverage.xml
 htmlcov/
-
-# Node
-node_modules/
-dist/
-
-# Environment
-.env
+junit.xml
+.tox/
 
 # IDE
 .vscode/
 .idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Node
+node_modules/
+dist/
+.cache/
+
+# Docker
+.docker/
+
+# Runtime
+*.pid
+*.seed
+*.pid.lock
+
+# Reports
+backend/reports/*.md
+backend/reports/*.json
+backend/reports/*.csv
+
+# OS
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Project specific
+backend/data/*.db
+backend/data/*.jsonl

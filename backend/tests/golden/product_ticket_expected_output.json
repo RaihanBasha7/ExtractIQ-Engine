@@ -1,0 +1,21 @@
+{
+  "ticket_id": "product_ticket",
+  "customer": {
+    "name": "Mike Chen",
+    "account_id": null
+  },
+  "issue": {
+    "category": "product",
+    "subcategory": "manufacturing defect",
+    "product_or_service": "Sony WH-1000XM5 wireless headphones",
+    "urgency": "high"
+  },
+  "sentiment": "frustrated",
+  "entities": {
+    "order_ids": ["INV-33821-K"],
+    "dates_mentioned": ["Jan 15 2026"],
+    "amounts_mentioned": ["$349.99"]
+  },
+  "requested_action": "Process warranty claim for replacement pair shipped overnight or full refund including shipping",
+  "resolution_status": "unresolved"
+}

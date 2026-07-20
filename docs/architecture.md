@@ -33,8 +33,8 @@ the system reliable, maintainable, and scalable.
       Text Cleaning & Normalization
                   │
                   ▼
-          LLM Extraction Engine
-        (Featherless AI • GLM-5.2)
+           LLM Extraction Engine
+         (Groq • Featherless AI)
                   │
                   ▼
       Pydantic Schema Validation
@@ -149,8 +149,8 @@ The AI layer performs semantic understanding of the ticket.
 
 ### Technology
 
--   Featherless AI
--   GLM-5.2
+-   Featherless AI (zai-org/GLM-5.2) — default
+-   Groq (llama-3.3-70b-versatile) — optional
 
 ### Responsibilities
 
@@ -347,7 +347,6 @@ Future Production
 -   PostgreSQL
 -   Redis
 -   Celery
--   Docker
 -   Kubernetes
 -   LiteLLM gateway
 -   Multi-provider failover

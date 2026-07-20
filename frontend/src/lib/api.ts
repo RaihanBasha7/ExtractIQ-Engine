@@ -120,7 +120,7 @@ function normalizeHealth(raw: unknown): HealthResponse {
   const checks = obj(r.checks);
   const apiCheck = obj(checks.api);
   const dbCheck = obj(checks.database);
-  const groqCheck = obj(checks.groq);
+  const llmCheck = obj(checks.llm_provider);
   const diskCheck = obj(checks.disk);
   return {
     status: healthState(str(r.status, 'unknown')),
@@ -128,7 +128,7 @@ function normalizeHealth(raw: unknown): HealthResponse {
       api: healthState(str(apiCheck.status, 'unknown')),
       database: healthState(str(dbCheck.status, 'unknown')),
       disk: healthState(str(diskCheck.status, 'unknown')),
-      llm_provider: healthState(str(groqCheck.status, 'unknown')),
+      llm_provider: healthState(str(llmCheck.status, 'unknown')),
     },
     timestamp: str(r.timestamp, new Date().toISOString()),
     uptime_seconds: Math.floor((Date.now() - APP_START) / 1000),

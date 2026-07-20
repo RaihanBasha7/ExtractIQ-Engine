@@ -1,0 +1,129 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.backends._legacy:_Backend"
+
+[project]
+name = "extractiq-engine"
+version = "0.1.0"
+description = "AI-Powered Structured Information Extraction Engine for Noisy Customer Support Data"
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.11"
+
+[tool.black]
+line-length = 120
+target-version = ["py311", "py312", "py313"]
+include = '\.pyi?$'
+extend-exclude = '''
+/(
+  \.eggs
+  | \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | _build
+  | buck-out
+  | build
+  | dist
+  | __pycache__
+  | venv
+)/
+'''
+
+[tool.isort]
+profile = "black"
+line_length = 120
+multi_line_output = 3
+include_trailing_comma = true
+force_grid_wrap = 0
+use_parentheses = true
+ensure_newline_before_comments = true
+
+[tool.flake8]
+max-line-length = 120
+extend-ignore = ["E203", "W503"]
+exclude = [".git", "__pycache__", "venv", ".venv", "build", "dist", "*.pyc"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = false
+ignore_missing_imports = true
+warn_unused_configs = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+disallow_any_unimported = false
+disallow_untyped_defs = false
+no_implicit_optional = true
+warn_return_any = true
+exclude = [
+    "venv/",
+    ".venv/",
+    "__pycache__/",
+    "build/",
+]
+
+[[tool.mypy.overrides]]
+module = [
+    "app.database.*",
+    "app.evaluation.*",
+    "app.api.*",
+    "app.services.*",
+    "app.confidence",
+    "app.extraction",
+    "app.logging",
+    "app.metadata",
+    "app.preprocessing",
+    "app.repair_logging",
+    "app.schema",
+    "app.settings",
+]
+disallow_untyped_defs = false
+
+[tool.pytest.ini_options]
+minversion = "7.0"
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*", "async_test_*"]
+addopts = """
+    -v
+    --tb=short
+    --strict-config
+    --strict-markers
+    -p no:cacheprovider
+"""
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+    "integration: marks tests as integration tests",
+    "unit: marks tests as unit tests",
+    "asyncio: mark test as async",
+]
+
+[tool.coverage.run]
+source = ["app"]
+omit = [
+    "*/__pycache__/*",
+    "*/venv/*",
+    "*/tests/*",
+    "*/migrations/*",
+    "*/scripts/*",
+    "*/evaluation/*",
+]
+concurrency = ["thread"]
+parallel = true
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+    "class Base\\b",
+    "if TYPE_CHECKING:",
+    "@overload",
+    "except ImportError",
+    "except Exception:",
+    "if 0:",
+]

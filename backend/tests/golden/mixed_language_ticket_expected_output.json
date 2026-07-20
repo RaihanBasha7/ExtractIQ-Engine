@@ -1,0 +1,21 @@
+{
+  "ticket_id": "mixed_language_ticket",
+  "customer": {
+    "name": "Pierre Laurent",
+    "account_id": null
+  },
+  "issue": {
+    "category": "shipping",
+    "subcategory": "delivery status incorrect",
+    "product_or_service": "laptop",
+    "urgency": "high"
+  },
+  "sentiment": "frustrated",
+  "entities": {
+    "order_ids": ["FR-77291"],
+    "dates_mentioned": ["20 février", "March 1", "February 20"],
+    "amounts_mentioned": ["€1,249.99"]
+  },
+  "requested_action": "Investigate delivery with carrier why system shows delivered when package was not received",
+  "resolution_status": "unresolved"
+}

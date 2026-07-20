@@ -1,0 +1,21 @@
+{
+  "ticket_id": "broken_ticket",
+  "customer": {
+    "name": null,
+    "account_id": null
+  },
+  "issue": {
+    "category": "technical",
+    "subcategory": "button not working",
+    "product_or_service": null,
+    "urgency": "medium"
+  },
+  "sentiment": "angry",
+  "entities": {
+    "order_ids": [],
+    "dates_mentioned": [],
+    "amounts_mentioned": []
+  },
+  "requested_action": "Fix the button issue or provide refund",
+  "resolution_status": "unresolved"
+}

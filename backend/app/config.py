@@ -1,67 +1,68 @@
-import os
-from pathlib import Path
+"""
+Configuration module — backward-compatible bridge to Pydantic Settings.
 
-from dotenv import load_dotenv
+All configuration values are now sourced from :mod:`app.settings` which
+uses ``pydantic-settings`` for typed, validated configuration.
 
-# Load .env from the backend/ directory (parent of app/)
-dotenv_path = Path(__file__).resolve().parent.parent / ".env"
-load_dotenv(dotenv_path=dotenv_path)
+Legacy imports like ``from app.config import APP_NAME`` continue to work.
+New code should prefer ``from app.settings import settings``.
+
+Example
+-------
+    # Legacy (still works):
+    from app.config import MAX_REPAIR_RETRIES
+
+    # Preferred:
+    from app.settings import settings
+    print(settings.MAX_REPAIR_RETRIES)
+"""
+
+from app.settings import settings as _s
 
 # Application metadata
-APP_NAME = os.getenv("APP_NAME", "OneInbox API")
-APP_VERSION = os.getenv("APP_VERSION", "0.1.0")
-API_VERSION = os.getenv("API_VERSION", "v1")
-ENVIRONMENT = os.getenv("ENVIRONMENT", "development")
-APP_DESCRIPTION = os.getenv(
-    "APP_DESCRIPTION",
-    "Extracts structured JSON from noisy support tickets with a model-driven repair loop.",
-)
-CONTACT = {"name": "OneInbox Team", "url": "https://oneinbox.ai"}
-LICENSE_INFO = {"name": "MIT", "url": "https://opensource.org/licenses/MIT"}
-SERVERS = [{"url": "http://localhost:8000", "description": "Development server"}]
+APP_NAME: str = _s.APP_NAME
+APP_VERSION: str = _s.APP_VERSION
+API_VERSION: str = _s.API_VERSION
+ENVIRONMENT: str = _s.ENVIRONMENT
+APP_DESCRIPTION: str = _s.APP_DESCRIPTION
+CONTACT: dict = {"name": "OneInbox Team", "url": "https://oneinbox.ai"}
+LICENSE_INFO: dict = {"name": "MIT", "url": "https://opensource.org/licenses/MIT"}
+SERVERS: list = [{"url": "http://localhost:8000", "description": "Development server"}]
 
-GROQ_API_KEY = os.getenv("GROQ_API_KEY", "")
-GROQ_MODEL = os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile")
+# LLM Provider
+LLM_PROVIDER: str = _s.LLM_PROVIDER
 
-MAX_REPAIR_RETRIES = int(os.getenv("MAX_REPAIR_RETRIES", "3"))
+# Featherless AI (default provider)
+FEATHERLESS_API_KEY: str = _s.FEATHERLESS_API_KEY
+FEATHERLESS_BASE_URL: str = _s.FEATHERLESS_BASE_URL
+FEATHERLESS_MODEL: str = _s.FEATHERLESS_MODEL
 
-DB_PATH = os.getenv("DB_PATH", "data/extractions.db")
+# Groq (optional alternate provider)
+GROQ_API_KEY: str = _s.GROQ_API_KEY
+GROQ_MODEL: str = _s.GROQ_MODEL
 
-DATABASE_URL = os.getenv("DATABASE_URL", f"sqlite:///{DB_PATH}")
+# Extraction
+MAX_REPAIR_RETRIES: int = _s.MAX_REPAIR_RETRIES
 
-EVALUATION_RECORDS_PATH = os.getenv("EVALUATION_RECORDS_PATH", "data/evaluation_records.jsonl")
-SCHEMA_VERSION = os.getenv("SCHEMA_VERSION", "1.0")
+# Database
+DB_PATH: str = _s.DB_PATH
+DATABASE_URL: str = _s.DATABASE_URL
 
-LLM_PROVIDER = os.getenv("LLM_PROVIDER", "groq")
+# Evaluation
+EVALUATION_RECORDS_PATH: str = _s.EVALUATION_RECORDS_PATH
+SCHEMA_VERSION: str = _s.SCHEMA_VERSION
 
-FEATHERLESS_API_KEY = os.getenv("FEATHERLESS_API_KEY", "")
-FEATHERLESS_BASE_URL = os.getenv("FEATHERLESS_BASE_URL", "https://api.featherless.ai/v1")
-
-MODEL = os.getenv("MODEL", "")
-
-if LLM_PROVIDER == "featherless":
-    if not FEATHERLESS_API_KEY:
-        raise RuntimeError(
-            "FEATHERLESS_API_KEY is not set. Copy .env.example to .env and add your Featherless key."
-        )
-    if not MODEL:
-        raise RuntimeError(
-            "MODEL is not set. Copy .env.example to .env and add your model name."
-        )
-
-if not GROQ_API_KEY and LLM_PROVIDER == "groq":
-    raise RuntimeError(
-        "GROQ_API_KEY is not set. Copy .env.example to .env and add your Groq key."
-    )
+# Server
+HOST: str = _s.HOST
+PORT: int = _s.PORT
 
 # ── Resolved provider / model (single source of truth) ────────────────────
-
-ACTIVE_PROVIDER: str = LLM_PROVIDER
+ACTIVE_PROVIDER: str = _s.LLM_PROVIDER
 
 ACTIVE_MODEL: str
-if LLM_PROVIDER == "groq":
-    ACTIVE_MODEL = GROQ_MODEL or "llama-3.3-70b-versatile"
-elif LLM_PROVIDER == "featherless":
-    ACTIVE_MODEL = MODEL or "unknown"
+if _s.LLM_PROVIDER == "groq":
+    ACTIVE_MODEL = _s.GROQ_MODEL or "llama-3.3-70b-versatile"
+elif _s.LLM_PROVIDER == "featherless":
+    ACTIVE_MODEL = _s.FEATHERLESS_MODEL or "zai-org/GLM-5.2"
 else:
     ACTIVE_MODEL = "unknown"

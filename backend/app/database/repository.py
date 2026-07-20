@@ -3,7 +3,7 @@ from contextlib import contextmanager
 from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
 
-from sqlalchemy import case, func, cast, String
+from sqlalchemy import case, func
 from sqlalchemy.orm import Session
 
 from app.database.database import SessionLocal

@@ -1,0 +1,23 @@
+hey there
+
+my dashboard has been returning a 503 error every time i try to load the reports page. this started happening after I deployed the new config on tuesday. the error says something like "upstream service timeout" but I cant find any documentation on what that means.
+
+I already tried:
+- clearing my browser cache
+- using a different browser (Chrome, Firefox, Edge)
+- restarting my machine
+- checking the status page (which says everything is healthy)
+
+nothing works. the URL im trying to access is https://app.example.com/dashboard/reports. my username is jdoe and my email is john.doe@acme-corp.com.
+
+we have a board meeting on friday and I NEED these reports. this is blocking our entire team. please escalate to level 2 support if needed.
+
+also when I checked the network tab in devtools I saw these errors in the console:
+- Failed to load resource: the server responded with a status of 503
+- Uncaught (in promise) TypeError: Cannot read properties of undefined (reading 'data')
+
+my account id is a7b3c9d2e1f4 and I am the admin for our org.
+
+thanks,
+John Doe
+VP of Operations, Acme Corp

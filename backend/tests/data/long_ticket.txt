@@ -1,0 +1,60 @@
+Long term account issue - multiple interactions
+
+Hello support team,
+
+this is the 8th time I am reaching out about the same issue and I am honestly at my wits end. I have been told "it will be resolved in 24-48 hours" SIX TIMES now and nothing ever changes. let me explain the FULL situation from the beginning so hopefully someone can actually help.
+
+BACKGROUND:
+I signed up for your enterprise plan (subscription SUB-ENT-99231-X) on September 1 2025 for my company TechFlow Solutions Inc. We are a team of 12 people and we paid $2,499 per month for the enterprise tier with the advanced analytics addon and the API access package. our account manager was supposed to be Sarah Chen but she stopped responding to my emails after the first month.
+
+THE PROBLEM:
+Starting around November 15 2025 our dashboard started showing incorrect data. The revenue reports were off by approximately 15-20% compared to our internal tracking. I first noticed this when our CFO asked me why our Q4 numbers didnt match what the platform was showing.
+
+Here is a timeline of everything I have done:
+
+Nov 16 2025 - Submitted first support ticket (TKT-001482). Response on Nov 18 saying they would investigate.
+Nov 22 2025 - Followed up. Told it was being "prioritized."
+Nov 30 2025 - Escalated to manager. Got a call from someone named Mike who said they identified a "data pipeline issue."
+Dec 10 2025 - Mike said the fix was deployed and I should see correct data within 48 hours.
+Dec 15 2025 - Data was still wrong. Submitted ticket TKT-002194.
+Dec 20 2025 - No response. Submitted another followup.
+Dec 28 2025 - Finally got a response saying they needed more time and that the issue was "more complex than initially thought."
+Jan 3 2026 - I asked for a partial refund for the months where the service was unusable. no response.
+Jan 10 2026 - Called customer support at 1-800-555-OPERATOR. Spoke to Jessica who said she would "personally ensure this gets fixed."
+Jan 15 2026 - Jessica emailed saying engineering team was working on it.
+Jan 22 2026 - Emailed Jessica for update. No response.
+Feb 1 2026 - Sent an email to your CEO (I found the email on your website). got an automated response.
+Feb 10 2026 - Still broken. Called again and was told my case was with "tier 3 support" and they would call me back in 24 hours.
+Feb 15 2026 - Nobody called. I am writing this ticket now.
+
+The specific data issues I have identified:
+1. Revenue aggregation is double-counting refunded transactions
+2. The user activity metrics do not match the raw event logs when I export them
+3. The API response times shown in the dashboard are approximately 40% lower than what our own monitoring shows
+4. Export CSV files have duplicate rows for approximately 3% of transactions
+
+WHAT I NEED:
+- Fix the data pipeline so it produces correct numbers
+- A refund for the months of December, January, and February at minimum since the core functionality of the platform (analytics) has been broken. that would be $2,499 x 3 = $7,497
+- A written explanation of what was wrong and what was done to fix it so I can report to my board
+- Compensation for the time my team has wasted on this. approximately 40 engineering hours at $150/hour = $6,000
+- A direct contact in your engineering team who I can communicate with directly instead of going through support
+
+If I do not get a satisfactory resolution within 7 days I will be migrating my entire team to a competitor and I will be posting about this experience on every review platform I can find. I have been patient for 4 months but my patience has run out.
+
+My details:
+Company: TechFlow Solutions Inc
+My name: Priya Patel
+Title: VP of Engineering
+Email: priya.patel@techflowsolutions.com
+Phone: 415-555-9922
+Account: ACC-TECHFLOW-88472
+CEO email: jill.stevens@techflowsolutions.com (for verification purposes)
+
+I expect a response within 24 hours confirming receipt and outlining your resolution plan. If I do not receive one I will proceed with legal action as we have a binding contract and you have failed to deliver the service we paid for.
+
+Thank you for nothing,
+Priya Patel
+VP of Engineering, TechFlow Solutions Inc
+priya.patel@techflowsolutions.com
+415-555-9922

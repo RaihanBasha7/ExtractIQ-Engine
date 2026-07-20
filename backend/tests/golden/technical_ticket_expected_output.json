@@ -1,0 +1,21 @@
+{
+  "ticket_id": "technical_ticket",
+  "customer": {
+    "name": "John Doe",
+    "account_id": "a7b3c9d2e1f4"
+  },
+  "issue": {
+    "category": "technical",
+    "subcategory": "503 error on dashboard",
+    "product_or_service": "dashboard reports page",
+    "urgency": "critical"
+  },
+  "sentiment": "frustrated",
+  "entities": {
+    "order_ids": [],
+    "dates_mentioned": ["friday"],
+    "amounts_mentioned": []
+  },
+  "requested_action": "Escalate to level 2 support and fix 503 error on dashboard reports page",
+  "resolution_status": "escalated"
+}

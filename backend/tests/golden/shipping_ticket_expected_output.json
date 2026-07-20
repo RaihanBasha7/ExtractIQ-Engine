@@ -1,0 +1,21 @@
+{
+  "ticket_id": "shipping_ticket",
+  "customer": {
+    "name": "Ana Rodriguez",
+    "account_id": null
+  },
+  "issue": {
+    "category": "shipping",
+    "subcategory": "package not delivered",
+    "product_or_service": null,
+    "urgency": "high"
+  },
+  "sentiment": "frustrated",
+  "entities": {
+    "order_ids": ["SHIP-44921-K"],
+    "dates_mentioned": ["February 28", "March 3-5", "March 10", "March 2", "March 7"],
+    "amounts_mentioned": ["$67.43", "$289.97"]
+  },
+  "requested_action": "Track package, refund shipping cost of $67.43, and provide discount code for next order",
+  "resolution_status": "unresolved"
+}

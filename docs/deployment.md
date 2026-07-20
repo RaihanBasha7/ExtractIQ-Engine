@@ -23,11 +23,11 @@ MVPs.
                   │
                   ▼
           Render Backend
-      (FastAPI + Python 3.13)
+      (FastAPI + Python 3.12)
                   │
                   ▼
-        Featherless AI API
-         (GLM-5.2 Model)
+        LLM Provider API
+      (Groq / Featherless AI)
                   │
                   ▼
            SQLite Database
@@ -261,8 +261,11 @@ Expected Response
 
 ``` json
 {
-  "version": "1.0.0",
-  "model": "GLM-5.2"
+  "service": "OneInbox API",
+  "version": "0.1.0",
+  "api_version": "v1",
+  "provider": "featherless",
+  "model": "zai-org/GLM-5.2"
 }
 ```
 
@@ -289,14 +292,12 @@ Current MVP
 
 Future Enhancements
 
--   Docker containers
 -   PostgreSQL
 -   Redis
 -   Celery workers
 -   LiteLLM gateway
 -   Multi-provider failover
 -   Kubernetes
--   CI/CD pipelines
 -   Cloud monitoring
 -   Horizontal scaling
 

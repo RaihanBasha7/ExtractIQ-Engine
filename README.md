@@ -8,8 +8,8 @@
 <img src="docs/banner.png" width="100%">
 </p>
 
-[![Python](https://img.shields.io/badge/Python-3.13-blue.svg)]()
-[![FastAPI](https://img.shields.io/badge/FastAPI-Production-green.svg)]()
+[![Python](https://img.shields.io/badge/Python-3.12+-blue.svg)]()
+[![FastAPI](https://img.shields.io/badge/FastAPI-green.svg)]()
 [![React](https://img.shields.io/badge/React-19-61DAFB.svg)]()
 [![Pydantic](https://img.shields.io/badge/Pydantic-v2-red.svg)]()
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)]()
@@ -24,474 +24,669 @@ Built for the **OneInbox AI Engineer Internship Hackathon 2026**
 
 ---
 
-# 📖 Table of Contents
+## 📋 Table of Contents
 
-- Overview
-- Problem Statement
-- Solution
-- Key Features
-- Architecture
-- Tech Stack
-- Project Structure
-- Workflow
-- API
-- Screenshots
-- Performance
-- Installation
-- Running Locally
-- Deployment
-- Future Scope
-- Author
-- License
+- [Overview](#overview)
+- [Features](#features)
+- [Architecture](#architecture)
+- [Workflow](#workflow)
+- [Tech Stack](#tech-stack)
+- [Project Structure](#project-structure)
+- [Quick Start](#quick-start)
+- [API Reference](#api-reference)
+- [Testing](#testing)
+- [Deployment](#deployment)
+- [Performance](#performance)
+- [Known Limitations](#known-limitations)
+- [Roadmap](#roadmap)
+- [Contributing](#contributing)
+- [License](#license)
 
 ---
 
-#  Short Description
+# 📌 Short Description
 
 ExtractIQ Engine is a production-inspired AI extraction system that transforms noisy customer support tickets into clean, structured JSON.
 
-Instead of relying on fragile regex patterns, it uses LLMs, strict Pydantic validation, and a Model-Driven Repair Loop to guarantee highly reliable outputs.
+Instead of relying on fragile regex patterns, it uses **LLMs**, **strict Pydantic validation**, and a **Model-Driven Repair Loop** to guarantee highly reliable outputs.
+
+### Problem Statement
+
+Customer support tickets are messy — missing punctuation, broken sentences, mixed languages, typing mistakes, missing fields, and unstructured conversations. Traditional regex-based extraction breaks easily, and even modern LLMs frequently produce invalid JSON or violate predefined schemas.
+
+### Solution
+
+ExtractIQ Engine introduces a **Model-Driven Repair Loop**:
+
+1. **Extract** — LLM extracts structured data from ticket
+2. **Validate** — Pydantic enforces strict schema compliance  
+3. **Detect** — Validation errors are captured with exact field details
+4. **Repair** — Errors are fed back to the LLM for targeted correction
+5. **Repeat** — Loop continues until valid or retry limit reached
 
 ---
 
-# ❗ Problem Statement
+## ⭐ Key Features
 
-Customer support tickets are messy.
+### 🤖 AI-Powered Extraction
+Extracts structured information from noisy customer support tickets using state-of-the-art LLMs (Featherless AI, Groq).
 
-They often contain
+### ✅ Strict Schema Validation
+Every response must satisfy nested Pydantic models with enum enforcement, type checking, and required field validation.
 
-- Missing punctuation
-- Broken sentences
-- Mixed languages
-- Typing mistakes
-- Missing fields
-- Unstructured conversations
+### 🔄 Model-Driven Repair Loop
+Automatically repairs invalid outputs by feeding validation errors back to the LLM. No regex fallbacks, no force-fitting.
 
-Traditional regex-based extraction breaks easily.
+### 🛡️ PII Redaction
+Emails, phone numbers, and zip codes are automatically redacted before any data reaches third-party LLM providers.
 
-Even modern LLMs frequently produce invalid JSON, hallucinate fields, or violate predefined schemas.
+### 📊 Analytics Dashboard
+Real-time Streamlit dashboard showing success rates, repair rates, latency, category distribution, and historical trends.
 
-The challenge was to build an extraction engine that produces **schema-valid structured output** without using regex fallbacks.
+### 📂 Batch Extraction
+Upload and process multiple tickets simultaneously with individual error handling.
 
----
+### 📜 Extraction History
+Complete history of all extractions with pagination, search, and detailed repair attempt logging.
 
-# 💡 Solution
+### ❤️ Health Monitoring
+Comprehensive health endpoint with per-dependency status checks (API, database, LLM provider, disk).
 
-ExtractIQ Engine introduces a **Model-Driven Repair Loop**.
+### 📈 Metrics API
+Live extraction statistics including success rates, average processing time, retry distribution, and failure breakdown.
 
-Instead of fixing JSON using hardcoded rules:
-
-1. Extract using LLM
-2. Validate using Pydantic
-3. Detect validation errors
-4. Feed errors back to the LLM
-5. Regenerate corrected output
-6. Repeat until valid or retry limit reached
-
-This creates an intelligent self-correcting extraction pipeline.
-
----
-
-# ⭐ Key Features
-
-## 🤖 AI Powered Extraction
-
-Extracts structured information from customer tickets.
+### 🧠 MVP Architecture
+- Request IDs with end-to-end correlation
+- Structured JSON logging
+- Version endpoint
+- Error tracking with correlation IDs
+- Global exception handlers
+- CORS configuration
 
 ---
 
-## ✅ Strict Schema Validation
-
-Every response must satisfy nested Pydantic models.
-
----
-
-## 🔄 Model-Driven Repair Loop
-
-Automatically repairs invalid outputs using validation errors.
-
----
-
-## 📊 Analytics Dashboard
-
-- Success Rate
-- Repair Rate
-- Latency
-- Category Distribution
-- Historical Trends
-
----
-
-## 📂 Batch Extraction
-
-Upload multiple tickets simultaneously.
-
----
-
-## 📜 Extraction History
-
-Stores previous extraction results with metadata.
-
----
-
-## ❤️ Health Monitoring
-
-System health endpoint.
-
----
-
-## 📈 Metrics API
-
-Live extraction statistics.
-
----
-
-## 🧠 Production Ready Architecture
-
-- Request IDs
-- Structured Logging
-- Version Endpoint
-- Error Tracking
-- Correlation IDs
-
----
-
-# 🏗 Architecture
+## 🏗 Architecture
 
 ![Architecture](docs/architecture.png)
 
-The architecture follows a modular pipeline:
+The system follows a modular pipeline architecture:
 
 ```
-Raw Ticket
-
-↓
-
-Preprocessing
-
-↓
-
-LLM Extraction
-
-↓
-
-Pydantic Validation
-
-↓
-
-Repair Loop
-
-↓
-
-Validated JSON
-
-↓
-
-Database
-
-↓
-
-Analytics Dashboard
+┌─────────────┐
+│  Raw Ticket  │
+└──────┬──────┘
+       │
+       ▼
+┌─────────────┐
+│ Preprocess   │  ← PII redaction, normalization, language detection
+└──────┬──────┘
+       │
+       ▼
+┌─────────────┐
+│ LLM Extract  │  ← instructor + Groq/Featherless
+└──────┬──────┘
+       │
+       ▼
+┌─────────────┐     ┌──────────────┐
+│  Validate    │────→│  Repair Loop │  ← Feed errors back to LLM
+└──────┬──────┘     └──────────────┘
+       │
+       ▼
+┌─────────────┐
+│ Validated    │  ← Schema-compliant JSON
+│    JSON      │
+└──────┬──────┘
+       │
+       ▼
+┌─────────────┐
+│  Database    │  ← SQLite (SQLAlchemy)
+└──────┬──────┘
+       │
+       ▼
+┌─────────────┐
+│  Analytics   │  ← Streamlit / React Dashboard
+└─────────────┘
 ```
 
----
-
-# ⚙ Tech Stack
-
-## Backend
-
-- FastAPI
-- Python 3.13
-- Pydantic v2
-- SQLAlchemy
-- SQLite
-
-## AI
-
-- Featherless AI
-- GLM-5.2
-- Instructor
-
-## Frontend
-
-- React
-- Vite
-- TailwindCSS
-- Recharts
-- Framer Motion
-
-## Tools
-
-- Uvicorn
-- Plotly
-- Git
-- VS Code
-
----
-
-# 📁 Project Structure
+### Component Diagram
 
 ```
-ExtractIQ-Engine/
-
-│
-
-├── backend/
-
-│ ├── app/
-
-│ ├── api/
-
-│ ├── core/
-
-│ ├── models/
-
-│ ├── services/
-
-│ ├── database/
-
-│ ├── evaluation/
-
-│ ├── reports/
-
-│ ├── scripts/
-
-│ └── tests/
-
-│
-
-├── frontend/
-
-│ ├── src/
-
-│ ├── components/
-
-│ ├── pages/
-
-│ ├── assets/
-
-│ └── public/
-
-│
-
-├── docs/
-
-│ ├── banner.png
-
-│ ├── architecture.png
-
-│ └── screenshots/
-
-│
-
-└── README.md
+┌─────────────────────────────────────────────────────┐
+│                    FastAPI Server                     │
+│  ┌──────────┐  ┌──────────┐  ┌────────────────────┐ │
+│  │  Routes   │→│  Service  │→│  Extraction Engine  │ │
+│  └──────────┘  └──────────┘  └────────────────────┘ │
+│                      │               │               │
+│                      ▼               ▼               │
+│               ┌──────────┐  ┌────────────────────┐ │
+│               │ Database │  │  LLM Provider       │ │
+│               │   (DB)   │  │  (Groq/Featherless) │ │
+│               └──────────┘  └────────────────────┘ │
+└─────────────────────────────────────────────────────┘
 ```
 
 ---
 
-# 🔄 Workflow Pipeline
+## 🔄 Workflow Pipeline
 
 ```
 User Uploads Ticket
-
-↓
-
-Text Cleaning
-
-↓
-
-LLM Extraction
-
-↓
-
-JSON Validation
-
-↓
-
-Repair Loop
-
-↓
-
-Final Structured JSON
-
-↓
-
-Database Storage
-
-↓
-
-Analytics Dashboard
+       │
+       ▼
+Text Cleaning & PII Redaction
+       │
+       ▼
+LLM Extraction (instructor + Groq/Featherless)
+       │
+       ▼
+JSON Validation (Pydantic TicketExtraction)
+       │
+       ├── Valid ──→ Database Storage ──→ Response
+       │
+       └── Invalid ──→ Repair Loop
+                            │
+                            ├── (≤3 attempts) Re-prompt with errors
+                            │
+                            └── Max retries exceeded → Return failure
 ```
 
 ---
 
-# 🔌 API Endpoints
+## ⚙ Tech Stack
 
-| Method | Endpoint | Description |
-|----------|---------------------|-----------------------------|
-| POST | /v1/extract | Extract ticket |
-| POST | /v1/extract/batch | Batch extraction |
-| GET | /v1/history | Extraction history |
-| GET | /v1/metrics | Metrics |
-| GET | /v1/system | System info |
-| GET | /health | Health check |
-| GET | /version | Build version |
+### Backend
+| Technology | Purpose |
+|-----------|---------|
+| FastAPI    | REST API framework |
+| Python 3.12 | Runtime |
+| Pydantic v2 | Schema validation & settings |
+| SQLAlchemy 2.0 | ORM |
+| SQLite      | Database |
+| instructor  | Structured LLM output |
+| Uvicorn     | ASGI server |
 
----
+### AI / LLM
+| Technology | Purpose |
+|-----------|---------|
+| Featherless AI | Primary LLM provider (default: zai-org/GLM-5.2) |
+| Groq       | Optional alternate provider (llama-3.3-70b-versatile) |
 
-# 📸 Screenshots
+### Frontend
+| Technology | Purpose |
+|-----------|---------|
+| React 19   | UI framework |
+| Vite       | Build tool |
+| TailwindCSS | Styling |
+| Recharts   | Charts |
+| Framer Motion | Animations |
+| TypeScript | Type safety |
 
-## Dashboard
+### Dashboard
+| Technology | Purpose |
+|-----------|---------|
+| Streamlit  | Analytics dashboard |
+| Plotly     | Interactive charts |
+| Pandas     | Data processing |
 
-<img src="docs/screenshots/dashboard.png">
-
----
-
-## Extraction
-
-<img src="docs/screenshots/extraction.png">
-
----
-
-## Analytics
-
-<img src="docs/screenshots/analytics.png">
-
----
-
-## History
-
-<img src="docs/screenshots/history.png">
-
----
-
-# 📊 Performance Metrics
-
-| Metric | Value |
-|---------|-------|
-| Schema Validation | >90% |
-| Average Latency | <2 sec |
-| Repair Success | High |
-| Batch Processing | Supported |
-| Request Tracking | Yes |
-| Health Monitoring | Yes |
+### DevOps
+| Technology | Purpose |
+|-----------|---------|
+| Docker     | Containerization |
+| GitHub Actions | CI/CD |
+| pytest     | Testing |
+| Black      | Code formatting |
+| isort      | Import sorting |
+| Flake8     | Linting |
+| mypy       | Type checking |
+| pre-commit | Git hooks |
 
 ---
 
-# 🚀 Installation
+## 📁 Project Structure
+
+```
+ExtractIQ-Engine/
+│
+├── backend/
+│   ├── app/
+│   │   ├── api/              # API routes, models, middleware, error models
+│   │   │   ├── routes.py     # FastAPI route handlers
+│   │   │   ├── models.py     # Request/response Pydantic models
+│   │   │   ├── service.py    # Business logic orchestrator
+│   │   │   ├── middleware.py # Request ID & correlation middleware
+│   │   │   └── error_models.py  # Standard error response model
+│   │   ├── database/
+│   │   │   ├── database.py   # SQLAlchemy engine & session
+│   │   │   ├── models.py     # ORM models
+│   │   │   └── repository.py # Data access layer
+│   │   ├── evaluation/
+│   │   │   ├── collector.py  # Evaluation record collector
+│   │   │   ├── metrics.py    # Evaluation metrics calculations
+│   │   │   ├── models.py     # Evaluation record schema
+│   │   │   └── repository.py # JSONL-backed evaluation persistence
+│   │   ├── services/
+│   │   │   ├── health_service.py  # Dependency health checks
+│   │   │   ├── metrics_service.py # Metrics aggregation
+│   │   │   └── version_service.py # Version info
+│   │   ├── config.py         # Configuration (backward-compatible)
+│   │   ├── settings.py       # Pydantic Settings (centralized config)
+│   │   ├── schema.py         # TicketExtraction Pydantic schema
+│   │   ├── extraction.py     # Extraction & repair loop
+│   │   ├── preprocessing.py  # Text cleaning & PII redaction
+│   │   ├── confidence.py     # Confidence scoring
+│   │   ├── metadata.py       # Extraction metadata builder
+│   │   ├── logging.py        # Structured JSON logging
+│   │   └── repair_logging.py # Repair attempt logging
+│   ├── tests/
+│   │   ├── conftest.py       # Shared fixtures & test configuration
+│   │   ├── test_api.py       # API endpoint tests
+│   │   ├── test_schema.py    # Schema validation tests
+│   │   ├── test_repair_loop.py  # Repair loop tests
+│   │   ├── test_database.py  # Database operation tests
+│   │   ├── test_utilities.py # Utility module tests
+│   │   ├── test_error_handling.py  # Error handling tests
+│   │   ├── test_integration_mocked.py  # Mocked integration tests
+│   │   └── test_evaluation.py  # Evaluation module tests
+│   ├── scripts/              # Utility scripts
+│   ├── data/                 # Data files (CSV, JSONL, SQLite)
+│   ├── reports/              # Evaluation reports
+│   ├── Dockerfile            # Multi-stage Docker build
+│   ├── requirements.txt      # Production dependencies
+│   ├── requirements-dev.txt  # Development dependencies
+│   ├── pyproject.toml        # Tool configuration
+│   └── pytest.ini            # Pytest configuration
+│
+├── frontend/
+│   ├── src/
+│   │   ├── components/       # React components
+│   │   ├── pages/            # Page components
+│   │   ├── lib/              # API client & utilities
+│   │   └── assets/           # Static assets
+│   ├── Dockerfile
+│   ├── package.json
+│   ├── vite.config.ts
+│   └── tailwind.config.js
+│
+├── dashboard/
+│   ├── app.py                # Streamlit app
+│   ├── analytics.py          # Analytics components
+│   ├── charts.py             # Chart components
+│   └── config.py             # Dashboard config
+│
+├── docs/
+│   ├── architecture.png      # Architecture diagram
+│   ├── banner.png            # Project banner
+│   ├── logo.png              # Project logo
+│   ├── screenshots/          # Application screenshots
+│   └── api.md                # API documentation
+│
+├── .github/
+│   └── workflows/
+│       └── ci.yml            # GitHub Actions CI pipeline
+│
+├── docker-compose.yml        # Multi-service orchestration
+├── .pre-commit-config.yaml   # Pre-commit hooks
+├── .editorconfig             # Editor configuration
+├── .gitignore                # Git ignore rules
+├── README.md                 # This file
+├── CHANGELOG.md              # Release history
+├── CONTRIBUTING.md           # Contributing guide
+├── CODE_OF_CONDUCT.md        # Code of conduct
+├── SECURITY.md               # Security policy
+└── LICENSE                   # MIT License
+```
+
+---
+
+## 🚀 Quick Start
+
+### Prerequisites
+
+- Python 3.12+
+- Node.js 20+
+- An API key from Groq or Featherless AI
+
+### 1. Clone the Repository
 
 ```bash
 git clone https://github.com/RaihanBasha7/ExtractIQ-Engine.git
-
 cd ExtractIQ-Engine
 ```
 
-Backend
+### 2. Backend Setup
 
 ```bash
 cd backend
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
 
 pip install -r requirements.txt
 ```
 
-Frontend
+### 3. Configure Environment
+
+```bash
+cp .env.example .env
+```
+
+Edit `.env` and add your API key:
+
+```env
+LLM_PROVIDER=featherless
+FEATHERLESS_API_KEY=fl_your_key_here
+FEATHERLESS_MODEL=zai-org/GLM-5.2
+FEATHERLESS_BASE_URL=https://api.featherless.ai/v1
+MAX_REPAIR_RETRIES=3
+```
+
+To switch to Groq as the provider, change `LLM_PROVIDER=groq` and set `GROQ_API_KEY` and `GROQ_MODEL` instead.
+
+### 4. Run the Backend
+
+```bash
+uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+```
+
+### 5. Run the Frontend
 
 ```bash
 cd frontend
-
 npm install
-```
-
----
-
-# ▶ Running Locally
-
-Backend
-
-```bash
-uvicorn app.main:app --reload
-```
-
-Frontend
-
-```bash
 npm run dev
 ```
 
-Visit
+### 6. Access the Application
 
-```
-http://localhost:5173
+| Service      | URL                        |
+|-------------|----------------------------|
+| Frontend     | http://localhost:5173       |
+| API Docs     | http://localhost:8000/docs  |
+| Dashboard    | http://localhost:8501       |
+
+---
+
+## 🔌 API Reference
+
+> **Note on example responses:** The JSON response bodies below show the expected structure and field types. Numeric values (response times, latency, confidence) are illustrative and will vary based on provider, network conditions, and input complexity. See `reports/benchmark.md` for actual measured values.
+
+### Health Check
+
+```http
+GET /health
 ```
 
-API Docs
-
+Response:
+```json
+{
+  "status": "healthy",
+  "timestamp": "2026-07-20T10:30:00Z",
+  "response_time_ms": 12.34,
+  "checks": {
+    "api": { "status": "ok", "response_time_ms": 0.1 },
+    "database": { "status": "ok", "response_time_ms": 1.2 },
+    "llm_provider": { "status": "ok", "response_time_ms": 5.0, "provider": "featherless", "model": "zai-org/GLM-5.2" },
+    "disk": { "status": "ok", "response_time_ms": 0.3 }
+  }
+}
 ```
-http://localhost:8000/docs
+
+### Version Info
+
+```http
+GET /version
+```
+
+Response:
+```json
+{
+  "service": "OneInbox API",
+  "version": "0.1.0",
+  "api_version": "v1",
+  "provider": "featherless",
+  "model": "zai-org/GLM-5.2",
+  "environment": "development",
+  "python_version": "3.12.4",
+  "timestamp": "2026-07-20T10:30:00Z"
+}
+```
+
+### Single Extraction
+
+```http
+POST /v1/extract
+Content-Type: application/json
+
+{
+  "ticket_id": "TKT-001",
+  "raw_text": "From: John Doe <john@example.com>\nSubject: Need help\n\nI can't log into my account. It says 'invalid password'. Help!"
+}
+```
+
+Response:
+```json
+{
+  "ticket_id": "TKT-001",
+  "success": true,
+  "data": {
+    "ticket_id": "TKT-001",
+    "customer": { "name": "John Doe", "account_id": null },
+    "issue": {
+      "category": "account",
+      "subcategory": "login failure",
+      "product_or_service": null,
+      "urgency": "high"
+    },
+    "sentiment": "frustrated",
+    "entities": { "order_ids": [], "dates_mentioned": [], "amounts_mentioned": [] },
+    "requested_action": "help with login",
+    "resolution_status": "unresolved"
+  },
+  "confidence": 0.85,
+  "metadata": {
+    "repair_attempts": 0,
+    "latency_ms": 450,
+    "provider": "featherless",
+    "model": "zai-org/GLM-5.2",
+    "validation": "passed",
+    "timestamp": "2026-07-20T10:30:00Z"
+  },
+  "retry_count": 0,
+  "latency_seconds": 0.45,
+  "language": "en",
+  "request_id": "REQ-000001",
+  "cleaned_text": "From: John Doe <[REDACTED_EMAIL]>\nSubject: Need help\n\nI can't log into my account...",
+  "repair_attempts": []
+}
+```
+
+### Batch Extraction
+
+```http
+POST /v1/extract/batch
+Content-Type: application/json
+
+{
+  "tickets": [
+    { "ticket_id": "TKT-001", "raw_text": "Need help with my order" },
+    { "ticket_id": "TKT-002", "raw_text": "Account locked, please help" }
+  ]
+}
+```
+
+### Extraction History
+
+```http
+GET /v1/history?limit=10&offset=0
+```
+
+### Metrics
+
+```http
+GET /v1/metrics
+```
+
+### Combined System Status
+
+```http
+GET /v1/system
 ```
 
 ---
 
-# ☁ Deployment
+## 🧪 Testing
 
-Backend
+The project uses **pytest** for testing.
 
-- Render
+### Running Tests
 
-Frontend
+```bash
+cd backend
 
-- Vercel
+# Run all tests
+python -m pytest
 
-Database
+# With coverage report
+python -m pytest --cov=app --cov-report=term
 
-- SQLite
+# With HTML coverage report
+python -m pytest --cov=app --cov-report=html
 
-Future Production
+# Run specific test file
+python -m pytest tests/test_api.py
 
-- PostgreSQL
-- Docker
-- Redis
-- Celery
-- LiteLLM
-- Gemini Failover
+# Run tests by marker
+python -m pytest -m "unit"
+python -m pytest -m "integration"
+
+# Verbose output
+python -m pytest -v
+```
+
+### Test Structure
+
+| Test File | Coverage |
+|-----------|----------|
+| `test_api.py` | API endpoints (health, version, metrics, history, extract, batch) |
+| `test_schema.py` | Schema validation, enums, nested objects, optional fields |
+| `test_repair_loop.py` | Repair loop execution, retry counting, error classification |
+| `test_database.py` | CRUD operations, metrics aggregation, history retrieval |
+| `test_utilities.py` | Text cleaning, PII stripping, request ID, confidence, metadata |
+| `test_error_handling.py` | Error responses, exception handlers, validation errors |
+| `test_integration_mocked.py` | End-to-end pipeline with mocked LLM |
+| `test_evaluation.py` | Evaluation records, metrics, repository |
+
+### Code Quality
+
+```bash
+# Format code
+black --line-length=120 app/ tests/
+
+# Sort imports
+isort --profile=black app/ tests/
+
+# Lint
+flake8 app/ tests/
+
+# Type check
+mypy app/
+```
 
 ---
 
-# 🚀 Future Scope
+## 🐳 Docker Deployment
 
-- Multi-provider LLM routing
-- LiteLLM Gateway
-- Redis Queue
-- Celery Workers
-- PostgreSQL
-- Docker
-- Kubernetes
-- AWS Deployment
-- Real-time Monitoring
-- Authentication
-- Webhooks
-- Human Review Dashboard
+### Build and Run with Docker
+
+```bash
+# Build the backend image
+docker build -t extractiq-engine -f backend/Dockerfile .
+
+# Run the container
+docker run -p 8000:8000 \
+  -e LLM_PROVIDER=featherless \
+  -e FEATHERLESS_API_KEY=your_key \
+  -e FEATHERLESS_MODEL=zai-org/GLM-5.2 \
+  -e FEATHERLESS_BASE_URL=https://api.featherless.ai/v1 \
+  extractiq-engine
+```
+
+### Full Stack with Docker Compose
+
+```bash
+# Start all services
+docker-compose up -d
+
+# View logs
+docker-compose logs -f
+
+# Stop services
+docker-compose down
+```
+
+This starts:
+- **Backend** on port 8000
+- **Frontend** on port 5173
+- Health checks ensure proper startup order
 
 ---
 
-# 👨‍💻 Author
+## 🛣️ Roadmap
+
+### Short Term
+- [ ] PostgreSQL support (via SQLAlchemy)
+- [ ] Authentication & API keys
+- [ ] Rate limiting middleware
+- [ ] Request validation improvements
+
+### Medium Term
+- [ ] Multi-provider LLM routing (LiteLLM)
+- [ ] Redis queue + Celery workers
+- [ ] Webhook notifications
+- [ ] Human review dashboard
+- [ ] Export integration (CSV, JSON, PDF)
+
+### Long Term
+- [ ] Kubernetes deployment
+- [ ] AWS/GCP deployment
+- [ ] Real-time monitoring (Prometheus + Grafana)
+- [ ] Active learning loop
+- [ ] Multi-language schema support
+- [ ] A/B testing framework
+
+---
+
+## ⚠️ Known Limitations
+
+1. **SQLite** — Suitable for development/small-scale. For production, migrate to PostgreSQL.
+2. **Process-local request IDs** — Current REQ-XXXXXX generator resets on restart. Use UUIDv7 for distributed deployments.
+3. **Rate limits** — Free-tier LLM providers have daily token limits. Consider upgrading or adding provider failover.
+4. **Single-worker** — The repair loop runs synchronously. For high throughput, implement Celery workers.
+5. **Language detection** — Uses `langdetect` which may not detect all languages accurately.
+6. **No authentication** — API endpoints are currently open. Add authentication before production deployment.
+
+---
+
+## 👨‍💻 Author
 
 **Shaik Raihan Basha**
 
-B.Tech CSE
+B.Tech CSE | AI/ML Engineer
 
-AI/ML Engineer
-
-GitHub:
-https://github.com/raihanbasha7
-
-LinkedIn:
-https://www.linkedin.com/in/shaikraihanbasha
+- GitHub: [@raihanbasha7](https://github.com/raihanbasha7)
+- LinkedIn: [Shaik Raihan Basha](https://www.linkedin.com/in/shaikraihanbasha)
 
 ---
 
-# 📜 License
+## 🤝 Contributing
 
-MIT License
+Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduct and the process for submitting pull requests.
+
+---
+
+## 📄 License
+
+MIT License — Copyright (c) 2026 Shaik Raihan Basha
+
+See [LICENSE](LICENSE) for full details.
 
 Copyright (c) 2026 Shaik Raihan Basha
