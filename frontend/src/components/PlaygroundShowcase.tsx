@@ -211,36 +211,40 @@ export function FieldMappingTable({ mappings }: { mappings: FieldMapping[] }) {
 }
 
 /* ── Schema Validation Checklist ── */
-export function SchemaValidationChecklist({ showAll = false }: { showAll?: boolean }) {
+export function SchemaValidationChecklist({ showAll = false, validationStatus }: { showAll?: boolean; validationStatus?: string }) {
+  const passed = validationStatus === 'passed';
   const checks = [
-    { label: 'Required fields present', status: 'pass' as const, icon: CheckCircle2 },
-    { label: 'Enum values valid', status: 'pass' as const, icon: CheckCircle2 },
-    { label: 'Nested schema structure', status: 'pass' as const, icon: CheckCircle2 },
-    { label: 'Type validation', status: 'pass' as const, icon: CheckCircle2 },
-    { label: 'JSON syntax valid', status: 'pass' as const, icon: CheckCircle2 },
+    { label: 'Required fields present', status: passed ? 'pass' as const : 'fail' as const },
+    { label: 'Enum values valid', status: passed ? 'pass' as const : 'fail' as const },
+    { label: 'Nested schema structure', status: passed ? 'pass' as const : 'fail' as const },
+    { label: 'Type validation', status: passed ? 'pass' as const : 'fail' as const },
+    { label: 'JSON syntax valid', status: passed ? 'pass' as const : 'fail' as const },
   ];
 
   if (showAll) {
     checks.push(
-      { label: 'Schema match', status: 'pass' as const, icon: CheckCircle2 },
-      { label: 'Guaranteed JSON', status: 'pass' as const, icon: CheckCircle2 },
+      { label: 'Schema match', status: passed ? 'pass' as const : 'fail' as const },
+      { label: 'Guaranteed JSON', status: passed ? 'pass' as const : 'fail' as const },
     );
   }
 
   return (
     <div className="grid grid-cols-2 gap-1.5">
       {checks.map((check, i) => {
-        const Icon = check.icon;
+        const isPass = check.status === 'pass';
+        const Icon = isPass ? CheckCircle2 : AlertTriangle;
         return (
           <motion.div
             key={check.label}
             initial={{ opacity: 0, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.06 }}
-            className="flex items-center gap-1.5 rounded-lg bg-brand-green/[0.04] border border-brand-green/10 px-2.5 py-1.5"
+            className={`flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 ${
+              isPass ? 'bg-brand-green/[0.04] border border-brand-green/10' : 'bg-red-500/[0.04] border border-red-500/10'
+            }`}
           >
-            <Icon size={11} className="text-brand-green shrink-0" />
-            <span className="text-[10px] text-white/60">{check.label}</span>
+            <Icon size={11} className={`shrink-0 ${isPass ? 'text-brand-green' : 'text-red-400'}`} />
+            <span className={`text-[10px] ${isPass ? 'text-white/60' : 'text-red-300/70'}`}>{check.label}</span>
           </motion.div>
         );
       })}

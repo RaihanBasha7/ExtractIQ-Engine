@@ -19,21 +19,16 @@ class MetricsService:
             retry_history = self._repo.retry_history(db_session=session)
 
         total_requests = stats.total
-        successful_extractions = stats.successful
-        failed_extractions = stats.failed
 
-        if total_requests > 0:
-            schema_valid_rate = round(successful_extractions / total_requests * 100, 2)
-        else:
-            schema_valid_rate = 0.0
-
+        schema_valid_rate = round(stats.successful / total_requests * 100, 2) if total_requests > 0 else 0.0
         average_retry_count = round(stats.average_retry_count or 0.0, 2)
         average_processing_time = round(stats.average_processing_time or 0.0, 2)
+        average_confidence = round(stats.average_confidence or 0.0, 1)
 
         return MetricsResponse(
             total_requests=total_requests,
-            successful_extractions=successful_extractions,
-            failed_extractions=failed_extractions,
+            successful_extractions=stats.successful,
+            failed_extractions=stats.failed,
             schema_valid_rate=schema_valid_rate,
             average_retry_count=average_retry_count,
             average_processing_time=average_processing_time,
@@ -42,4 +37,9 @@ class MetricsService:
             latency_history=latency_history,
             success_history=success_history,
             retry_history=retry_history,
+            average_confidence=average_confidence,
+            needs_review_count=stats.needs_review_count,
+            repair_count=stats.repair_count,
+            repair_success_count=stats.repair_success_count,
+            failure_rate=stats.failure_rate,
         )

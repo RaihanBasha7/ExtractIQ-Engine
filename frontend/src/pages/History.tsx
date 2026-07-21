@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Search, ChevronDown, CheckCircle2, XCircle, Clock, History as HistoryIcon, ChevronLeft, ChevronRight, AlertCircle } from 'lucide-react';
+import { Search, ChevronDown, CheckCircle2, XCircle, Clock, History as HistoryIcon, ChevronLeft, ChevronRight, AlertCircle, AlertTriangle } from 'lucide-react';
 import { api } from '../lib/api';
 import { GlassCard } from '../components/GlassCard';
 import { JsonBlock } from '../components/JsonBlock';
@@ -12,6 +12,7 @@ const PAGE_SIZE = 20;
 const filters: { key: 'all' | ExtractionStatus; label: string }[] = [
   { key: 'all', label: 'All' },
   { key: 'completed', label: 'Completed' },
+  { key: 'needs_review', label: 'Needs Review' },
   { key: 'failure', label: 'Failures' },
 ];
 
@@ -131,17 +132,17 @@ function HistoryRow({
   expanded: boolean;
   onToggle: () => void;
 }) {
-  const isDone = item.status === 'completed';
+  const fs = item.final_status;
+  const statusColor = fs === 'SUCCESS' ? 'bg-brand-green/15 border-brand-green/40 text-brand-green' :
+    fs === 'REPAIRED' ? 'bg-yellow-500/15 border-yellow-500/40 text-yellow-400' :
+    'bg-red-500/15 border-red-500/40 text-red-400';
+  const statusIcon = fs === 'SUCCESS' ? <CheckCircle2 size={16} /> :
+    fs === 'REPAIRED' ? <AlertCircle size={16} /> :
+    <XCircle size={16} />;
   return (
     <div className="relative pl-12 animate-in">
-      <div
-        className={`absolute left-0 top-4 w-10 h-10 rounded-full border-2 flex items-center justify-center ${
-          isDone
-            ? 'bg-brand-green/15 border-brand-green/40 text-brand-green'
-            : 'bg-red-500/15 border-red-500/40 text-red-400'
-        }`}
-      >
-        {isDone ? <CheckCircle2 size={16} /> : <XCircle size={16} />}
+      <div className={`absolute left-0 top-4 w-10 h-10 rounded-full border-2 flex items-center justify-center ${statusColor}`}>
+        {statusIcon}
       </div>
       <button onClick={onToggle} className="w-full text-left">
         <GlassCard className="p-4">
@@ -149,6 +150,12 @@ function HistoryRow({
             <div className="min-w-0">
               <p className="text-sm text-white/85 truncate">{item.ticket_preview}</p>
               <div className="flex items-center gap-3 mt-1.5 text-[11px] text-white/40">
+                <span className={
+                  fs === 'SUCCESS' ? 'text-brand-green' :
+                  fs === 'REPAIRED' ? 'text-yellow-400' :
+                  'text-red-400'
+                }>{fs}</span>
+                <span>&middot;</span>
                 <span>{new Date(item.timestamp).toLocaleString()}</span>
                 <span>&middot;</span>
                 <span>{item.model}</span>
@@ -157,14 +164,25 @@ function HistoryRow({
                   <Clock size={10} /> {item.latency_ms}ms
                 </span>
                 <span>&middot;</span>
-                <span>{(item.confidence * 100).toFixed(0)}% conf</span>
+                <span>{item.confidence_score}% conf</span>
                 {item.repair_attempts_count > 0 && (
                   <>
                     <span>&middot;</span>
                     <span className="text-brand-cyan">{item.repair_attempts_count} repairs</span>
                   </>
                 )}
+                {item.validation_status && (
+                  <>
+                    <span>&middot;</span>
+                    <span className={item.validation_status === 'passed' ? 'text-brand-green' : 'text-red-400'}>
+                      {item.validation_status === 'passed' ? 'Valid' : 'Invalid'}
+                    </span>
+                  </>
+                )}
               </div>
+              {item.needs_review_reason && (
+                <p className="text-[10px] text-yellow-400/70 mt-1">{item.needs_review_reason}</p>
+              )}
             </div>
             <ChevronDown
               size={16}

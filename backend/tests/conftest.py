@@ -20,7 +20,7 @@ if _backend_root not in sys.path:
 # Set test environment BEFORE any app imports
 os.environ["LLM_PROVIDER"] = "featherless"
 os.environ["FEATHERLESS_API_KEY"] = "test-featherless-key"
-os.environ["FEATHERLESS_MODEL"] = "zai-org/GLM-5.2"
+os.environ["FEATHERLESS_MODEL"] = "deepseek-ai/DeepSeek-V4-Pro"
 os.environ["FEATHERLESS_BASE_URL"] = "https://api.featherless.ai/v1"
 os.environ["MAX_REPAIR_RETRIES"] = "3"
 os.environ["ENVIRONMENT"] = "test"

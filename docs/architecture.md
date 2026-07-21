@@ -149,7 +149,7 @@ The AI layer performs semantic understanding of the ticket.
 
 ### Technology
 
--   Featherless AI (zai-org/GLM-5.2) — default
+-   Featherless AI (deepseek-ai/DeepSeek-V4-Pro) — default
 -   Groq (llama-3.3-70b-versatile) — optional
 
 ### Responsibilities

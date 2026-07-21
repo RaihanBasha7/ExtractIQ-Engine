@@ -3,7 +3,10 @@ export type ExtractionStatus =
   | 'running'
   | 'validated'
   | 'completed'
-  | 'failure';
+  | 'failure'
+  | 'needs_review';
+
+export type FinalStatus = 'SUCCESS' | 'REPAIRED' | 'NEEDS_REVIEW' | 'FAILED' | 'PROVIDER_RETRY' | 'INFRASTRUCTURE_ERROR';
 
 export type HealthState = 'healthy' | 'warning' | 'degraded' | 'offline' | 'unknown';
 
@@ -31,6 +34,10 @@ export interface MetricsResponse {
   latency_history: { t: string; latency: number }[];
   success_history: { t: string; rate: number }[];
   retry_history: { t: string; retries: number }[];
+  average_confidence: number;
+  needs_review_count: number;
+  repair_count: number;
+  failure_rate: number;
   [key: string]: unknown;
 }
 
@@ -61,8 +68,16 @@ export interface ExtractionResult {
     confidence: number;
     timestamp: string;
     repair_attempts: number;
+    confidence_score: number;
+    final_status: FinalStatus;
+    validation: string;
+    needs_review_reason: string | null;
   };
   status: ExtractionStatus;
+  final_status: FinalStatus;
+  confidence_score: number;
+  validation_status: string;
+  needs_review_reason: string | null;
 }
 
 export interface HistoryItem {
@@ -82,4 +97,8 @@ export interface HistoryItem {
   original_ticket: string;
   final_json: Record<string, unknown>;
   extraction_summary: Record<string, unknown>;
+  final_status: FinalStatus;
+  confidence_score: number;
+  validation_status: string;
+  needs_review_reason: string | null;
 }

@@ -214,13 +214,13 @@ class TestConfidenceScoring:
             resolution_status=ResolutionStatus.unresolved,
         )
         score = compute_confidence(ConfidenceMetrics(success=True, retry_count=0, data=perfect))
-        assert score == 1.00
+        assert score == 100.0
 
     def test_failed_extraction_scores_010(self):
         from app.confidence import ConfidenceMetrics, compute_confidence
 
         score = compute_confidence(ConfidenceMetrics(success=False, retry_count=3, data=None))
-        assert score == 0.10
+        assert score == 10.0
 
     def test_repaired_with_missing_fields(self):
         from app.confidence import ConfidenceMetrics, compute_confidence
@@ -245,13 +245,13 @@ class TestConfidenceScoring:
             resolution_status=ResolutionStatus.pending,
         )
         score = compute_confidence(ConfidenceMetrics(success=True, retry_count=1, data=repaired))
-        assert score == 0.25
+        assert score == 25.0
 
     def test_lower_bound_clamping(self):
         from app.confidence import ConfidenceMetrics, compute_confidence
 
         score = compute_confidence(ConfidenceMetrics(success=True, retry_count=100, data=None))
-        assert score == 0.10
+        assert score == 10.0
 
 
 class TestLogging:

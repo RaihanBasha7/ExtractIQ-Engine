@@ -18,9 +18,17 @@ def create_database():
     Base.metadata.create_all(bind=engine)
 
     with engine.connect() as conn:
-        result = conn.execute(
-            text("SELECT COUNT(*) FROM pragma_table_info('extraction_results') WHERE name='repair_attempts_json'")
-        )
-        if result.scalar() == 0:
-            conn.execute(text("ALTER TABLE extraction_results ADD COLUMN repair_attempts_json TEXT"))
-            conn.commit()
+        for col, col_type in [
+            ("repair_attempts_json", "TEXT"),
+            ("confidence_score", "FLOAT"),
+            ("validation_status", "VARCHAR(20)"),
+            ("repair_attempts_count", "INTEGER"),
+            ("final_status", "VARCHAR(20)"),
+            ("needs_review_reason", "TEXT"),
+        ]:
+            result = conn.execute(
+                text(f"SELECT COUNT(*) FROM pragma_table_info('extraction_results') WHERE name='{col}'")
+            )
+            if result.scalar() == 0:
+                conn.execute(text(f"ALTER TABLE extraction_results ADD COLUMN {col} {col_type}"))
+        conn.commit()

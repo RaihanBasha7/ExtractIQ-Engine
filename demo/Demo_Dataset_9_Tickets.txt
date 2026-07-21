@@ -1,0 +1,44 @@
+=== TICKET 01 === 
+Customer: Customer 1 Order ID: ORD-10001 Issue: The
+product arrived damaged during delivery. Requested Action: Please send a
+replacement. Additional Details: Package delivered yesterday. Photos
+available.
+
+=== TICKET 02 === 
+Customer: Customer 2 Order ID: ORD-10002 Issue: The
+product arrived damaged during delivery. Requested Action: Please send a
+replacement. Additional Details: Package delivered yesterday. Photos
+available.
+
+=== TICKET 03 === 
+Customer: Customer 3 Order ID: ORD-10003 Issue: The
+product arrived damaged during delivery. Requested Action: Please send a
+replacement. Additional Details: Package delivered yesterday. Photos
+available.
+
+=== TICKET 04 === 
+Customer: Customer 4 Order ID: ORD-10004 Issue: The
+product arrived damaged during delivery. Requested Action: Please send a
+replacement. Additional Details: Package delivered yesterday. Photos
+available.
+
+=== TICKET 5 === 
+I think I received it… or maybe my neighbour did.
+Courier says delivered but I cannot find it. Refund if not delivered,
+otherwise replace.
+
+=== TICKET 6 === 
+Payment may have gone through. Bank says yes, website
+says no. Tried two cards. Please investigate.
+
+=== TICKET 7 ===
+Cancel the order. Actually don’t cancel if already
+shipped. If already refunded, ignore this.
+
+=== TICKET 8 === 
+helo support my odrer id ORD-24001 scren crackd after
+opning box plz replce asap
+
+=== TICKET 9 === 
+Order ORD-30001. Display flickers. Need repair or
+replacement.

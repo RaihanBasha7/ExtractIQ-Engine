@@ -30,29 +30,19 @@ class ExtractionMetadata(BaseModel):
     model: str = Field(description="Model name used.")
     validation: Literal["passed", "failed"] = Field(description="Schema validation outcome.")
     timestamp: datetime = Field(description="When the extraction completed (ISO-8601 UTC).")
+    confidence_score: float = Field(default=0.0, description="Confidence score 0–100.")
+    final_status: str = Field(default="NEEDS_REVIEW", description="SUCCESS, REPAIRED, or NEEDS_REVIEW.")
+    needs_review_reason: str | None = Field(default=None, description="Reasons if final_status is NEEDS_REVIEW.")
 
 
 def build_metadata(
     repair_attempts: int,
     latency_seconds: float,
     success: bool,
+    confidence_score: float = 0.0,
+    final_status: str = "NEEDS_REVIEW",
+    needs_review_reason: str | None = None,
 ) -> ExtractionMetadata:
-    """Build extraction metadata for an API response.
-
-    Parameters
-    ----------
-    repair_attempts:
-        Number of times the LLM was re-prompted (``retry_count``).
-    latency_seconds:
-        Wall-clock time spent processing, in seconds.
-    success:
-        Whether the extraction ultimately produced a valid result.
-
-    Returns
-    -------
-    ExtractionMetadata
-        Fully populated metadata object.
-    """
     return ExtractionMetadata(
         repair_attempts=repair_attempts,
         latency_ms=round(latency_seconds * 1000),
@@ -60,4 +50,7 @@ def build_metadata(
         model=ACTIVE_MODEL,
         validation="passed" if success else "failed",
         timestamp=datetime.now(timezone.utc),
+        confidence_score=confidence_score,
+        final_status=final_status,
+        needs_review_reason=needs_review_reason,
     )

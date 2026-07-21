@@ -44,7 +44,7 @@ class Settings(BaseSettings):
     # Featherless AI (default provider)
     FEATHERLESS_API_KEY: str = ""
     FEATHERLESS_BASE_URL: str = "https://api.featherless.ai/v1"
-    FEATHERLESS_MODEL: str = "zai-org/GLM-5.2"
+    FEATHERLESS_MODEL: str = "deepseek-ai/DeepSeek-V4-Pro"
 
     # Groq (optional alternate provider)
     GROQ_API_KEY: str = ""
@@ -64,6 +64,16 @@ class Settings(BaseSettings):
     # ── Server ─────────────────────────────────────────────────────────────
     HOST: str = "0.0.0.0"
     PORT: int = 8000
+
+    # ── File upload / ingestion ─────────────────────────────────────────────
+    MAX_UPLOAD_SIZE_MB: int = 100
+    TEMP_UPLOAD_DIR: str = "/tmp/extractiq_uploads"
+    INGESTION_CHUNK_SIZE: int = 50  # Max tickets per chunk for large documents
+
+    # ── Batch processing ────────────────────────────────────────────────────
+    BATCH_MAX_CONCURRENT_REQUESTS: int = 2
+    BATCH_MAX_RETRIES: int = 3
+    BATCH_RETRY_DELAYS: list[float] = [1.0, 2.0, 4.0]
 
     def model_post_init(self, __context) -> None:
         """Validate configuration after initialisation."""

@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Sparkles,
@@ -68,6 +68,20 @@ export function Playground() {
 
   const example = EXAMPLE_TICKETS.find((e) => e.id === selectedExample)!;
 
+  const errorStageRef = useRef(-1);
+  const lastActiveRef = useRef(-1);
+  useEffect(() => {
+    if (state === 'running' && activeStage >= 0) {
+      lastActiveRef.current = activeStage;
+    }
+    if (state === 'error') {
+      errorStageRef.current = lastActiveRef.current >= 0 ? lastActiveRef.current : 2;
+    }
+    if (state === 'idle' || state === 'done') {
+      errorStageRef.current = -1;
+    }
+  }, [state, activeStage]);
+
   const fieldMappings = useMemo(
     () => (result ? findFieldMappings(result.final_json, result.ticket) : []),
     [result],
@@ -117,9 +131,9 @@ export function Playground() {
     URL.revokeObjectURL(url);
   };
 
-  const stageStatus = (index: number): 'done' | 'active' | 'pending' | 'held' => {
+  const stageStatus = (index: number): 'done' | 'active' | 'pending' | 'held' | 'error' => {
     if (result) return 'done';
-    if (state === 'error') return 'pending';
+    if (state === 'error') return index === errorStageRef.current ? 'error' : 'pending';
     if (activeStage < 0) return 'pending';
     if (index < activeStage) return 'done';
     if (index === activeStage) {
@@ -238,30 +252,34 @@ export function Playground() {
                 const isActive = status === 'active';
                 const isDone = status === 'done';
                 const isHeld = status === 'held';
-                const isPending = status === 'pending';
+                const isError = status === 'error';
                 return (
                   <div key={stage.id} className="relative">
                     <motion.div
                       layout
                       className={`relative flex items-center gap-3 rounded-2xl px-4 py-3 border transition-all duration-500 ${
-                        isActive
-                          ? 'border-brand-blue/50 shadow-[0_0_30px_-6px_rgba(59,130,246,0.5)] bg-brand-blue/[0.08] scale-[1.01]'
-                          : isDone
-                            ? 'border-brand-green/30 bg-brand-green/[0.04]'
-                            : isHeld
-                              ? 'border-yellow-500/40 shadow-[0_0_25px_-6px_rgba(234,179,8,0.3)] bg-yellow-500/[0.06]'
-                              : 'border-white/[0.06] bg-white/[0.02]'
+                        isError
+                          ? 'border-red-500/50 shadow-[0_0_30px_-6px_rgba(239,68,68,0.5)] bg-red-500/[0.08] scale-[1.01]'
+                          : isActive
+                            ? 'border-brand-blue/50 shadow-[0_0_30px_-6px_rgba(59,130,246,0.5)] bg-brand-blue/[0.08] scale-[1.01]'
+                            : isDone
+                              ? 'border-brand-green/30 bg-brand-green/[0.04]'
+                              : isHeld
+                                ? 'border-yellow-500/40 shadow-[0_0_25px_-6px_rgba(234,179,8,0.3)] bg-yellow-500/[0.06]'
+                                : 'border-white/[0.06] bg-white/[0.02]'
                       }`}
                     >
                       {/* Stage icon */}
                       <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-all duration-500 ${
-                        isActive
-                          ? 'bg-gradient-to-br from-brand-blue to-brand-cyan text-white shadow-glow'
-                          : isDone
-                            ? 'bg-brand-green/15 text-brand-green'
-                            : isHeld
-                              ? 'bg-yellow-500/15 text-yellow-400'
-                              : 'bg-white/[0.04] text-white/40'
+                        isError
+                          ? 'bg-red-500/15 text-red-400'
+                          : isActive
+                            ? 'bg-gradient-to-br from-brand-blue to-brand-cyan text-white shadow-glow'
+                            : isDone
+                              ? 'bg-brand-green/15 text-brand-green'
+                              : isHeld
+                                ? 'bg-yellow-500/15 text-yellow-400'
+                                : 'bg-white/[0.04] text-white/40'
                       }`}>
                         {isDone ? <CheckCircle2 size={18} /> : <stage.icon size={18} />}
                       </div>
@@ -269,7 +287,7 @@ export function Playground() {
                       {/* Stage label */}
                       <div className="flex-1 min-w-0">
                         <p className={`text-sm font-semibold ${
-                          isActive ? 'text-white' : isDone ? 'text-white/80' : isHeld ? 'text-yellow-300' : 'text-white/55'
+                          isError ? 'text-red-300' : isActive ? 'text-white' : isDone ? 'text-white/80' : isHeld ? 'text-yellow-300' : 'text-white/55'
                         }`}>
                           {stage.label}
                           {isHeld && (
@@ -280,6 +298,11 @@ export function Playground() {
                           {isDone && stage.id === 'repair' && inRepair && (
                             <span className="ml-2 text-[10px] text-brand-green font-semibold uppercase tracking-wider animate-pulse-slow">
                               looped
+                            </span>
+                          )}
+                          {isError && (
+                            <span className="ml-2 text-[10px] text-red-400 font-semibold uppercase tracking-wider">
+                              failed
                             </span>
                           )}
                         </p>
@@ -308,6 +331,9 @@ export function Playground() {
                         {isDone && i === 5 && (
                           <CheckCircle2 size={18} className="text-brand-green" />
                         )}
+                        {isError && (
+                          <span className="w-3 h-3 rounded-full bg-red-400" />
+                        )}
                       </div>
                     </motion.div>
 
@@ -316,7 +342,7 @@ export function Playground() {
                       <div className="flex justify-center py-0.5">
                         <div className="relative w-0.5 h-4 overflow-hidden">
                           <div className={`absolute inset-0 transition-colors duration-500 ${
-                            isDone ? 'bg-brand-green/50' : 'bg-white/10'
+                            isError ? 'bg-red-500/50' : isDone ? 'bg-brand-green/50' : 'bg-white/10'
                           }`} />
                           {isActive && (
                             <motion.div
@@ -427,15 +453,49 @@ export function Playground() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
               >
-                {/* Success banner */}
-                <GlassCard hover={false} className="p-5 border-brand-green/20">
+                {/* Status banner */}
+                <GlassCard hover={false} className={`p-5 ${
+                  result.final_status === 'SUCCESS' ? 'border-brand-green/20' :
+                  result.final_status === 'REPAIRED' ? 'border-yellow-500/20' :
+                  result.final_status === 'FAILED' ? 'border-red-500/20' :
+                  result.final_status === 'PROVIDER_RETRY' ? 'border-orange-500/20' :
+                  'border-red-500/20'
+                }`}>
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-brand-green/15 border border-brand-green/20 flex items-center justify-center">
-                      <CheckCircle2 size={20} className="text-brand-green" />
+                    <div className={`w-10 h-10 rounded-xl border flex items-center justify-center ${
+                      result.final_status === 'SUCCESS' ? 'bg-brand-green/15 border-brand-green/20' :
+                      result.final_status === 'REPAIRED' ? 'bg-yellow-500/15 border-yellow-500/20' :
+                      result.final_status === 'FAILED' ? 'bg-red-500/15 border-red-500/20' :
+                      result.final_status === 'PROVIDER_RETRY' ? 'bg-orange-500/15 border-orange-500/20' :
+                      'bg-red-500/15 border-red-500/20'
+                    }`}>
+                      {result.final_status === 'SUCCESS' ? <CheckCircle2 size={20} className="text-brand-green" /> :
+                       result.final_status === 'REPAIRED' ? <AlertTriangle size={20} className="text-yellow-400" /> :
+                       result.final_status === 'FAILED' ? <XCircle size={20} className="text-red-400" /> :
+                       result.final_status === 'PROVIDER_RETRY' ? <RefreshCw size={20} className="text-orange-400" /> :
+                       <AlertCircle size={20} className="text-red-400" />}
                     </div>
                     <div>
-                      <p className="text-sm font-semibold text-brand-green">Extraction Complete</p>
-                      <p className="text-xs text-white/40 mt-0.5">Guaranteed JSON ready for inspection</p>
+                      <p className={`text-sm font-semibold ${
+                        result.final_status === 'SUCCESS' ? 'text-brand-green' :
+                        result.final_status === 'REPAIRED' ? 'text-yellow-400' :
+                        result.final_status === 'FAILED' ? 'text-red-400' :
+                        result.final_status === 'PROVIDER_RETRY' ? 'text-orange-400' :
+                        'text-red-400'
+                      }`}>
+                        {result.final_status === 'SUCCESS' ? 'Extraction Complete' :
+                         result.final_status === 'REPAIRED' ? 'Extraction Repaired' :
+                         result.final_status === 'FAILED' ? 'Extraction Failed' :
+                         result.final_status === 'PROVIDER_RETRY' ? 'Provider Retry' :
+                         'Needs Review'}
+                      </p>
+                      <p className="text-xs text-white/40 mt-0.5">
+                        {result.final_status === 'SUCCESS' ? 'Passed on first attempt with high confidence' :
+                         result.final_status === 'REPAIRED' ? 'Recovered after repair loop' :
+                         result.final_status === 'FAILED' ? 'Extraction could not be completed' :
+                         result.final_status === 'PROVIDER_RETRY' ? 'Temporary infrastructure issue, please retry' :
+                         'Requires manual review'}
+                      </p>
                     </div>
                     <div className="ml-auto flex gap-2">
                       <button onClick={copyJson} className="btn-ghost text-xs px-3 py-1.5">
@@ -467,7 +527,7 @@ export function Playground() {
                   <h3 className="text-sm font-semibold mb-3 flex items-center gap-2" style={{ color: 'var(--text-primary)' }}>
                     <ShieldCheck size={15} className="text-brand-green" /> Schema Validation
                   </h3>
-                  <SchemaValidationChecklist showAll />
+                  <SchemaValidationChecklist showAll validationStatus={result.validation_status} />
                 </GlassCard>
 
                 {/* AI Reasoning */}
@@ -479,57 +539,87 @@ export function Playground() {
                   />
                 </GlassCard>
 
-                {/* Extraction Summary */}
-                <GlassCard hover={false} className="p-5">
-                  <h3 className="text-sm font-semibold mb-4 flex items-center gap-2" style={{ color: 'var(--text-primary)' }}>
-                    <Cpu size={15} className="text-brand-cyan" /> Extraction Summary
-                  </h3>
-                  <div className="flex items-start gap-5 mb-4">
-                    <div className="flex flex-col items-center gap-1 shrink-0">
-                      <ConfidenceRing value={result.metadata.confidence} />
-                      <span className="text-[10px] text-white/40">Confidence</span>
+                  {/* Extraction Summary */}
+                  <GlassCard hover={false} className="p-5">
+                    <h3 className="text-sm font-semibold mb-4 flex items-center gap-2" style={{ color: 'var(--text-primary)' }}>
+                      <Cpu size={15} className="text-brand-cyan" /> Extraction Summary
+                    </h3>
+                    <div className="flex items-start gap-5 mb-4">
+                      <div className="flex flex-col items-center gap-1 shrink-0">
+                        <ConfidenceRing value={result.confidence_score / 100} />
+                        <span className="text-[10px] text-white/40">Confidence</span>
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <ExtractionSummaryCards
+                          latencyMs={result.metadata.latency_ms}
+                          confidence={result.confidence_score / 100}
+                          repairAttempts={result.metadata.repair_attempts}
+                          fieldCount={fieldCount}
+                          provider={result.metadata.provider}
+                          model={result.metadata.model}
+                          validationStatus={result.validation_status === 'passed' ? 'Passed' : 'Failed'}
+                        />
+                      </div>
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <ExtractionSummaryCards
-                        latencyMs={result.metadata.latency_ms}
-                        confidence={result.metadata.confidence}
-                        repairAttempts={result.metadata.repair_attempts}
-                        fieldCount={fieldCount}
-                        provider={result.metadata.provider}
-                        model={result.metadata.model}
-                        validationStatus="Valid"
-                      />
-                    </div>
-                  </div>
 
-                  {/* Metadata grid */}
-                  <div className="grid grid-cols-2 gap-3 text-sm mt-3">
-                    <Meta label="Request ID" value={result.id} mono />
-                    <Meta label="Provider" value={result.metadata.provider} />
-                    <Meta label="Model" value={result.metadata.model} mono />
-                    <Meta label="Repair Attempts" value={String(result.metadata.repair_attempts)} />
-                    <Meta label="Timestamp" value={new Date(result.metadata.timestamp).toLocaleString()} />
-                    <Meta label="Schema Status" value="Validated" />
-                  </div>
-
-                  {/* Confidence bar */}
-                  <div className="mt-4">
-                    <div className="flex items-center justify-between mb-1.5">
-                      <span className="text-xs text-white/50">Confidence Score</span>
-                      <span className="text-xs font-semibold text-white">
-                        {(result.metadata.confidence * 100).toFixed(1)}%
+                    {/* Status badges */}
+                    <div className="flex flex-wrap gap-2 mb-3">
+                      <span className={`chip text-xs font-semibold ${
+                        result.final_status === 'SUCCESS' ? 'bg-brand-green/15 text-brand-green border-brand-green/30' :
+                        result.final_status === 'REPAIRED' ? 'bg-yellow-500/15 text-yellow-400 border-yellow-500/30' :
+                        result.final_status === 'FAILED' ? 'bg-red-500/15 text-red-400 border-red-500/30' :
+                        result.final_status === 'PROVIDER_RETRY' ? 'bg-orange-500/15 text-orange-400 border-orange-500/30' :
+                        'bg-red-500/15 text-red-400 border-red-500/30'
+                      }`}>
+                        Status: {result.final_status}
+                      </span>
+                      <span className={`chip text-xs font-semibold ${
+                        result.validation_status === 'passed' ? 'bg-brand-green/15 text-brand-green border-brand-green/30' : 'bg-red-500/15 text-red-400 border-red-500/30'
+                      }`}>
+                        Validation: {result.validation_status === 'passed' ? 'Passed' : 'Failed'}
+                      </span>
+                      <span className="chip bg-brand-cyan/15 text-brand-cyan border-brand-cyan/30 text-xs font-semibold">
+                        Confidence: {result.confidence_score}%
                       </span>
                     </div>
-                    <div className="h-2 rounded-full bg-white/[0.06] overflow-hidden">
-                      <motion.div
-                        initial={{ width: 0 }}
-                        animate={{ width: `${result.metadata.confidence * 100}%` }}
-                        transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-                        className="h-full rounded-full bg-gradient-to-r from-brand-blue to-brand-cyan"
-                      />
+
+                    {result.needs_review_reason && (
+                      <div className="rounded-lg bg-yellow-500/10 border border-yellow-500/20 p-3 mb-3">
+                        <p className="text-xs font-semibold text-yellow-400 mb-1">Reason{result.needs_review_reason.includes(';') ? 's' : ''}:</p>
+                        {result.needs_review_reason.split('; ').map((reason, i) => (
+                          <p key={i} className="text-xs text-yellow-300/80">- {reason}</p>
+                        ))}
+                      </div>
+                    )}
+
+                    {/* Metadata grid */}
+                    <div className="grid grid-cols-2 gap-3 text-sm mt-3">
+                      <Meta label="Request ID" value={result.id} mono />
+                      <Meta label="Provider" value={result.metadata.provider} />
+                      <Meta label="Model" value={result.metadata.model} mono />
+                      <Meta label="Repair Attempts" value={String(result.metadata.repair_attempts)} />
+                      <Meta label="Timestamp" value={new Date(result.metadata.timestamp).toLocaleString()} />
+                      <Meta label="Final Status" value={result.final_status} />
                     </div>
-                  </div>
-                </GlassCard>
+
+                    {/* Confidence bar */}
+                    <div className="mt-4">
+                      <div className="flex items-center justify-between mb-1.5">
+                        <span className="text-xs text-white/50">Confidence Score</span>
+                        <span className="text-xs font-semibold text-white">
+                          {result.confidence_score}%
+                        </span>
+                      </div>
+                      <div className="h-2 rounded-full bg-white/[0.06] overflow-hidden">
+                        <motion.div
+                          initial={{ width: 0 }}
+                          animate={{ width: `${result.confidence_score}%` }}
+                          transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+                          className="h-full rounded-full bg-gradient-to-r from-brand-blue to-brand-cyan"
+                        />
+                      </div>
+                    </div>
+                  </GlassCard>
 
                 {/* Repair Timeline */}
                 {result.repair_attempts.length > 0 && (

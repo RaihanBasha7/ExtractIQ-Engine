@@ -97,8 +97,7 @@ export function useExtraction() {
         pendingResultRef.current = res;
         apiReadyRef.current = true;
         setApiReady(true);
-      } catch (err) {
-        console.error('[useExtraction] extraction failed:', err);
+      } catch {
         if (!mountedRef.current) { runningRef.current = false; return; }
         clearTimers();
         setActiveStage(-1);

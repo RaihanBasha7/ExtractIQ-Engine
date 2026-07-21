@@ -93,6 +93,11 @@ class ExtractionRepository:
         failure_category: str | None,
         latency_seconds: float,
         repair_attempts_json: list | None = None,
+        confidence_score: float = 0.0,
+        validation_status: str = "failed",
+        repair_attempts_count: int = 0,
+        final_status: str = "NEEDS_REVIEW",
+        needs_review_reason: str | None = None,
         db_session: Session | None = None,
     ) -> ExtractionResult:
         with _resolve_session(db_session) as session:
@@ -105,6 +110,11 @@ class ExtractionRepository:
                     failure_category=failure_category,
                     latency_seconds=latency_seconds,
                     repair_attempts_json=repair_attempts_json,
+                    confidence_score=confidence_score,
+                    validation_status=validation_status,
+                    repair_attempts_count=repair_attempts_count,
+                    final_status=final_status,
+                    needs_review_reason=needs_review_reason,
                 )
                 session.add(result)
                 session.flush()
@@ -218,6 +228,11 @@ class ExtractionRepository:
                     ExtractionResult.repair_attempts_json,
                     ExtractionResult.failure_category,
                     ExtractionResult.latency_seconds,
+                    ExtractionResult.confidence_score,
+                    ExtractionResult.validation_status,
+                    ExtractionResult.repair_attempts_count,
+                    ExtractionResult.final_status,
+                    ExtractionResult.needs_review_reason,
                     ExtractionResult.created_at,
                     RawTicket.raw_text,
                 )
@@ -237,6 +252,11 @@ class ExtractionRepository:
                     "repair_attempts": r.repair_attempts_json or [],
                     "failure_category": r.failure_category,
                     "latency_seconds": r.latency_seconds,
+                    "confidence_score": r.confidence_score or 0.0,
+                    "validation_status": r.validation_status or "failed",
+                    "repair_attempts_count": r.repair_attempts_count or 0,
+                    "final_status": r.final_status or "NEEDS_REVIEW",
+                    "needs_review_reason": r.needs_review_reason,
                     "created_at": r.created_at.isoformat() if r.created_at else None,
                     "raw_text": r.raw_text or "",
                 }
@@ -308,7 +328,6 @@ class ExtractionRepository:
         self,
         db_session: Session | None = None,
     ) -> "ExtractionStats":
-        """Return aggregate statistics across all extraction results in one query."""
         with _resolve_session(db_session) as session:
             row = session.query(
                 func.count(ExtractionResult.id).label("total"),
@@ -317,24 +336,40 @@ class ExtractionRepository:
                 func.avg(ExtractionResult.retry_count).label("avg_retry"),
                 func.avg(ExtractionResult.latency_seconds).label("avg_time"),
                 func.max(ExtractionResult.created_at).label("last_updated"),
+                func.avg(ExtractionResult.confidence_score).label("avg_confidence"),
+                func.sum(case((ExtractionResult.final_status == "NEEDS_REVIEW", 1), else_=0)).label("needs_review"),
+                func.sum(case((ExtractionResult.retry_count > 0, 1), else_=0)).label("repair_count"),
+                func.sum(case(
+                    (ExtractionResult.final_status == "REPAIRED", 1), else_=0
+                )).label("repair_success_count"),
             ).first()
+            total = row.total or 0
+            needs_review = row.needs_review or 0
             return ExtractionStats(
-                total=row.total or 0,
+                total=total,
                 successful=row.successful or 0,
                 failed=row.failed or 0,
                 average_retry_count=row.avg_retry,
                 average_processing_time=row.avg_time,
                 last_updated=row.last_updated,
+                average_confidence=row.avg_confidence,
+                needs_review_count=needs_review,
+                repair_count=row.repair_count or 0,
+                repair_success_count=row.repair_success_count or 0,
+                failure_rate=round((needs_review / total * 100), 1) if total > 0 else 0.0,
             )
 
 
 @dataclass
 class ExtractionStats:
-    """Aggregate statistics across all extraction results."""
-
     total: int
     successful: int
     failed: int
     average_retry_count: float | None
     average_processing_time: float | None
     last_updated: datetime | None
+    average_confidence: float | None = None
+    needs_review_count: int = 0
+    repair_count: int = 0
+    repair_success_count: int = 0
+    failure_rate: float = 0.0

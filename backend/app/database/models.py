@@ -35,10 +35,15 @@ class ExtractionResult(Base):
     repair_attempts_json: Mapped[list | None] = mapped_column(JSON, nullable=True)
     failure_category: Mapped[str | None] = mapped_column(String(100), nullable=True)
     latency_seconds: Mapped[float] = mapped_column(Float, nullable=False, default=0.0)
+    confidence_score: Mapped[float] = mapped_column(Float, nullable=False, default=0.0)
+    validation_status: Mapped[str] = mapped_column(String(20), nullable=False, default="failed")
+    repair_attempts_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    final_status: Mapped[str] = mapped_column(String(20), nullable=False, default="NEEDS_REVIEW")
+    needs_review_reason: Mapped[str | None] = mapped_column(Text, nullable=True)
     created_at: Mapped[datetime.datetime] = mapped_column(
         default=datetime.datetime.now(datetime.timezone.utc),
         server_default=func.now(),
     )
 
     def __repr__(self) -> str:
-        return f"<ExtractionResult(ticket_id={self.ticket_id!r}, valid={self.schema_valid})>"
+        return f"<ExtractionResult(ticket_id={self.ticket_id!r}, status={self.final_status})>"

@@ -50,7 +50,7 @@ schema-valid JSON.
     "repair_attempts": 0,
     "latency_ms": 1482,
     "provider": "featherless",
-    "model": "zai-org/GLM-5.2",
+    "model": "deepseek-ai/DeepSeek-V4-Pro",
     "validation": "passed",
     "timestamp": "2026-07-20T15:20:14Z"
   },
@@ -249,7 +249,7 @@ Returns combined health check and metrics.
     "checks": {
       "api": {"status": "ok", "response_time_ms": 0.1},
       "database": {"status": "ok", "response_time_ms": 1.2},
-      "llm_provider": {"status": "ok", "response_time_ms": 5.0, "provider": "featherless", "model": "zai-org/GLM-5.2"},
+      "llm_provider": {"status": "ok", "response_time_ms": 5.0, "provider": "featherless", "model": "deepseek-ai/DeepSeek-V4-Pro"},
       "disk": {"status": "ok", "response_time_ms": 0.3}
     }
   },
@@ -287,7 +287,7 @@ Checks API health.
   "checks": {
     "api": {"status": "ok", "response_time_ms": 0.1},
     "database": {"status": "ok", "response_time_ms": 1.2},
-    "llm_provider": {"status": "ok", "response_time_ms": 0.0, "provider": "featherless", "model": "zai-org/GLM-5.2"},
+    "llm_provider": {"status": "ok", "response_time_ms": 0.0, "provider": "featherless", "model": "deepseek-ai/DeepSeek-V4-Pro"},
     "disk": {"status": "ok", "response_time_ms": 0.3}
   }
 }
@@ -322,7 +322,7 @@ Returns application version and runtime metadata.
   "version": "0.1.0",
   "api_version": "v1",
   "provider": "featherless",
-  "model": "zai-org/GLM-5.2",
+  "model": "deepseek-ai/DeepSeek-V4-Pro",
   "environment": "development",
   "python_version": "3.12.4",
   "timestamp": "2026-07-20T15:20:14Z"

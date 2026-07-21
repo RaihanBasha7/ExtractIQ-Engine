@@ -72,7 +72,7 @@ A floating-point value [0.10, 1.00] indicating the system's confidence in extrac
 The system is not a single ML model but a **pipeline**:
 
 1. **Preprocessing Layer:** Regex-based text normalization and PII redaction
-2. **LLM Extraction Engine:** `zai-org/GLM-5.2` served via Featherless AI API (default), called through the `instructor` library for structured output enforcement. Groq's `llama-3.3-70b-versatile` is supported as an alternate provider.
+2. **LLM Extraction Engine:** `deepseek-ai/DeepSeek-V4-Pro` served via Featherless AI API (default), called through the `instructor` library for structured output enforcement. Groq's `llama-3.3-70b-versatile` is supported as an alternate provider.
 3. **Model-Driven Repair Loop:** Up to 3 automatic repair attempts on schema validation failure, feeding exact Pydantic error messages back to the LLM
 4. **Confidence Scorer:** Rule-based scoring from retry count, missing fields, and repair status
 5. **Persistence Layer:** SQLite for extraction results, JSONL for evaluation records
@@ -215,7 +215,7 @@ Detailed analysis in `docs/reports/failure_analysis.md`.
 |-----------|---------|------|
 | Extraction schema | 1.0 | 2026-07 |
 | Confidence algorithm | 1.0 | 2026-07 |
-| LLM: zai-org/GLM-5.2 (default) / llama-3.3-70b-versatile (alternate) | 5.2 / 3.3 | Latest |
+| LLM: deepseek-ai/DeepSeek-V4-Pro (default) / llama-3.3-70b-versatile (alternate) | 5.2 / 3.3 | Latest |
 | instructor library | 1.x | Latest |
 | Repair loop logic | 1.0 | 2026-07 |
 

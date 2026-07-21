@@ -30,10 +30,48 @@ class ExtractResponse(BaseModel):
     request_id: str | None = None
     cleaned_text: str | None = None
     repair_attempts: list[RepairAttemptDetail] = Field(default_factory=list)
+    confidence_score: float = 0.0
+    validation_status: str = "failed"
+    final_status: str = "NEEDS_REVIEW"
+    needs_review_reason: str | None = None
 
 
 class ExtractBatchRequest(BaseModel):
     tickets: list[ExtractRequest]
+
+
+class SegmentInfoResponse(BaseModel):
+    index: int
+    word_count: int = 0
+    char_count: int = 0
+    preview: str = ""
+    boundary_type: str = "auto"
+    valid: bool = True
+    validation_message: str | None = None
+
+
+class BatchUploadResponse(BaseModel):
+    pages: int = 0
+    tickets_detected: int = 0
+    processed: int = 0
+    successful: int = 0
+    repaired: int = 0
+    needs_review: int = 0
+    failed: int = 0
+    infrastructure_retry: int = 0
+    results: list[ExtractResponse] = Field(default_factory=list)
+    file_name: str | None = None
+    file_size: int | None = None
+    file_type: str | None = None
+    warnings: list[str] = Field(default_factory=list)
+    segments: list[SegmentInfoResponse] = Field(default_factory=list)
+    segmentation_method: str | None = None
+    session_id: str | None = None
+
+
+class ModifySegmentsRequest(BaseModel):
+    session_id: str
+    tickets: list[str]
 
 
 class ExtractBatchResponse(BaseModel):
@@ -80,6 +118,11 @@ class MetricsResponse(BaseModel):
     latency_history: list[dict] = Field(default_factory=list, description="Time-series of latency values.")
     success_history: list[dict] = Field(default_factory=list, description="Time-series of success/failure.")
     retry_history: list[dict] = Field(default_factory=list, description="Time-series of retry counts.")
+    average_confidence: float = Field(default=0.0, description="Average confidence score (0–100).")
+    needs_review_count: int = Field(default=0, description="Number of extractions flagged NEEDS_REVIEW.")
+    repair_count: int = Field(default=0, description="Number of extractions that required repairs.")
+    repair_success_count: int = Field(default=0, description="Number of extractions that succeeded after repairs.")
+    failure_rate: float = Field(default=0.0, description="Percentage of extractions that failed or need review.")
 
 
 class HistoryQueryParams(BaseModel):
@@ -92,13 +135,17 @@ class HistoryItem(BaseModel):
     ticket_id: str = Field(description="Original ticket identifier.")
     original_ticket: str = Field(description="Raw ticket text before preprocessing.")
     extraction_summary: dict | None = Field(default=None, description="Extracted structured JSON.")
-    confidence: float = Field(default=0.0, description="Confidence score (0.0–1.0).")
+    confidence: float = Field(default=0.0, description="Confidence score (0–100).")
     latency: float = Field(default=0.0, description="Processing time in seconds.")
     repair_attempts: list[RepairAttemptDetail] = Field(default_factory=list, description="Detailed repair attempts.")
     provider: str = Field(default="", description="LLM provider.")
     model: str = Field(default="", description="LLM model.")
     timestamp: str = Field(default="", description="ISO-8601 timestamp of extraction.")
-    status: str = Field(default="", description="completed or failure")
+    status: str = Field(default="", description="completed, failure, or needs_review")
+    final_status: str = Field(default="NEEDS_REVIEW", description="SUCCESS, REPAIRED, or NEEDS_REVIEW.")
+    confidence_score: float = Field(default=0.0, description="Confidence score (0–100).")
+    validation_status: str = Field(default="failed", description="passed or failed")
+    needs_review_reason: str | None = Field(default=None, description="Reasons if NEEDS_REVIEW.")
 
 
 class HistoryResponse(BaseModel):

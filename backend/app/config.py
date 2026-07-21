@@ -63,6 +63,6 @@ ACTIVE_MODEL: str
 if _s.LLM_PROVIDER == "groq":
     ACTIVE_MODEL = _s.GROQ_MODEL or "llama-3.3-70b-versatile"
 elif _s.LLM_PROVIDER == "featherless":
-    ACTIVE_MODEL = _s.FEATHERLESS_MODEL or "zai-org/GLM-5.2"
+    ACTIVE_MODEL = _s.FEATHERLESS_MODEL or "deepseek-ai/DeepSeek-V4-Pro"
 else:
     ACTIVE_MODEL = "unknown"

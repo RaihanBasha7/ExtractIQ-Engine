@@ -81,7 +81,7 @@ The cleaned ticket is sent to the configured LLM.
 
 ### Model
 
--   Featherless AI (zai-org/GLM-5.2) — default provider
+-   Featherless AI (deepseek-ai/DeepSeek-V4-Pro) — default provider
 -   Groq (llama-3.3-70b-versatile) — optional alternate
 
 ### Responsibilities

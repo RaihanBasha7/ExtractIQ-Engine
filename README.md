@@ -208,7 +208,7 @@ JSON Validation (Pydantic TicketExtraction)
 ### AI / LLM
 | Technology | Purpose |
 |-----------|---------|
-| Featherless AI | Primary LLM provider (default: zai-org/GLM-5.2) |
+| Featherless AI | Primary LLM provider (default: deepseek-ai/DeepSeek-V4-Pro) |
 | Groq       | Optional alternate provider (llama-3.3-70b-versatile) |
 
 ### Frontend
@@ -393,7 +393,7 @@ Edit `.env` and add your API key:
 ```env
 LLM_PROVIDER=featherless
 FEATHERLESS_API_KEY=fl_your_key_here
-FEATHERLESS_MODEL=zai-org/GLM-5.2
+FEATHERLESS_MODEL=deepseek-ai/DeepSeek-V4-Pro
 FEATHERLESS_BASE_URL=https://api.featherless.ai/v1
 MAX_REPAIR_RETRIES=3
 ```
@@ -443,7 +443,7 @@ Response:
   "checks": {
     "api": { "status": "ok", "response_time_ms": 0.1 },
     "database": { "status": "ok", "response_time_ms": 1.2 },
-    "llm_provider": { "status": "ok", "response_time_ms": 5.0, "provider": "featherless", "model": "zai-org/GLM-5.2" },
+    "llm_provider": { "status": "ok", "response_time_ms": 5.0, "provider": "featherless", "model": "deepseek-ai/DeepSeek-V4-Pro" },
     "disk": { "status": "ok", "response_time_ms": 0.3 }
   }
 }
@@ -462,7 +462,7 @@ Response:
   "version": "0.1.0",
   "api_version": "v1",
   "provider": "featherless",
-  "model": "zai-org/GLM-5.2",
+  "model": "deepseek-ai/DeepSeek-V4-Pro",
   "environment": "development",
   "python_version": "3.12.4",
   "timestamp": "2026-07-20T10:30:00Z"
@@ -505,7 +505,7 @@ Response:
     "repair_attempts": 0,
     "latency_ms": 450,
     "provider": "featherless",
-    "model": "zai-org/GLM-5.2",
+    "model": "deepseek-ai/DeepSeek-V4-Pro",
     "validation": "passed",
     "timestamp": "2026-07-20T10:30:00Z"
   },
@@ -624,7 +624,7 @@ docker build -t extractiq-engine -f backend/Dockerfile .
 docker run -p 8000:8000 \
   -e LLM_PROVIDER=featherless \
   -e FEATHERLESS_API_KEY=your_key \
-  -e FEATHERLESS_MODEL=zai-org/GLM-5.2 \
+  -e FEATHERLESS_MODEL=deepseek-ai/DeepSeek-V4-Pro \
   -e FEATHERLESS_BASE_URL=https://api.featherless.ai/v1 \
   extractiq-engine
 ```

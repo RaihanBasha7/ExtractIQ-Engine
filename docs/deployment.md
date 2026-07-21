@@ -117,7 +117,7 @@ dist/
 
 ``` env
 FEATHERLESS_API_KEY=your_featherless_api_key
-MODEL_NAME=zai-org/GLM-5.2
+MODEL_NAME=deepseek-ai/DeepSeek-V4-Pro
 DATABASE_URL=sqlite:///data/extractions.db
 MAX_REPAIR_ATTEMPTS=3
 LOG_LEVEL=INFO
@@ -265,7 +265,7 @@ Expected Response
   "version": "0.1.0",
   "api_version": "v1",
   "provider": "featherless",
-  "model": "zai-org/GLM-5.2"
+  "model": "deepseek-ai/DeepSeek-V4-Pro"
 }
 ```
 

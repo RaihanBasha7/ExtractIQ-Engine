@@ -3,7 +3,7 @@
 **Report Date:** 2026-07-20  
 **System Version:** 0.1.0  
 **LLM Provider:** Groq (primary test run) / Featherless AI (alternate)  
-**Model:** llama-3.3-70b-versatile (Groq) / zai-org/GLM-5.2 (Featherless)  
+**Model:** llama-3.3-70b-versatile (Groq) / deepseek-ai/DeepSeek-V4-Pro (Featherless)  
 **Evaluation Dataset:** 37 tickets (Groq run) + 15 adversarial stress tickets (Featherless)
 
 ---
