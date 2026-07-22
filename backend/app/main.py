@@ -225,7 +225,7 @@ async def request_validation_handler(request: Request, exc: RequestValidationErr
         status_code=422,
         error_code="VALIDATION_ERROR",
         message="Request validation failed",
-        details=exc.errors(),
+        details=exc.errors(),  # type: ignore[arg-type]
     )
 
 
@@ -238,7 +238,7 @@ async def pydantic_validation_handler(request: Request, exc: ValidationError):
         status_code=422,
         error_code="VALIDATION_ERROR",
         message="Data validation failed",
-        details=exc.errors(),
+        details=exc.errors(),  # type: ignore[arg-type]
     )
 
 

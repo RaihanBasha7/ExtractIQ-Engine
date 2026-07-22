@@ -197,14 +197,14 @@ class ExtractionRepository:
         db_session: Session | None = None,
     ) -> float | None:
         with _resolve_session(db_session) as session:
-            return session.query(func.avg(ExtractionResult.retry_count)).scalar()
+            return session.query(func.avg(ExtractionResult.retry_count)).scalar()  # type: ignore[no-any-return]
 
     def average_processing_time(
         self,
         db_session: Session | None = None,
     ) -> float | None:
         with _resolve_session(db_session) as session:
-            return session.query(func.avg(ExtractionResult.latency_seconds)).scalar()
+            return session.query(func.avg(ExtractionResult.latency_seconds)).scalar()  # type: ignore[no-any-return]
 
     def failure_breakdown(
         self,
@@ -227,7 +227,7 @@ class ExtractionRepository:
         db_session: Session | None = None,
     ) -> datetime | None:
         with _resolve_session(db_session) as session:
-            return session.query(func.max(ExtractionResult.created_at)).scalar()
+            return session.query(func.max(ExtractionResult.created_at)).scalar()  # type: ignore[no-any-return]
 
     def list_history(
         self,
@@ -356,6 +356,7 @@ class ExtractionRepository:
                 func.sum(case((ExtractionResult.retry_count > 0, 1), else_=0)).label("repair_count"),
                 func.sum(case((ExtractionResult.final_status == "REPAIRED", 1), else_=0)).label("repair_success_count"),
             ).first()
+            assert row is not None
             total = row.total or 0
             needs_review = row.needs_review or 0
             return ExtractionStats(

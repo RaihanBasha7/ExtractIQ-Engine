@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from unittest.mock import patch
-
 
 class TestHealthService:
     def test_has_critical_failure_database_down(self):

@@ -51,8 +51,10 @@ def parse_csv(file_path: str, file_name: str, file_size_bytes: int, **kwargs) ->
             warnings=[f"Failed to parse CSV: {exc}"],
         )
 
-    column = text_column or _detect_text_column(reader.fieldnames)
-    if column not in reader.fieldnames:
+    assert reader.fieldnames is not None
+    fieldnames = list(reader.fieldnames)
+    column = text_column or _detect_text_column(fieldnames)
+    if column not in fieldnames:
         warnings = [f"Text column '{column}' not found. Available: {', '.join(reader.fieldnames)}"]
         return IngestionResult(
             text="",

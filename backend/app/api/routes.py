@@ -372,7 +372,7 @@ async def _process_tickets_async(tickets: list[str], request_id: str | None) -> 
             logger.error("Ticket %d unhandled exception: %s", i, r)
             final.append(_build_infra_error_response(i, request_id, settings.BATCH_MAX_RETRIES, str(r)))
         else:
-            final.append(r)
+            final.append(r)  # type: ignore[arg-type]
     return final
 
 

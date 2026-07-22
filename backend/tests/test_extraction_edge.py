@@ -2,23 +2,21 @@ from __future__ import annotations
 
 from unittest.mock import MagicMock, patch
 
-import pytest
-
 
 class TestExtractionUtilities:
     def test_get_instructor_mode_groq(self):
         with patch("app.extraction.LLM_PROVIDER", "groq"):
-            from app.extraction import _get_instructor_mode
-
             import instructor
+
+            from app.extraction import _get_instructor_mode
 
             assert _get_instructor_mode() == instructor.Mode.TOOLS
 
     def test_get_instructor_mode_featherless(self):
         with patch("app.extraction.LLM_PROVIDER", "featherless"):
-            from app.extraction import _get_instructor_mode
-
             import instructor
+
+            from app.extraction import _get_instructor_mode
 
             assert _get_instructor_mode() == instructor.Mode.JSON
 
@@ -156,6 +154,7 @@ class TestGetClient:
                 with patch("app.extraction.FEATHERLESS_BASE_URL", "https://test.ai/v1"):
                     with patch("app.extraction.instructor.from_openai") as mock_from_openai:
                         import app.extraction
+
                         app.extraction._reset_client_cache()
                         from app.extraction import _get_client
 
@@ -170,6 +169,7 @@ class TestGetClient:
             with patch("app.extraction.GROQ_API_KEY", "test-key"):
                 with patch("app.extraction.instructor.from_groq") as mock_from_groq:
                     import app.extraction
+
                     app.extraction._reset_client_cache()
 
                     mock_client = MagicMock()

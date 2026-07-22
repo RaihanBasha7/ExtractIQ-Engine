@@ -3,7 +3,6 @@ from __future__ import annotations
 import json
 import tempfile
 from pathlib import Path
-from unittest.mock import patch
 
 
 class TestJsonParserAdvanced:
@@ -192,9 +191,9 @@ class TestSegmenterAdvanced:
         assert len(result.segments) == 0
 
     def test_classify_pattern(self):
-        from app.ingestion.segmenter import _classify_pattern
-
         import re
+
+        from app.ingestion.segmenter import _classify_pattern
 
         p1 = re.compile(r"^[-=*_]{3,}\s*$", re.MULTILINE)
         assert _classify_pattern(p1) == "separator"

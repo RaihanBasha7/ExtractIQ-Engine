@@ -15,7 +15,7 @@ class TestSystemEndpoint:
         assert "metrics" in data
 
     def test_system_degraded_when_db_down(self, client):
-        from app.api.models import HealthResponse, HealthCheckDetail, MetricsResponse
+        from app.api.models import HealthCheckDetail, HealthResponse, MetricsResponse
 
         now = datetime.now(timezone.utc)
         health = HealthResponse(
@@ -23,9 +23,7 @@ class TestSystemEndpoint:
             timestamp=now,
             response_time_ms=5.0,
             checks={
-                "database": HealthCheckDetail(
-                    status="degraded", response_time_ms=1.0, error="down"
-                ),
+                "database": HealthCheckDetail(status="degraded", response_time_ms=1.0, error="down"),
             },
         )
         metrics = MetricsResponse(
@@ -90,8 +88,12 @@ class TestBatchHelpers:
 
         def _make(status: str):
             m = ExtractionMetadata(
-                repair_attempts=0, latency_ms=0, provider="test", model="test",
-                validation="passed", timestamp=datetime.now(timezone.utc),
+                repair_attempts=0,
+                latency_ms=0,
+                provider="test",
+                model="test",
+                validation="passed",
+                timestamp=datetime.now(timezone.utc),
             )
             return ExtractResponse(
                 ticket_id="T1",
@@ -134,13 +136,17 @@ class TestBatchHelpers:
         assert _get_ext(".hidden") == ""
 
     def test_classify_infrastructure_error(self):
-        from app.api.routes import _classify_infrastructure_error
         from app.api.models import ExtractResponse
+        from app.api.routes import _classify_infrastructure_error
         from app.metadata import ExtractionMetadata
 
         metadata = ExtractionMetadata(
-            repair_attempts=0, latency_ms=0, provider="test", model="test",
-            validation="failed", timestamp=datetime.now(timezone.utc),
+            repair_attempts=0,
+            latency_ms=0,
+            provider="test",
+            model="test",
+            validation="failed",
+            timestamp=datetime.now(timezone.utc),
         )
         resp = ExtractResponse(
             ticket_id="T1",
@@ -184,8 +190,9 @@ class TestBatchProcessEndpoint:
 
 class TestProcessTicketsAsync:
     def test_process_tickets_with_exception(self):
-        from app.api.routes import _process_tickets_async
         import asyncio
+
+        from app.api.routes import _process_tickets_async
 
         with patch("app.api.routes._process_ticket_with_retry") as mock:
             mock.side_effect = RuntimeError("Task failed")

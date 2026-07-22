@@ -50,4 +50,5 @@ def retry_on_provider_error(
             raise
         except Exception:
             raise
+    assert last_exc is not None
     raise last_exc

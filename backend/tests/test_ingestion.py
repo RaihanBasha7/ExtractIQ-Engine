@@ -17,9 +17,9 @@ class TestIngestionInit:
         assert detect_file_type("test.unknown") is None
 
     def test_ingest_file_unsupported(self):
-        from app.ingestion import ingest_file
-
         import pytest
+
+        from app.ingestion import ingest_file
 
         with pytest.raises(ValueError, match="Unsupported file type"):
             ingest_file("test.xyz", "test.xyz", 100)

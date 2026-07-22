@@ -32,7 +32,7 @@ class _PdfHandle:
     def page_count(self) -> int:
         if self.library == "pdfplumber":
             return len(self.source.pages)
-        return self.source.page_count
+        return int(self.source.page_count)
 
     def get_page_text(self, idx: int) -> str:
         if self.library == "pdfplumber":

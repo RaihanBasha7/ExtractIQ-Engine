@@ -226,7 +226,7 @@ def _call_llm(
             result = client.chat.completions.create(
                 model=model_name,
                 response_model=TicketExtraction,
-                messages=messages,
+                messages=messages,  # type: ignore[arg-type]
                 max_retries=0,
                 temperature=0,
                 timeout=timeout,
@@ -277,7 +277,12 @@ def _record_extraction_attempt(
     attempts.append(ExtractionAttempt(attempt_number=attempt_num, success=success, error=error))
     status = "success" if success else "failed"
     _record_repair_entry(
-        repair_log, attempt_num, status, error, time.monotonic() - attempt_start, request_id=request_id
+        repair_log,
+        attempt_num,
+        status,  # type: ignore[arg-type]
+        error,
+        time.monotonic() - attempt_start,
+        request_id=request_id,
     )
 
 

@@ -31,25 +31,25 @@ class TestSettings:
         assert settings.LLM_TIMEOUT_SECONDS == 30.0
 
     def test_settings_featherless_validation_fails_without_key(self):
-        from app.settings import Settings
-
         import pytest
+
+        from app.settings import Settings
 
         with pytest.raises(RuntimeError):
             Settings(LLM_PROVIDER="featherless", FEATHERLESS_API_KEY="", FEATHERLESS_MODEL="test", ENVIRONMENT="test")
 
     def test_settings_groq_validation_fails_without_key(self):
-        from app.settings import Settings
-
         import pytest
+
+        from app.settings import Settings
 
         with pytest.raises(RuntimeError):
             Settings(LLM_PROVIDER="groq", GROQ_API_KEY="", ENVIRONMENT="test")
 
     def test_settings_negative_retries_fails(self):
-        from app.settings import Settings
-
         import pytest
+
+        from app.settings import Settings
 
         with pytest.raises(RuntimeError):
             Settings(

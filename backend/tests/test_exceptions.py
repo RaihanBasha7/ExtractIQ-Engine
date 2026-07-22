@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock
 
 import pytest
 
@@ -50,9 +50,9 @@ class TestExceptionHierarchy:
         assert isinstance(mapped, ProviderRateLimitError)
 
     def test_map_provider_exception_timeout(self):
-        from app.exceptions import ProviderTimeoutError, map_provider_exception
-
         from groq import APITimeoutError
+
+        from app.exceptions import ProviderTimeoutError, map_provider_exception
 
         exc = APITimeoutError("timed out")
         mapped = map_provider_exception(exc)
@@ -91,9 +91,8 @@ class TestRetryWrapper:
         assert fn.call_count == 1
 
     def test_retry_eventually_succeeds(self):
-        from app.retry import retry_on_provider_error
-
         from app.exceptions import ProviderRateLimitError
+        from app.retry import retry_on_provider_error
 
         fn = MagicMock(side_effect=[ProviderRateLimitError("first"), ProviderRateLimitError("second"), "success"])
         result = retry_on_provider_error(fn, max_retries=3, base_delay=0.01)
@@ -101,9 +100,8 @@ class TestRetryWrapper:
         assert fn.call_count == 3
 
     def test_retry_exhausted_raises(self):
-        from app.retry import retry_on_provider_error
-
         from app.exceptions import ProviderRateLimitError
+        from app.retry import retry_on_provider_error
 
         fn = MagicMock(side_effect=ProviderRateLimitError("always fails"))
         with pytest.raises(ProviderRateLimitError):

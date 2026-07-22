@@ -20,7 +20,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 RUN python -m venv /venv
 ENV PATH="/venv/bin:$PATH"
 
-COPY requirements.txt .
+COPY backend/requirements.txt .
 RUN pip install --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt
 
@@ -43,9 +43,9 @@ RUN groupadd -r extractiq && \
 
 WORKDIR /app
 
-COPY app ./app
-COPY data ./data
-COPY scripts ./scripts
+COPY backend/app ./app
+COPY backend/data ./data
+COPY backend/scripts ./scripts
 
 RUN chown -R extractiq:extractiq /app
 

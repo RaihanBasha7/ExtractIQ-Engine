@@ -49,10 +49,7 @@ def create_database():
 def _migrate_sqlite():
     with engine.connect() as conn:
         existing = set(
-            row[0]
-            for row in conn.execute(
-                text("SELECT name FROM pragma_table_info('extraction_results')")
-            ).fetchall()
+            row[0] for row in conn.execute(text("SELECT name FROM pragma_table_info('extraction_results')")).fetchall()
         )
         migrations = [
             ("repair_attempts_json", "TEXT"),

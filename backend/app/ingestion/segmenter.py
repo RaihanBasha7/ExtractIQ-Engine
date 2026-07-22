@@ -299,7 +299,7 @@ def _ai_assisted_segmentation(text: str) -> list[tuple[str, str]] | None:
         result: AiSegments = client.chat.completions.create(
             model=ACTIVE_MODEL,
             response_model=AiSegments,
-            messages=messages,
+            messages=messages,  # type: ignore[arg-type]
             max_retries=0,
             temperature=0,
         )

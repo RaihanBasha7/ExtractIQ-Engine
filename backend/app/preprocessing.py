@@ -55,7 +55,7 @@ def detect_language(text: str) -> str:
     if detect is None:
         return "unknown"
     try:
-        return detect(text)
+        return str(detect(text))
     except LangDetectException:
         return "unknown"
 

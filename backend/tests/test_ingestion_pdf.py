@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import os
 import tempfile
 from pathlib import Path
 from unittest.mock import patch
@@ -132,8 +131,9 @@ class TestPdfParser:
             Path(path).unlink(missing_ok=True)
 
     def test_pdf_handle_fitz(self):
-        from app.ingestion.pdf_parser import _PdfHandle
         import fitz
+
+        from app.ingestion.pdf_parser import _PdfHandle
 
         path = _create_text_pdf("Fitz test")
         try:
