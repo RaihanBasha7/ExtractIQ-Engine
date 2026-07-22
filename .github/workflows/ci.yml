@@ -173,8 +173,8 @@ jobs:
       - name: Build backend Docker image
         uses: docker/build-push-action@v5
         with:
-          context: .
-          file: backend/Dockerfile
+          context: backend
+          file: Dockerfile
           push: false
           tags: extractiq-engine-backend:ci
           cache-from: type=gha
