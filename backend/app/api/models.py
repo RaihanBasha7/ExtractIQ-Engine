@@ -7,8 +7,11 @@ from app.schema import TicketExtraction
 
 
 class ExtractRequest(BaseModel):
-    ticket_id: str
-    raw_text: str
+    ticket_id: str = Field(description="Unique identifier for this ticket.")
+    raw_text: str = Field(
+        description="Raw support ticket text.",
+        examples=["Hi, I need help with my order #1234. It hasn't arrived yet."],
+    )
 
 
 class RepairAttemptDetail(BaseModel):
@@ -37,7 +40,7 @@ class ExtractResponse(BaseModel):
 
 
 class ExtractBatchRequest(BaseModel):
-    tickets: list[ExtractRequest]
+    tickets: list[ExtractRequest] = Field(description="List of tickets to extract.", max_length=100)
 
 
 class SegmentInfoResponse(BaseModel):

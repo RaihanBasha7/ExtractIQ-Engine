@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import { memo, type ReactNode } from 'react';
 
 interface GlassCardProps {
   children: ReactNode;
@@ -7,7 +7,7 @@ interface GlassCardProps {
   glow?: 'blue' | 'cyan' | 'green' | 'yellow' | 'red' | 'none';
 }
 
-export function GlassCard({
+export const GlassCard = memo(function GlassCard({
   children,
   className = '',
   hover = true,
@@ -33,4 +33,4 @@ export function GlassCard({
       {children}
     </div>
   );
-}
+});

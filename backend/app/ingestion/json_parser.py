@@ -25,7 +25,7 @@ def parse_json(file_path: str, file_name: str, file_size_bytes: int, **kwargs) -
         with open(file_path, "r", encoding="utf-8") as f:
             data = json.load(f)
     except json.JSONDecodeError as exc:
-        logger.error("Failed to parse JSON file", exc_info=exc, path=file_path)
+        logger.error("Failed to parse JSON file %s: %s", file_path, exc)
         return IngestionResult(
             text="",
             file_type="JSON",
@@ -36,7 +36,7 @@ def parse_json(file_path: str, file_name: str, file_size_bytes: int, **kwargs) -
             warnings=[f"Invalid JSON: {exc}"],
         )
     except Exception as exc:
-        logger.error("Failed to read JSON file", exc_info=exc, path=file_path)
+        logger.error("Failed to read JSON file %s: %s", file_path, exc)
         return IngestionResult(
             text="",
             file_type="JSON",

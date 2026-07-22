@@ -200,12 +200,16 @@ def _call_llm(
     messages: list[dict],
     request_id: str | None = None,
     max_rate_retries: int = 2,
+    timeout_seconds: float | None = None,
 ) -> TicketExtraction:
     """Make a single LLM call with structured output extraction.
 
     Automatically retries on 429 / rate-limit errors with exponential backoff
     so the UI never sees a raw provider error for transient throttling.
     """
+    from app.settings import settings
+
+    timeout = timeout_seconds or settings.LLM_TIMEOUT_SECONDS
     last_exc: Exception | None = None
     for attempt in range(max_rate_retries + 1):
         try:
@@ -225,6 +229,7 @@ def _call_llm(
                 messages=messages,
                 max_retries=0,
                 temperature=0,
+                timeout=timeout,
             )
 
             log_event(

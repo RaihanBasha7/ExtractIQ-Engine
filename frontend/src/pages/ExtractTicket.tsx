@@ -12,6 +12,7 @@ import {
   Calendar,
   Recycle,
   CheckCircle2,
+  Loader2,
   DollarSign,
   Truck,
   Wifi,
@@ -129,6 +130,7 @@ export function ExtractTicket() {
           <textarea
             value={ticket}
             onChange={(e) => setTicket(e.target.value)}
+            onKeyDown={(e) => { if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') handleRun(); }}
             placeholder="Paste your support ticket here&hellip;"
             aria-label="Support ticket input"
             className="flex-1 min-h-[280px] resize-none rounded-xl bg-[#0a0e1a] border border-white/[0.06] p-4 text-sm text-white/85 placeholder:text-white/25 outline-none focus:border-brand-blue/40 transition-colors font-mono leading-relaxed"
@@ -145,7 +147,7 @@ export function ExtractTicket() {
               className="btn-primary disabled:opacity-40 disabled:cursor-not-allowed"
             >
               {running ? (
-                <span className="animate-spin">🔄</span>
+                <Loader2 size={15} className="animate-spin" />
               ) : (
                 <Play size={15} />
               )} {running ? 'Analyzing Ticket...' : 'Run Extraction'}

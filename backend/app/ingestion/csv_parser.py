@@ -24,7 +24,7 @@ def parse_csv(file_path: str, file_name: str, file_size_bytes: int, **kwargs) ->
         with open(file_path, "r", encoding="utf-8-sig") as f:
             raw = f.read()
     except Exception as exc:
-        logger.error("Failed to read CSV file", exc_info=exc, path=file_path)
+        logger.error("Failed to read CSV file %s: %s", file_path, exc)
         return IngestionResult(
             text="",
             file_type="CSV",
@@ -40,7 +40,7 @@ def parse_csv(file_path: str, file_name: str, file_size_bytes: int, **kwargs) ->
         if not reader.fieldnames:
             raise ValueError("No columns found in CSV")
     except Exception as exc:
-        logger.error("Failed to parse CSV", exc_info=exc, path=file_path)
+        logger.error("Failed to parse CSV %s: %s", file_path, exc)
         return IngestionResult(
             text="",
             file_type="CSV",

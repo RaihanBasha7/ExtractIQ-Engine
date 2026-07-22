@@ -20,6 +20,7 @@ from datetime import datetime, timezone
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.trustedhost import TrustedHostMiddleware
 from fastapi.responses import JSONResponse
 from pydantic import ValidationError
 
@@ -33,6 +34,7 @@ from app.config import (
     APP_NAME,
     APP_VERSION,
     CONTACT,
+    ENVIRONMENT,
     LICENSE_INFO,
     MAX_REPAIR_RETRIES,
     SERVERS,
@@ -62,8 +64,20 @@ async def lifespan(application: FastAPI):
         model=ACTIVE_MODEL,
         max_retries=MAX_REPAIR_RETRIES,
         version=APP_VERSION,
+        environment=ENVIRONMENT,
+        app_name=APP_NAME,
     )
     yield
+    uptime = time.monotonic() - application.state.start_time
+    log_event(
+        logger,
+        event="service_shutdown",
+        stage="api",
+        status="success",
+        uptime_seconds=round(uptime, 2),
+        version=APP_VERSION,
+        environment=ENVIRONMENT,
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -98,12 +112,55 @@ app.middleware("http")(request_id_middleware)
 # CORS
 # ---------------------------------------------------------------------------
 
+if ENVIRONMENT == "production":
+    _cors_origins = [
+        "https://extractiq.oneinbox.ai",
+        "https://extractiq.vercel.app",
+    ]
+else:
+    _cors_origins = ["*"]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_origins=_cors_origins,
+    allow_credentials=True,
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allow_headers=[
+        "Content-Type",
+        "Authorization",
+        "X-Request-ID",
+        "X-Correlation-ID",
+    ],
 )
+
+if ENVIRONMENT == "production":
+    app.add_middleware(
+        TrustedHostMiddleware,
+        allowed_hosts=[
+            "localhost",
+            "127.0.0.1",
+            "extractiq.oneinbox.ai",
+            "*.vercel.app",
+            "*.onrender.com",
+        ],
+    )
+
+
+# ---------------------------------------------------------------------------
+# Security headers middleware
+# ---------------------------------------------------------------------------
+
+
+@app.middleware("http")
+async def security_headers_middleware(request: Request, call_next):
+    response = await call_next(request)
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    response.headers["X-Frame-Options"] = "DENY"
+    response.headers["X-XSS-Protection"] = "1; mode=block"
+    response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
+    if ENVIRONMENT == "production":
+        response.headers["Content-Security-Policy"] = "default-src 'self'"
+    return response
 
 
 # ---------------------------------------------------------------------------
@@ -118,6 +175,14 @@ app.include_router(router)
 # ---------------------------------------------------------------------------
 
 
+def _sanitize_for_production(details: dict | None) -> dict | None:
+    if ENVIRONMENT != "production" or details is None:
+        return details
+    if isinstance(details, dict) and "input" in details:
+        details = {k: v for k, v in details.items() if k != "input"}
+    return details
+
+
 def _error_response(
     request: Request,
     status_code: int,
@@ -130,7 +195,7 @@ def _error_response(
         content=ErrorResponse(
             error_code=error_code,
             message=message,
-            details=details,
+            details=_sanitize_for_production(details),
             timestamp=datetime.now(timezone.utc),
             request_id=getattr(request.state, "request_id", None),
         ).model_dump(mode="json"),
@@ -179,6 +244,7 @@ async def pydantic_validation_handler(request: Request, exc: ValidationError):
 
 @app.exception_handler(Exception)
 async def generic_exception_handler(request: Request, exc: Exception):
+    request_id = getattr(request.state, "request_id", None)
     log_event(
         logger,
         event="unhandled_exception",
@@ -186,13 +252,14 @@ async def generic_exception_handler(request: Request, exc: Exception):
         status="failed",
         level="ERROR",
         exc_info=True,
-        request_id=getattr(request.state, "request_id", None),
+        request_id=request_id,
         path=request.url.path,
         method=request.method,
     )
+    message = str(exc) if ENVIRONMENT != "production" else "An internal error occurred"
     return _error_response(
         request,
         status_code=500,
         error_code="INTERNAL_ERROR",
-        message="An internal error occurred",
+        message=message,
     )

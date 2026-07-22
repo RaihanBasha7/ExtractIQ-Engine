@@ -20,7 +20,7 @@ def parse_docx(file_path: str, file_name: str, file_size_bytes: int, **kwargs) -
     try:
         doc = Document(file_path)
     except Exception as exc:
-        logger.error("Failed to open DOCX file", exc_info=exc, path=file_path)
+        logger.error("Failed to open DOCX file: %s", exc, exc_info=exc)
         return IngestionResult(
             text="",
             file_type="DOCX",

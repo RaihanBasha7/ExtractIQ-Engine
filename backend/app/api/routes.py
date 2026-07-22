@@ -56,6 +56,7 @@ _batch_semaphore = asyncio.Semaphore(settings.BATCH_MAX_CONCURRENT_REQUESTS)
     summary="Health check",
     description="Returns structured health information for all service dependencies.",
     response_description="Service health with per-dependency check results.",
+    operation_id="get_health",
 )
 def health(request: Request, response: Response):
     request_id = _get_request_id(request)
@@ -72,6 +73,7 @@ def health(request: Request, response: Response):
     summary="Version information",
     description="Returns service version, active LLM provider/model, and runtime metadata.",
     response_description="Version and runtime metadata.",
+    operation_id="get_version",
 )
 def version(request: Request):
     request_id = _get_request_id(request)
@@ -103,10 +105,11 @@ def _get_request_id(request: Request) -> str | None:
     description="Preprocesses raw ticket text (PII redaction, normalization), then runs "
     "the model-driven extraction with up to 3 repair retries on schema validation failure.",
     response_description="Extraction result for the requested ticket.",
+    operation_id="extract_ticket",
     responses={
-        400: {"model": ErrorResponse, "description": "Bad Request"},
-        422: {"model": ErrorResponse, "description": "Validation Error"},
-        500: {"model": ErrorResponse, "description": "Internal Server Error"},
+        400: {"model": ErrorResponse, "description": "Bad Request — missing or empty raw_text"},
+        422: {"model": ErrorResponse, "description": "Validation Error — invalid request body"},
+        500: {"model": ErrorResponse, "description": "Internal Server Error — extraction or provider failure"},
     },
 )
 def extract(req: ExtractRequest, request: Request):
@@ -127,6 +130,7 @@ def extract(req: ExtractRequest, request: Request):
     description="Returns aggregated extraction statistics including success rates, "
     "average processing times, and a breakdown of failures by category.",
     response_description="Aggregated extraction metrics with per-field summaries.",
+    operation_id="get_metrics",
     responses={
         400: {"model": ErrorResponse, "description": "Bad Request"},
         422: {"model": ErrorResponse, "description": "Validation Error"},
@@ -157,6 +161,7 @@ def get_metrics(request: Request):
     description="Accepts a list of tickets and processes each independently. "
     "Empty raw_text entries are immediately rejected without calling the LLM.",
     response_description="Batch extraction results.",
+    operation_id="extract_batch",
     responses={
         400: {"model": ErrorResponse, "description": "Bad Request"},
         422: {"model": ErrorResponse, "description": "Validation Error"},
@@ -416,10 +421,11 @@ def _aggregate_results(results: list[ExtractResponse]) -> dict:
     "intelligently segmented into individual tickets, and the segments are returned "
     "for preview. Tickets are NOT extracted yet — call POST /v1/extract/batch/process "
     "to run the AI extraction.",
+    operation_id="batch_upload",
     responses={
-        400: {"model": ErrorResponse, "description": "Bad Request"},
-        413: {"description": "File too large"},
-        500: {"model": ErrorResponse, "description": "Internal Server Error"},
+        400: {"model": ErrorResponse, "description": "Bad Request — missing file/text or unsupported format"},
+        413: {"description": "File too large — maximum 100 MB"},
+        500: {"model": ErrorResponse, "description": "Internal Server Error — ingestion failure"},
     },
 )
 async def extract_batch_upload(
@@ -572,10 +578,11 @@ async def extract_batch_upload(
     summary="Run AI extraction on previously segmented tickets",
     description="Takes a session ID from /v1/extract/batch/upload and processes "
     "each detected ticket through the AI extraction pipeline in parallel.",
+    operation_id="batch_process",
     responses={
-        400: {"model": ErrorResponse, "description": "Bad Request"},
-        404: {"model": ErrorResponse, "description": "Session not found"},
-        500: {"model": ErrorResponse, "description": "Internal Server Error"},
+        400: {"model": ErrorResponse, "description": "Bad Request — no tickets to process"},
+        404: {"model": ErrorResponse, "description": "Session not found — re-upload the document"},
+        500: {"model": ErrorResponse, "description": "Internal Server Error — extraction failure"},
     },
 )
 async def process_segments(
@@ -646,8 +653,9 @@ def _get_ext(filename: str) -> str:
     summary="Get extraction history",
     description="Returns paginated extraction history with latest first.",
     response_description="Paginated history of extractions.",
+    operation_id="get_history",
     responses={
-        422: {"model": ErrorResponse, "description": "Validation Error"},
+        422: {"model": ErrorResponse, "description": "Validation Error — invalid limit/offset"},
     },
 )
 def get_history(
@@ -716,6 +724,10 @@ def get_history(
     summary="Combined system health and metrics",
     description="Returns health check and metrics in a single request to reduce dashboard polling.",
     response_description="Combined health and metrics payload.",
+    operation_id="get_system",
+    responses={
+        503: {"description": "Service degraded — one or more dependencies are unhealthy"},
+    },
 )
 def get_system(request: Request, response: Response):
     request_id = _get_request_id(request)

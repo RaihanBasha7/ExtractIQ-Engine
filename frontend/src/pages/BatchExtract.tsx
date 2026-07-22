@@ -17,6 +17,7 @@ import {
   SplitSquareHorizontal,
   Eye,
   EyeOff,
+  RefreshCw,
 } from 'lucide-react';
 import { GlassCard } from '../components/GlassCard';
 import { api } from '../lib/api';
@@ -375,6 +376,7 @@ export function BatchExtract() {
               <textarea
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
+                onKeyDown={(e) => { if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') startText(); }}
                 placeholder="Paste multiple tickets &mdash; one per line..."
                 aria-label="Batch text input"
                 className="w-full min-h-[140px] resize-none rounded-xl bg-[#0a0e1a] border border-white/[0.06] p-4 text-sm text-white/85 placeholder:text-white/25 outline-none focus:border-brand-blue/40 font-mono"
@@ -667,9 +669,14 @@ export function BatchExtract() {
             <AlertTriangle size={15} className="text-red-400 shrink-0" />
             <span className="text-sm text-red-300">{error}</span>
           </div>
-          <button onClick={() => { setError(null); setMode('empty'); }} className="btn-ghost mt-3 text-xs">
-            Try Again
-          </button>
+          <div className="flex gap-2 mt-3">
+            <button onClick={() => { setError(null); setMode('empty'); }} className="btn-ghost text-xs">
+              Cancel
+            </button>
+            <button onClick={() => { setError(null); if (file) startUpload(); else if (input.trim()) startText(); }} className="btn-primary text-xs" disabled={running}>
+              <RefreshCw size={13} /> Retry
+            </button>
+          </div>
         </GlassCard>
       )}
 

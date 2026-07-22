@@ -49,6 +49,10 @@ dist/
 # Docker
 .docker/
 
+# Tooling
+.mypy_cache/
+.bolt/
+
 # Runtime
 *.pid
 *.seed

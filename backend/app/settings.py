@@ -72,6 +72,10 @@ class Settings(BaseSettings):
     BATCH_MAX_RETRIES: int = 3
     BATCH_RETRY_DELAYS: list[float] = [1.0, 2.0, 4.0]
 
+    # ── Timeouts ────────────────────────────────────────────────────────────
+    LLM_TIMEOUT_SECONDS: float = 60.0
+    EXTRACTION_TIMEOUT_SECONDS: float = 120.0
+
     def model_post_init(self, __context) -> None:
         """Validate configuration after initialisation."""
         if self.LLM_PROVIDER == "featherless":

@@ -224,7 +224,7 @@ Detailed analysis in `docs/reports/failure_analysis.md`.
 ## Contact
 
 For questions about this model card or the ExtractIQ Engine:
-- GitHub Issues: https://github.com/shaikraihanbasha/extractiq-engine/issues
+- GitHub Issues: https://github.com/anomalyco/ExtractIQ-Engine/issues
 - Security: See `security.md`
 
 ---
