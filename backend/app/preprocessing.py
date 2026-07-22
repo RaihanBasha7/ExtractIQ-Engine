@@ -11,7 +11,7 @@ import re
 from dataclasses import dataclass
 
 try:
-    from langdetect import detect, LangDetectException
+    from langdetect import LangDetectException, detect
 except ImportError:  # pragma: no cover - optional dependency guard
     detect = None
     LangDetectException = Exception

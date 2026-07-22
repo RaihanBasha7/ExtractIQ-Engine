@@ -36,6 +36,7 @@ os.environ["DATABASE_URL"] = f"sqlite:///{_test_db_path}"
 
 # Create database tables eagerly so they exist for all tests
 from app.database.database import create_database  # noqa: E402
+
 create_database()
 
 
@@ -52,13 +53,15 @@ def _cleanup_test_db():
 
 
 # Register cleanup at exit
-import atexit
+import atexit  # noqa: E402
+
 atexit.register(_cleanup_test_db)
 
 
 # ---------------------------------------------------------------------------
 # Schema fixtures
 # ---------------------------------------------------------------------------
+
 
 @pytest.fixture
 def valid_extraction_dict() -> dict[str, Any]:
@@ -104,11 +107,11 @@ def invalid_extraction_dict() -> dict[str, Any]:
 # Database fixtures
 # ---------------------------------------------------------------------------
 
+
 @pytest.fixture
 def db_session():
     """Provide a SQLAlchemy session with transaction rollback for isolation."""
     from app.database.database import SessionLocal, engine
-    from sqlalchemy.orm import close_all_sessions
 
     # Close all existing sessions and begin a transaction
     connection = engine.connect()
@@ -139,6 +142,7 @@ def _clear_db_between_tests(request):
 # FastAPI app / TestClient fixtures
 # ---------------------------------------------------------------------------
 
+
 @pytest.fixture(scope="function")
 def app() -> FastAPI:
     """Create a fresh FastAPI app for each test."""
@@ -158,6 +162,7 @@ def client(app: FastAPI) -> TestClient:
 # Repair log fixtures
 # ---------------------------------------------------------------------------
 
+
 @pytest.fixture
 def repair_log_with_entries():
     """Return a RepairLog with sample entries."""
@@ -167,15 +172,14 @@ def repair_log_with_entries():
 
     log = RepairLog()
     record_attempt(log, 1, "success", None, 0.5, timestamp=datetime.now(timezone.utc))
-    record_attempt(
-        log, 2, "failed", "validation error: field required", 1.2, timestamp=datetime.now(timezone.utc)
-    )
+    record_attempt(log, 2, "failed", "validation error: field required", 1.2, timestamp=datetime.now(timezone.utc))
     return log
 
 
 # ---------------------------------------------------------------------------
 # Temporary directory
 # ---------------------------------------------------------------------------
+
 
 @pytest.fixture
 def tmp_data_dir(tmp_path: Path) -> Path:

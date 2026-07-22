@@ -1,7 +1,7 @@
 from collections.abc import Iterator
 from contextlib import contextmanager
 from dataclasses import dataclass
-from datetime import datetime, timedelta, timezone
+from datetime import datetime
 
 from sqlalchemy import case, func
 from sqlalchemy.orm import Session
@@ -61,10 +61,20 @@ class RawTicketRepository:
                 session.add(ticket)
                 session.flush()
                 session.refresh(ticket)
-                log_event(logger, event="raw_ticket_saved", stage="preprocessing", status="success", ticket_id=ticket_id)
+                log_event(
+                    logger, event="raw_ticket_saved", stage="preprocessing", status="success", ticket_id=ticket_id
+                )
                 return ticket
             except Exception:
-                log_event(logger, event="raw_ticket_save_failed", stage="preprocessing", status="failed", level="ERROR", exc_info=True, ticket_id=ticket_id)
+                log_event(
+                    logger,
+                    event="raw_ticket_save_failed",
+                    stage="preprocessing",
+                    status="failed",
+                    level="ERROR",
+                    exc_info=True,
+                    ticket_id=ticket_id,
+                )
                 raise
 
     def get_by_ticket_id(
@@ -119,10 +129,26 @@ class ExtractionRepository:
                 session.add(result)
                 session.flush()
                 session.refresh(result)
-                log_event(logger, event="extraction_result_saved", stage="extraction", status="success", ticket_id=ticket_id, action="save_result")
+                log_event(
+                    logger,
+                    event="extraction_result_saved",
+                    stage="extraction",
+                    status="success",
+                    ticket_id=ticket_id,
+                    action="save_result",
+                )
                 return result
             except Exception:
-                log_event(logger, event="extraction_result_save_failed", stage="extraction", status="failed", level="ERROR", exc_info=True, ticket_id=ticket_id, action="save_result")
+                log_event(
+                    logger,
+                    event="extraction_result_save_failed",
+                    stage="extraction",
+                    status="failed",
+                    level="ERROR",
+                    exc_info=True,
+                    ticket_id=ticket_id,
+                    action="save_result",
+                )
                 raise
 
     def get_by_ticket_id(
@@ -157,22 +183,14 @@ class ExtractionRepository:
         db_session: Session | None = None,
     ) -> int:
         with _resolve_session(db_session) as session:
-            return (
-                session.query(ExtractionResult)
-                .filter(ExtractionResult.schema_valid.is_(True))
-                .count()
-            )
+            return session.query(ExtractionResult).filter(ExtractionResult.schema_valid.is_(True)).count()
 
     def failed_count(
         self,
         db_session: Session | None = None,
     ) -> int:
         with _resolve_session(db_session) as session:
-            return (
-                session.query(ExtractionResult)
-                .filter(ExtractionResult.schema_valid.is_(False))
-                .count()
-            )
+            return session.query(ExtractionResult).filter(ExtractionResult.schema_valid.is_(False)).count()
 
     def average_retry_count(
         self,
@@ -319,10 +337,7 @@ class ExtractionRepository:
                 .order_by(ExtractionResult.created_at.asc())
                 .all()
             )
-            return [
-                {"t": r.created_at.isoformat() if r.created_at else "", "retries": r.retry_count}
-                for r in rows
-            ]
+            return [{"t": r.created_at.isoformat() if r.created_at else "", "retries": r.retry_count} for r in rows]
 
     def get_stats(
         self,
@@ -339,9 +354,7 @@ class ExtractionRepository:
                 func.avg(ExtractionResult.confidence_score).label("avg_confidence"),
                 func.sum(case((ExtractionResult.final_status == "NEEDS_REVIEW", 1), else_=0)).label("needs_review"),
                 func.sum(case((ExtractionResult.retry_count > 0, 1), else_=0)).label("repair_count"),
-                func.sum(case(
-                    (ExtractionResult.final_status == "REPAIRED", 1), else_=0
-                )).label("repair_success_count"),
+                func.sum(case((ExtractionResult.final_status == "REPAIRED", 1), else_=0)).label("repair_success_count"),
             ).first()
             total = row.total or 0
             needs_review = row.needs_review or 0

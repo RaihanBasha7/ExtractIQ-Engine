@@ -2,9 +2,8 @@
 
 from __future__ import annotations
 
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock
 
-import pytest
 from pydantic import ValidationError
 
 from app.schema import TicketExtraction
@@ -194,7 +193,9 @@ class TestRepairLoopExecution:
             call_count[0] += 1
             if call_count[0] == 1:
                 msg = "validation error: field required"
-                raise ValidationError.from_exception_data("TicketExtraction", [{"type": "missing", "loc": ("field",), "msg": msg, "input": None}])
+                raise ValidationError.from_exception_data(
+                    "TicketExtraction", [{"type": "missing", "loc": ("field",), "msg": msg, "input": None}]
+                )
             return valid_ticket
 
         mock_client.chat.completions.create.side_effect = side_effect
@@ -213,7 +214,9 @@ class TestRepairLoopExecution:
         def side_effect(*args, **kwargs):
             call_count[0] += 1
             msg = f"validation error: attempt {call_count[0]}"
-            raise ValidationError.from_exception_data("TicketExtraction", [{"type": "missing", "loc": ("field",), "msg": msg, "input": None}])
+            raise ValidationError.from_exception_data(
+                "TicketExtraction", [{"type": "missing", "loc": ("field",), "msg": msg, "input": None}]
+            )
 
         mock_client.chat.completions.create.side_effect = side_effect
 
@@ -229,7 +232,9 @@ class TestRepairLoopExecution:
         mock_client = MagicMock()
 
         def always_fails(*args, **kwargs):
-            raise ValidationError.from_exception_data("TicketExtraction", [{"type": "missing", "loc": ("field",), "msg": "field required", "input": None}])
+            raise ValidationError.from_exception_data(
+                "TicketExtraction", [{"type": "missing", "loc": ("field",), "msg": "field required", "input": None}]
+            )
 
         mock_client.chat.completions.create.side_effect = always_fails
 
@@ -267,9 +272,9 @@ class TestRepairLoopExecution:
         assert len(result.attempts) == 1
 
     def test_non_retryable_error_stops_immediately(self):
-        from app.extraction import extract_ticket
-
         from groq import RateLimitError
+
+        from app.extraction import extract_ticket
 
         mock_client = MagicMock()
         mock_client.chat.completions.create.side_effect = RateLimitError(

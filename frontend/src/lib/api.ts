@@ -109,7 +109,8 @@ export function normalizeExtraction(raw: unknown, ticket?: string): ExtractionRe
   const fs = finalStatus(r.final_status ?? (r.metadata as any)?.final_status ?? 'NEEDS_REVIEW');
   const cs = num(r.confidence_score ?? (r.metadata as any)?.confidence_score ?? 0, 0);
   const vs = str(r.validation_status ?? (r.metadata as any)?.validation ?? 'failed');
-  const nrr = str(r.needs_review_reason ?? (r.metadata as any)?.needs_review_reason ?? null, null);
+  const rawReason = r.needs_review_reason ?? (r.metadata as any)?.needs_review_reason;
+  const nrr: string | null = rawReason != null ? String(rawReason) : null;
   return {
     id: str(r.id ?? r.request_id ?? r.ticket_id, 'ext_' + Math.random().toString(36).slice(2, 10)),
     ticket: ticketText,

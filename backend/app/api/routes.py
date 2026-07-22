@@ -1,29 +1,25 @@
 import asyncio
-import json
 import os
 import tempfile
-import time
 import uuid
 from datetime import datetime, timezone
 
-from fastapi import APIRouter, HTTPException, Query, Request, Response, UploadFile, File, Form
-
-from app.settings import settings
+from fastapi import APIRouter, File, Form, HTTPException, Query, Request, Response, UploadFile
 
 from app.api.error_models import ErrorResponse
 from app.api.models import (
+    BatchUploadResponse,
     ExtractBatchRequest,
     ExtractBatchResponse,
-    BatchUploadResponse,
-    ModifySegmentsRequest,
-    SegmentInfoResponse,
     ExtractRequest,
     ExtractResponse,
     HealthResponse,
     HistoryItem,
     HistoryResponse,
     MetricsResponse,
+    ModifySegmentsRequest,
     RepairAttemptDetail,
+    SegmentInfoResponse,
     SystemResponse,
     VersionResponse,
 )
@@ -36,6 +32,7 @@ from app.metadata import ExtractionMetadata
 from app.services.health_service import HealthService
 from app.services.metrics_service import MetricsService
 from app.services.version_service import VersionService
+from app.settings import settings
 
 logger = get_logger(__name__)
 
@@ -81,8 +78,14 @@ def version(request: Request):
     log_event(logger, event="version_request_started", stage="api", status="started", request_id=request_id)
     info = version_service.get_version()
     log_event(
-        logger, event="version_request_completed", stage="api", status="success",
-        request_id=request_id, version=info.version, provider=info.provider, model=info.model,
+        logger,
+        event="version_request_completed",
+        stage="api",
+        status="success",
+        request_id=request_id,
+        version=info.version,
+        provider=info.provider,
+        model=info.model,
     )
     return info
 
@@ -110,7 +113,9 @@ def extract(req: ExtractRequest, request: Request):
     if not req.raw_text.strip():
         raise HTTPException(status_code=400, detail="raw_text must not be empty")
     request_id = _get_request_id(request)
-    log_event(logger, event="request_received", stage="api", status="started", request_id=request_id, ticket_id=req.ticket_id)
+    log_event(
+        logger, event="request_received", stage="api", status="started", request_id=request_id, ticket_id=req.ticket_id
+    )
     return process_ticket(req.ticket_id, req.raw_text, request_id=request_id)
 
 
@@ -132,7 +137,14 @@ def get_metrics(request: Request):
     request_id = _get_request_id(request)
     log_event(logger, event="metrics_requested", stage="api", status="started", request_id=request_id)
     result = metrics_service.get_metrics()
-    log_event(logger, event="metrics_returned", stage="api", status="success", request_id=request_id, total=result.total_requests)
+    log_event(
+        logger,
+        event="metrics_returned",
+        stage="api",
+        status="success",
+        request_id=request_id,
+        total=result.total_requests,
+    )
     return result
 
 
@@ -153,7 +165,14 @@ def get_metrics(request: Request):
 )
 def extract_batch(req: ExtractBatchRequest, request: Request):
     request_id = _get_request_id(request)
-    log_event(logger, event="batch_request_received", stage="api", status="started", request_id=request_id, batch_size=len(req.tickets))
+    log_event(
+        logger,
+        event="batch_request_received",
+        stage="api",
+        status="started",
+        request_id=request_id,
+        batch_size=len(req.tickets),
+    )
     results: list[ExtractResponse] = []
     for ticket in req.tickets:
         if not ticket.raw_text.strip():
@@ -193,10 +212,20 @@ def extract_batch(req: ExtractBatchRequest, request: Request):
 # ── Batch helper ───────────────────────────────────────────────────────────
 
 
-_INFRA_ERROR_KEYWORDS = ["rate_limit", "rate limit", "429", "too many requests",
-                          "provider_busy", "provider busy", "503", "timeout",
-                          "connection", "unavailable", "concurrency_limit",
-                          "concurrency limit"]
+_INFRA_ERROR_KEYWORDS = [
+    "rate_limit",
+    "rate limit",
+    "429",
+    "too many requests",
+    "provider_busy",
+    "provider busy",
+    "503",
+    "timeout",
+    "connection",
+    "unavailable",
+    "concurrency_limit",
+    "concurrency limit",
+]
 
 _INFRA_STATUSES = {"PROVIDER_RATE_LIMIT", "PROVIDER_TIMEOUT", "NETWORK_ERROR", "MODEL_ERROR"}
 
@@ -243,7 +272,7 @@ def _build_infra_error_response(idx: int, request_id: str | None, retry_count: i
             timestamp=datetime.now(timezone.utc),
             confidence_score=10.0,
             final_status=final_status,
-            needs_review_reason=f"Provider rate limited. Please retry later.",
+            needs_review_reason="Provider rate limited. Please retry later.",
         ),
         retry_count=retry_count,
         failure_category="infrastructure_error",
@@ -253,7 +282,7 @@ def _build_infra_error_response(idx: int, request_id: str | None, retry_count: i
         confidence_score=10.0,
         validation_status="failed",
         final_status=final_status,
-        needs_review_reason=f"Provider rate limited. Please retry later.",
+        needs_review_reason="Provider rate limited. Please retry later.",
     )
 
 
@@ -290,8 +319,13 @@ async def _process_ticket_with_retry(
                 delay = retry_delays[attempt] if attempt < len(retry_delays) else retry_delays[-1]
                 logger.info(
                     "Ticket %d infra error (attempt %d/%d) -> retry in %.1fs | status=%s category=%s reason=%s",
-                    idx, attempt + 1, max_retries, delay,
-                    resp.final_status, resp.failure_category, resp.needs_review_reason,
+                    idx,
+                    attempt + 1,
+                    max_retries,
+                    delay,
+                    resp.final_status,
+                    resp.failure_category,
+                    resp.needs_review_reason,
                 )
                 await asyncio.sleep(delay)
                 continue
@@ -299,15 +333,22 @@ async def _process_ticket_with_retry(
             resp = _classify_infrastructure_error(resp)
             logger.info(
                 "Ticket %d infra retries exhausted after %d attempts | final_status=%s",
-                idx, max_retries, resp.final_status,
+                idx,
+                max_retries,
+                resp.final_status,
             )
             return resp
 
         # Success or non-infra failure — return as-is
         logger.info(
             "Ticket %d completed | attempt=%d/%d status=%s retries=%d category=%s latency=%.2fs",
-            idx, attempt + 1, max_retries, resp.final_status,
-            resp.retry_count, resp.failure_category or "none", resp.latency_seconds,
+            idx,
+            attempt + 1,
+            max_retries,
+            resp.final_status,
+            resp.retry_count,
+            resp.failure_category or "none",
+            resp.latency_seconds,
         )
         return resp
 
@@ -317,10 +358,7 @@ async def _process_ticket_with_retry(
 
 async def _process_tickets_async(tickets: list[str], request_id: str | None) -> list[ExtractResponse]:
     semaphore = asyncio.Semaphore(settings.BATCH_MAX_CONCURRENT_REQUESTS)
-    tasks = [
-        _process_ticket_with_retry(semaphore, text, i, request_id)
-        for i, text in enumerate(tickets)
-    ]
+    tasks = [_process_ticket_with_retry(semaphore, text, i, request_id) for i, text in enumerate(tickets)]
     results = await asyncio.gather(*tasks, return_exceptions=True)
 
     final: list[ExtractResponse] = []
@@ -345,9 +383,16 @@ def _aggregate_results(results: list[ExtractResponse]) -> dict:
     repaired = sum(1 for r in results if r.final_status == "REPAIRED")
     needs_review = sum(1 for r in results if r.final_status == "NEEDS_REVIEW")
     infra_errors = sum(1 for r in results if r.final_status in _INFRA_STATUSES)
-    failed = sum(1 for r in results if r.final_status == "FAILED" or (
-        r.validation_status == "failed" and r.final_status not in _INFRA_STATUSES and r.final_status not in ("NEEDS_REVIEW", "FAILED")
-    ))
+    failed = sum(
+        1
+        for r in results
+        if r.final_status == "FAILED"
+        or (
+            r.validation_status == "failed"
+            and r.final_status not in _INFRA_STATUSES
+            and r.final_status not in ("NEEDS_REVIEW", "FAILED")
+        )
+    )
     return {
         "processed": len(results),
         "successful": successful,
@@ -399,7 +444,9 @@ async def extract_batch_upload(
         ext = _get_ext(file_name)
         supported = {".pdf", ".txt", ".docx", ".csv", ".json"}
         if ext not in supported:
-            raise HTTPException(status_code=400, detail=f"Unsupported file type '{ext}'. Supported: {', '.join(sorted(supported))}")
+            raise HTTPException(
+                status_code=400, detail=f"Unsupported file type '{ext}'. Supported: {', '.join(sorted(supported))}"
+            )
 
         tmp = tempfile.NamedTemporaryFile(delete=False, suffix=ext)
         try:
@@ -408,26 +455,42 @@ async def extract_batch_upload(
             max_size = 100 * 1024 * 1024
             if file_size > max_size:
                 os.unlink(tmp.name)
-                raise HTTPException(status_code=413, detail=f"File too large ({file_size / 1024 / 1024:.1f} MB). Maximum is 100 MB.")
+                raise HTTPException(
+                    status_code=413, detail=f"File too large ({file_size / 1024 / 1024:.1f} MB). Maximum is 100 MB."
+                )
             tmp.write(content)
             tmp.flush()
             tmp.close()
 
             from app.ingestion import ingest_file
+
             result = ingest_file(tmp.name, file_name, file_size)
             raw_text = result.text
             file_type = result.file_type
             pages = result.pages or 1
             warnings = result.warnings
             log_event(
-                logger, event="file_ingested", stage="ingestion", status="success",
-                request_id=request_id, file_name=file_name, file_type=file_type,
-                pages=pages, tickets_detected=result.tickets_detected,
+                logger,
+                event="file_ingested",
+                stage="ingestion",
+                status="success",
+                request_id=request_id,
+                file_name=file_name,
+                file_type=file_type,
+                pages=pages,
+                tickets_detected=result.tickets_detected,
             )
         except HTTPException:
             raise
         except Exception as exc:
-            log_event(logger, event="ingestion_error", stage="ingestion", status="failed", request_id=request_id, exc_info=True)
+            log_event(
+                logger,
+                event="ingestion_error",
+                stage="ingestion",
+                status="failed",
+                request_id=request_id,
+                exc_info=True,
+            )
             raise HTTPException(status_code=500, detail=f"Ingestion failed: {exc}")
         finally:
             if os.path.exists(tmp.name):
@@ -440,19 +503,22 @@ async def extract_batch_upload(
         raise HTTPException(status_code=400, detail="No extractable text found in the input")
 
     from app.ingestion.segmenter import segment_document
+
     seg_result = segment_document(raw_text, use_ai=True)
 
     segment_responses: list[SegmentInfoResponse] = []
     for seg in seg_result.segments:
-        segment_responses.append(SegmentInfoResponse(
-            index=seg.index,
-            word_count=seg.word_count,
-            char_count=seg.char_count,
-            preview=_build_segment_preview(seg.text),
-            boundary_type=seg.boundary_type,
-            valid=seg.valid,
-            validation_message=seg.validation_message,
-        ))
+        segment_responses.append(
+            SegmentInfoResponse(
+                index=seg.index,
+                word_count=seg.word_count,
+                char_count=seg.char_count,
+                preview=_build_segment_preview(seg.text),
+                boundary_type=seg.boundary_type,
+                valid=seg.valid,
+                validation_message=seg.validation_message,
+            )
+        )
 
     session_id = str(uuid.uuid4())
     _segment_cache[session_id] = {
@@ -466,8 +532,13 @@ async def extract_batch_upload(
     }
 
     log_event(
-        logger, event="batch_segmented", stage="segmentation", status="success",
-        request_id=request_id, file_name=file_name, segments=len(segment_responses),
+        logger,
+        event="batch_segmented",
+        stage="segmentation",
+        status="success",
+        request_id=request_id,
+        file_name=file_name,
+        segments=len(segment_responses),
         method=seg_result.method,
     )
 
@@ -524,8 +595,13 @@ async def process_segments(
         raise HTTPException(status_code=400, detail="No tickets to process")
 
     log_event(
-        logger, event="batch_processing_started", stage="batch", status="started",
-        request_id=request_id, session_id=session_id, ticket_count=len(tickets),
+        logger,
+        event="batch_processing_started",
+        stage="batch",
+        status="started",
+        request_id=request_id,
+        session_id=session_id,
+        ticket_count=len(tickets),
         max_concurrent=settings.BATCH_MAX_CONCURRENT_REQUESTS,
         max_retries=settings.BATCH_MAX_RETRIES,
     )
@@ -534,8 +610,13 @@ async def process_segments(
     agg = _aggregate_results(results)
 
     log_event(
-        logger, event="batch_processing_completed", stage="batch", status="success",
-        request_id=request_id, session_id=session_id, **agg,
+        logger,
+        event="batch_processing_completed",
+        stage="batch",
+        status="success",
+        request_id=request_id,
+        session_id=session_id,
+        **agg,
     )
 
     return BatchUploadResponse(
@@ -597,29 +678,33 @@ def get_history(
         raw_attempts = r.get("repair_attempts") or []
         for a in raw_attempts:
             if isinstance(a, dict):
-                attempt_details.append(RepairAttemptDetail(
-                    attempt=a.get("attempt", 1),
-                    status=a.get("status", "failed"),
-                    error=a.get("error"),
-                ))
+                attempt_details.append(
+                    RepairAttemptDetail(
+                        attempt=a.get("attempt", 1),
+                        status=a.get("status", "failed"),
+                        error=a.get("error"),
+                    )
+                )
 
-        items.append(HistoryItem(
-            request_id=str(r.get("id", "")),
-            ticket_id=r.get("ticket_id", ""),
-            original_ticket=raw[:500] if raw else "",
-            extraction_summary=structured,
-            confidence=confidence_score / 100.0,
-            latency=latency,
-            repair_attempts=attempt_details,
-            provider=ACTIVE_PROVIDER,
-            model=ACTIVE_MODEL,
-            timestamp=r.get("created_at", ""),
-            status=status,
-            final_status=final_status,
-            confidence_score=confidence_score,
-            validation_status=validation_status,
-            needs_review_reason=r.get("needs_review_reason"),
-        ))
+        items.append(
+            HistoryItem(
+                request_id=str(r.get("id", "")),
+                ticket_id=r.get("ticket_id", ""),
+                original_ticket=raw[:500] if raw else "",
+                extraction_summary=structured,
+                confidence=confidence_score / 100.0,
+                latency=latency,
+                repair_attempts=attempt_details,
+                provider=ACTIVE_PROVIDER,
+                model=ACTIVE_MODEL,
+                timestamp=r.get("created_at", ""),
+                status=status,
+                final_status=final_status,
+                confidence_score=confidence_score,
+                validation_status=validation_status,
+                needs_review_reason=r.get("needs_review_reason"),
+            )
+        )
 
     return HistoryResponse(items=items, total=total, limit=limit, offset=offset)
 

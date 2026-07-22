@@ -56,7 +56,9 @@ class TestFullPipelineMocked:
         mock_client.chat.completions.create.return_value = sample_valid_ticket_extraction
 
         with patch("app.extraction._get_client", return_value=mock_client):
-            result = process_ticket("TKT-INT-001", "I was overcharged $99.99 for my subscription, please refund.", request_id="REQ-INT-001")
+            result = process_ticket(
+                "TKT-INT-001", "I was overcharged $99.99 for my subscription, please refund.", request_id="REQ-INT-001"
+            )
 
         assert result.success is True
         assert result.data is not None
@@ -191,6 +193,7 @@ class TestBatchProcessingMocked:
         from tests.test_api import _make_extract_response
 
         with patch("app.api.routes.process_ticket") as mock_process:
+
             def side_effect(ticket_id, raw_text, request_id=None):
                 if not raw_text.strip():
                     mock = _make_extract_response(ticket_id, success=False)
@@ -198,6 +201,7 @@ class TestBatchProcessingMocked:
                     mock["confidence"] = 0.0
                     return mock
                 return _make_extract_response(ticket_id)
+
             mock_process.side_effect = side_effect
             response = client.post(
                 "/v1/extract/batch",

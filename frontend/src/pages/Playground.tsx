@@ -14,22 +14,23 @@ import {
   Recycle,
   CheckCircle2,
   XCircle,
+  AlertTriangle,
+  AlertCircle,
   Wifi,
   RefreshCw,
   CreditCard,
   Lock,
   Truck,
-  ChevronDown,
   Braces,
   Cpu,
   Tag,
-  Clock,
   Gauge,
   Loader2,
   type LucideIcon,
 } from 'lucide-react';
 import { EXAMPLE_TICKETS } from '../lib/examples';
 import { useExtraction } from '../lib/useExtraction';
+import { useExtractionContext } from '../lib/extractionContext';
 import { GlassCard } from '../components/GlassCard';
 import { JsonBlock } from '../components/JsonBlock';
 import {
@@ -63,10 +64,19 @@ const PIPELINE_STAGES_LIST = [
 export function Playground() {
   const [selectedExample, setSelectedExample] = useState(EXAMPLE_TICKETS[0].id);
   const { state, activeStage, inRepair, held, result, error, run, reset } = useExtraction();
+  const { singleResult, setSingleResult, clearSingle } = useExtractionContext();
   const [copied, setCopied] = useState(false);
   const running = state === 'running';
 
+  const displayResult = result || (state === 'idle' ? singleResult : null);
+
   const example = EXAMPLE_TICKETS.find((e) => e.id === selectedExample)!;
+
+  useEffect(() => {
+    if (state === 'done' && result) {
+      setSingleResult(result);
+    }
+  }, [state, result, setSingleResult]);
 
   const errorStageRef = useRef(-1);
   const lastActiveRef = useRef(-1);
@@ -83,12 +93,12 @@ export function Playground() {
   }, [state, activeStage]);
 
   const fieldMappings = useMemo(
-    () => (result ? findFieldMappings(result.final_json, result.ticket) : []),
-    [result],
+    () => (displayResult ? findFieldMappings(displayResult.final_json, displayResult.ticket) : []),
+    [displayResult],
   );
 
   const fieldCount = useMemo(() => {
-    if (!result) return 0;
+    if (!displayResult) return 0;
     let count = 0;
     function walk(obj: unknown) {
       if (obj && typeof obj === 'object' && !Array.isArray(obj)) {
@@ -99,40 +109,46 @@ export function Playground() {
         }
       }
     }
-    walk(result.final_json);
+    walk(displayResult.final_json);
     return count;
-  }, [result]);
+  }, [displayResult]);
 
   const handleRun = useCallback(() => {
+    clearSingle();
     run(example.ticket);
-  }, [run, example.ticket]);
+  }, [run, example.ticket, clearSingle]);
 
   const handleReset = useCallback(() => {
     reset();
   }, [reset]);
 
+  const handleResetAll = useCallback(() => {
+    reset();
+    clearSingle();
+  }, [reset, clearSingle]);
+
   const copyJson = async () => {
-    if (!result) return;
+    if (!displayResult) return;
     try {
-      await navigator.clipboard.writeText(JSON.stringify(result.final_json, null, 2));
+      await navigator.clipboard.writeText(JSON.stringify(displayResult.final_json, null, 2));
       setCopied(true);
       setTimeout(() => setCopied(false), 1500);
     } catch { /* ignore */ }
   };
 
   const download = () => {
-    if (!result) return;
-    const blob = new Blob([JSON.stringify(result.final_json, null, 2)], { type: 'application/json' });
+    if (!displayResult) return;
+    const blob = new Blob([JSON.stringify(displayResult.final_json, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `playground-${result.id}.json`;
+    a.download = `playground-${displayResult.id}.json`;
     a.click();
     URL.revokeObjectURL(url);
   };
 
   const stageStatus = (index: number): 'done' | 'active' | 'pending' | 'held' | 'error' => {
-    if (result) return 'done';
+    if (displayResult) return 'done';
     if (state === 'error') return index === errorStageRef.current ? 'error' : 'pending';
     if (activeStage < 0) return 'pending';
     if (index < activeStage) return 'done';
@@ -445,55 +461,55 @@ export function Playground() {
 
           {/* Result sections - only show when result exists */}
           <AnimatePresence>
-            {result && (
+            {displayResult && (
               <motion.div
-                key="result"
+                key="playground-result"
                 className="space-y-4"
-                initial={{ opacity: 0, y: 20 }}
+                initial={result ? { opacity: 0, y: 20 } : false}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
               >
                 {/* Status banner */}
                 <GlassCard hover={false} className={`p-5 ${
-                  result.final_status === 'SUCCESS' ? 'border-brand-green/20' :
-                  result.final_status === 'REPAIRED' ? 'border-yellow-500/20' :
-                  result.final_status === 'FAILED' ? 'border-red-500/20' :
-                  result.final_status === 'PROVIDER_RETRY' ? 'border-orange-500/20' :
+                  displayResult.final_status === 'SUCCESS' ? 'border-brand-green/20' :
+                  displayResult.final_status === 'REPAIRED' ? 'border-yellow-500/20' :
+                  displayResult.final_status === 'FAILED' ? 'border-red-500/20' :
+                  displayResult.final_status === 'PROVIDER_RETRY' ? 'border-orange-500/20' :
                   'border-red-500/20'
                 }`}>
                   <div className="flex items-center gap-3">
                     <div className={`w-10 h-10 rounded-xl border flex items-center justify-center ${
-                      result.final_status === 'SUCCESS' ? 'bg-brand-green/15 border-brand-green/20' :
-                      result.final_status === 'REPAIRED' ? 'bg-yellow-500/15 border-yellow-500/20' :
-                      result.final_status === 'FAILED' ? 'bg-red-500/15 border-red-500/20' :
-                      result.final_status === 'PROVIDER_RETRY' ? 'bg-orange-500/15 border-orange-500/20' :
+                      displayResult.final_status === 'SUCCESS' ? 'bg-brand-green/15 border-brand-green/20' :
+                      displayResult.final_status === 'REPAIRED' ? 'bg-yellow-500/15 border-yellow-500/20' :
+                      displayResult.final_status === 'FAILED' ? 'bg-red-500/15 border-red-500/20' :
+                      displayResult.final_status === 'PROVIDER_RETRY' ? 'bg-orange-500/15 border-orange-500/20' :
                       'bg-red-500/15 border-red-500/20'
                     }`}>
-                      {result.final_status === 'SUCCESS' ? <CheckCircle2 size={20} className="text-brand-green" /> :
-                       result.final_status === 'REPAIRED' ? <AlertTriangle size={20} className="text-yellow-400" /> :
-                       result.final_status === 'FAILED' ? <XCircle size={20} className="text-red-400" /> :
-                       result.final_status === 'PROVIDER_RETRY' ? <RefreshCw size={20} className="text-orange-400" /> :
+                      {displayResult.final_status === 'SUCCESS' ? <CheckCircle2 size={20} className="text-brand-green" /> :
+                       displayResult.final_status === 'REPAIRED' ? <AlertTriangle size={20} className="text-yellow-400" /> :
+                       displayResult.final_status === 'FAILED' ? <XCircle size={20} className="text-red-400" /> :
+                       displayResult.final_status === 'PROVIDER_RETRY' ? <RefreshCw size={20} className="text-orange-400" /> :
                        <AlertCircle size={20} className="text-red-400" />}
                     </div>
                     <div>
                       <p className={`text-sm font-semibold ${
-                        result.final_status === 'SUCCESS' ? 'text-brand-green' :
-                        result.final_status === 'REPAIRED' ? 'text-yellow-400' :
-                        result.final_status === 'FAILED' ? 'text-red-400' :
-                        result.final_status === 'PROVIDER_RETRY' ? 'text-orange-400' :
+                        displayResult.final_status === 'SUCCESS' ? 'text-brand-green' :
+                        displayResult.final_status === 'REPAIRED' ? 'text-yellow-400' :
+                        displayResult.final_status === 'FAILED' ? 'text-red-400' :
+                        displayResult.final_status === 'PROVIDER_RETRY' ? 'text-orange-400' :
                         'text-red-400'
                       }`}>
-                        {result.final_status === 'SUCCESS' ? 'Extraction Complete' :
-                         result.final_status === 'REPAIRED' ? 'Extraction Repaired' :
-                         result.final_status === 'FAILED' ? 'Extraction Failed' :
-                         result.final_status === 'PROVIDER_RETRY' ? 'Provider Retry' :
+                        {displayResult.final_status === 'SUCCESS' ? 'Extraction Complete' :
+                         displayResult.final_status === 'REPAIRED' ? 'Extraction Repaired' :
+                         displayResult.final_status === 'FAILED' ? 'Extraction Failed' :
+                         displayResult.final_status === 'PROVIDER_RETRY' ? 'Provider Retry' :
                          'Needs Review'}
                       </p>
                       <p className="text-xs text-white/40 mt-0.5">
-                        {result.final_status === 'SUCCESS' ? 'Passed on first attempt with high confidence' :
-                         result.final_status === 'REPAIRED' ? 'Recovered after repair loop' :
-                         result.final_status === 'FAILED' ? 'Extraction could not be completed' :
-                         result.final_status === 'PROVIDER_RETRY' ? 'Temporary infrastructure issue, please retry' :
+                        {displayResult.final_status === 'SUCCESS' ? 'Passed on first attempt with high confidence' :
+                         displayResult.final_status === 'REPAIRED' ? 'Recovered after repair loop' :
+                         displayResult.final_status === 'FAILED' ? 'Extraction could not be completed' :
+                         displayResult.final_status === 'PROVIDER_RETRY' ? 'Temporary infrastructure issue, please retry' :
                          'Requires manual review'}
                       </p>
                     </div>
@@ -519,7 +535,7 @@ export function Playground() {
                       </span>
                     )}
                   </h3>
-                  <JsonBlock data={result.final_json} maxHeight="360px" />
+                  <JsonBlock data={displayResult.final_json} maxHeight="360px" />
                 </GlassCard>
 
                 {/* Schema Validation */}
@@ -527,15 +543,14 @@ export function Playground() {
                   <h3 className="text-sm font-semibold mb-3 flex items-center gap-2" style={{ color: 'var(--text-primary)' }}>
                     <ShieldCheck size={15} className="text-brand-green" /> Schema Validation
                   </h3>
-                  <SchemaValidationChecklist showAll validationStatus={result.validation_status} />
+                  <SchemaValidationChecklist showAll validationStatus={displayResult.validation_status} />
                 </GlassCard>
 
                 {/* AI Reasoning */}
                 <GlassCard hover={false} className="p-5">
                   <ExplainabilityPanel
-                    json={result.final_json}
-                    ticket={result.ticket}
-                    confidence={result.metadata.confidence}
+                    json={displayResult.final_json}
+                    ticket={displayResult.ticket}
                   />
                 </GlassCard>
 
@@ -546,18 +561,18 @@ export function Playground() {
                     </h3>
                     <div className="flex items-start gap-5 mb-4">
                       <div className="flex flex-col items-center gap-1 shrink-0">
-                        <ConfidenceRing value={result.confidence_score / 100} />
+                        <ConfidenceRing value={displayResult.confidence_score / 100} />
                         <span className="text-[10px] text-white/40">Confidence</span>
                       </div>
                       <div className="flex-1 min-w-0">
                         <ExtractionSummaryCards
-                          latencyMs={result.metadata.latency_ms}
-                          confidence={result.confidence_score / 100}
-                          repairAttempts={result.metadata.repair_attempts}
+                          latencyMs={displayResult.metadata.latency_ms}
+                          confidence={displayResult.confidence_score / 100}
+                          repairAttempts={displayResult.metadata.repair_attempts}
                           fieldCount={fieldCount}
-                          provider={result.metadata.provider}
-                          model={result.metadata.model}
-                          validationStatus={result.validation_status === 'passed' ? 'Passed' : 'Failed'}
+                          provider={displayResult.metadata.provider}
+                          model={displayResult.metadata.model}
+                          validationStatus={displayResult.validation_status === 'passed' ? 'Passed' : 'Failed'}
                         />
                       </div>
                     </div>
@@ -565,28 +580,28 @@ export function Playground() {
                     {/* Status badges */}
                     <div className="flex flex-wrap gap-2 mb-3">
                       <span className={`chip text-xs font-semibold ${
-                        result.final_status === 'SUCCESS' ? 'bg-brand-green/15 text-brand-green border-brand-green/30' :
-                        result.final_status === 'REPAIRED' ? 'bg-yellow-500/15 text-yellow-400 border-yellow-500/30' :
-                        result.final_status === 'FAILED' ? 'bg-red-500/15 text-red-400 border-red-500/30' :
-                        result.final_status === 'PROVIDER_RETRY' ? 'bg-orange-500/15 text-orange-400 border-orange-500/30' :
+                        displayResult.final_status === 'SUCCESS' ? 'bg-brand-green/15 text-brand-green border-brand-green/30' :
+                        displayResult.final_status === 'REPAIRED' ? 'bg-yellow-500/15 text-yellow-400 border-yellow-500/30' :
+                        displayResult.final_status === 'FAILED' ? 'bg-red-500/15 text-red-400 border-red-500/30' :
+                        displayResult.final_status === 'PROVIDER_RETRY' ? 'bg-orange-500/15 text-orange-400 border-orange-500/30' :
                         'bg-red-500/15 text-red-400 border-red-500/30'
                       }`}>
-                        Status: {result.final_status}
+                        Status: {displayResult.final_status}
                       </span>
                       <span className={`chip text-xs font-semibold ${
-                        result.validation_status === 'passed' ? 'bg-brand-green/15 text-brand-green border-brand-green/30' : 'bg-red-500/15 text-red-400 border-red-500/30'
+                        displayResult.validation_status === 'passed' ? 'bg-brand-green/15 text-brand-green border-brand-green/30' : 'bg-red-500/15 text-red-400 border-red-500/30'
                       }`}>
-                        Validation: {result.validation_status === 'passed' ? 'Passed' : 'Failed'}
+                        Validation: {displayResult.validation_status === 'passed' ? 'Passed' : 'Failed'}
                       </span>
                       <span className="chip bg-brand-cyan/15 text-brand-cyan border-brand-cyan/30 text-xs font-semibold">
-                        Confidence: {result.confidence_score}%
+                        Confidence: {displayResult.confidence_score}%
                       </span>
                     </div>
 
-                    {result.needs_review_reason && (
+                    {displayResult.needs_review_reason && (
                       <div className="rounded-lg bg-yellow-500/10 border border-yellow-500/20 p-3 mb-3">
-                        <p className="text-xs font-semibold text-yellow-400 mb-1">Reason{result.needs_review_reason.includes(';') ? 's' : ''}:</p>
-                        {result.needs_review_reason.split('; ').map((reason, i) => (
+                        <p className="text-xs font-semibold text-yellow-400 mb-1">Reason{displayResult.needs_review_reason.includes(';') ? 's' : ''}:</p>
+                        {displayResult.needs_review_reason.split('; ').map((reason, i) => (
                           <p key={i} className="text-xs text-yellow-300/80">- {reason}</p>
                         ))}
                       </div>
@@ -594,12 +609,12 @@ export function Playground() {
 
                     {/* Metadata grid */}
                     <div className="grid grid-cols-2 gap-3 text-sm mt-3">
-                      <Meta label="Request ID" value={result.id} mono />
-                      <Meta label="Provider" value={result.metadata.provider} />
-                      <Meta label="Model" value={result.metadata.model} mono />
-                      <Meta label="Repair Attempts" value={String(result.metadata.repair_attempts)} />
-                      <Meta label="Timestamp" value={new Date(result.metadata.timestamp).toLocaleString()} />
-                      <Meta label="Final Status" value={result.final_status} />
+                      <Meta label="Request ID" value={displayResult.id} mono />
+                      <Meta label="Provider" value={displayResult.metadata.provider} />
+                      <Meta label="Model" value={displayResult.metadata.model} mono />
+                      <Meta label="Repair Attempts" value={String(displayResult.metadata.repair_attempts)} />
+                      <Meta label="Timestamp" value={new Date(displayResult.metadata.timestamp).toLocaleString()} />
+                      <Meta label="Final Status" value={displayResult.final_status} />
                     </div>
 
                     {/* Confidence bar */}
@@ -607,13 +622,13 @@ export function Playground() {
                       <div className="flex items-center justify-between mb-1.5">
                         <span className="text-xs text-white/50">Confidence Score</span>
                         <span className="text-xs font-semibold text-white">
-                          {result.confidence_score}%
+                          {displayResult.confidence_score}%
                         </span>
                       </div>
                       <div className="h-2 rounded-full bg-white/[0.06] overflow-hidden">
                         <motion.div
                           initial={{ width: 0 }}
-                          animate={{ width: `${result.confidence_score}%` }}
+                          animate={{ width: `${displayResult.confidence_score}%` }}
                           transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
                           className="h-full rounded-full bg-gradient-to-r from-brand-blue to-brand-cyan"
                         />
@@ -622,13 +637,13 @@ export function Playground() {
                   </GlassCard>
 
                 {/* Repair Timeline */}
-                {result.repair_attempts.length > 0 && (
+                {displayResult.repair_attempts.length > 0 && (
                   <GlassCard hover={false} className="p-5">
                     <h3 className="text-sm font-semibold mb-3 flex items-center gap-2" style={{ color: 'var(--text-primary)' }}>
                       <Recycle size={15} className="text-brand-cyan" /> Repair Timeline
                     </h3>
                     <div className="space-y-2">
-                      {result.repair_attempts.map((a) => (
+                      {displayResult.repair_attempts.map((a) => (
                         <div key={a.attempt} className="flex items-center gap-2 text-sm">
                           <div className={`w-5 h-5 rounded-full flex items-center justify-center ${
                             a.status === 'success' ? 'bg-brand-green/15 text-brand-green' : 'bg-yellow-500/15 text-yellow-400'
@@ -648,7 +663,7 @@ export function Playground() {
                   </GlassCard>
                 )}
 
-                {result.repair_attempts.length === 0 && (
+                {displayResult.repair_attempts.length === 0 && (
                   <GlassCard hover={false} className="p-5 border-brand-green/20">
                     <div className="flex items-center gap-2">
                       <CheckCircle2 size={15} className="text-brand-green" />
@@ -666,7 +681,7 @@ export function Playground() {
                     <Brush size={15} className="text-brand-cyan" /> Preprocessed Ticket
                   </h3>
                   <pre className="text-xs text-white/70 whitespace-pre-wrap font-mono leading-relaxed bg-[#0a0e1a] rounded-lg p-3 border border-white/[0.05] max-h-[120px] overflow-auto no-scrollbar">
-                    {result.cleaned_text || result.ticket}
+                    {displayResult.cleaned_text || displayResult.ticket}
                   </pre>
                 </GlassCard>
 
@@ -682,12 +697,18 @@ export function Playground() {
                     <FieldMappingTable mappings={fieldMappings} />
                   </GlassCard>
                 )}
+
+                <div className="flex justify-center pt-2">
+                  <button onClick={handleResetAll} className="btn-primary">
+                    <CheckCircle2 size={16} /> Try Another Extraction
+                  </button>
+                </div>
               </motion.div>
             )}
           </AnimatePresence>
 
           {/* Empty state */}
-          {!result && !running && !error && (
+          {!displayResult && !running && !error && (
             <GlassCard hover={false} className="p-5">
               <div className="h-[200px] flex flex-col items-center justify-center text-center">
                 <div className="w-12 h-12 rounded-2xl bg-white/[0.04] border border-white/[0.06] flex items-center justify-center mb-3">

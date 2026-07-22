@@ -51,7 +51,15 @@ class EvaluationRepository:
         )
         with open(self._path, "a", encoding="utf-8") as f:
             f.write(lines + "\n")
-        log_event(logger, event="records_appended", stage="evaluation", status="success", level="DEBUG", n=len(records), path=str(self._path))
+        log_event(
+            logger,
+            event="records_appended",
+            stage="evaluation",
+            status="success",
+            level="DEBUG",
+            n=len(records),
+            path=str(self._path),
+        )
 
     # ── Read ──────────────────────────────────────────────────────────────
 
@@ -76,7 +84,15 @@ class EvaluationRepository:
                     records.append(EvaluationRecord(**raw))
                 except Exception:
                     skipped += 1
-                    log_event(logger, event="malformed_line_skipped", stage="evaluation", status="failed", level="WARNING", line=line_no, reason="malformed line")
+                    log_event(
+                        logger,
+                        event="malformed_line_skipped",
+                        stage="evaluation",
+                        status="failed",
+                        level="WARNING",
+                        line=line_no,
+                        reason="malformed line",
+                    )
         log_event(logger, event="records_loaded", stage="evaluation", status="success", n=len(records), skipped=skipped)
         return records
 

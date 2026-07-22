@@ -47,9 +47,7 @@ class Customer(BaseModel):
     name: Optional[str] = Field(
         default=None, description="Customer name if explicitly mentioned in the text, else null."
     )
-    account_id: Optional[str] = Field(
-        default=None, description="Account or order ID if mentioned, else null."
-    )
+    account_id: Optional[str] = Field(default=None, description="Account or order ID if mentioned, else null.")
 
 
 class Issue(BaseModel):
@@ -57,9 +55,7 @@ class Issue(BaseModel):
     subcategory: Optional[str] = Field(
         default=None, description="Free-text subcategory, e.g. 'refund', 'login failure'."
     )
-    product_or_service: Optional[str] = Field(
-        default=None, description="Product or service name mentioned, else null."
-    )
+    product_or_service: Optional[str] = Field(default=None, description="Product or service name mentioned, else null.")
     urgency: Urgency
 
 

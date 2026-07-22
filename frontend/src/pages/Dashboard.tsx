@@ -2,7 +2,6 @@
 import { useQuery } from '@tanstack/react-query';
 import {
   Activity,
-  CheckCircle2,
   Clock,
   Gauge,
   Recycle,
@@ -172,7 +171,7 @@ export function Dashboard() {
                     if (!v) return ''; const d = new Date(v); return isNaN(d.getTime()) ? v : `${d.getHours()}:${String(d.getMinutes()).padStart(2, '0')}`;
                   }} />
                   <YAxis stroke="rgba(255,255,255,0.2)" fontSize={10} tickLine={false} axisLine={false} width={50} tickFormatter={(v) => v >= 1000 ? `${(v / 1000).toFixed(1)}s` : `${v}ms`} />
-                  <Tooltip contentStyle={tooltipStyle} labelFormatter={(v) => { const d = new Date(v); return isNaN(d.getTime()) ? v : d.toLocaleTimeString(); }} formatter={(v: number) => [v >= 1000 ? `${(v / 1000).toFixed(2)}s` : `${Math.round(v)}ms`, 'Latency']} />
+                  <Tooltip contentStyle={tooltipStyle} labelFormatter={(v) => { const d = new Date(v); return isNaN(d.getTime()) ? v : d.toLocaleTimeString(); }} formatter={(v) => { const n = typeof v === 'number' ? v : 0; return [n >= 1000 ? `${(n / 1000).toFixed(2)}s` : `${Math.round(n)}ms`, 'Latency']; }} />
                   <Area type="monotone" dataKey="latency" stroke="#06B6D4" strokeWidth={2} fill="url(#lat)" dot={false} {...CHART_PROPS} />
                 </AreaChart>
               </ResponsiveContainer>
@@ -209,7 +208,7 @@ export function Dashboard() {
                     if (!v) return ''; const d = new Date(v); return isNaN(d.getTime()) ? v : `${d.getHours()}:${String(d.getMinutes()).padStart(2, '0')}`;
                   }} />
                   <YAxis domain={[0, 100]} stroke="rgba(255,255,255,0.2)" fontSize={10} tickLine={false} axisLine={false} width={40} tickFormatter={(v) => `${v}%`} />
-                  <Tooltip contentStyle={tooltipStyle} labelFormatter={(v) => { const d = new Date(v); return isNaN(d.getTime()) ? v : d.toLocaleTimeString(); }} formatter={(v: number) => [`${Math.round(v)}%`, 'Success Rate']} />
+                  <Tooltip contentStyle={tooltipStyle} labelFormatter={(v) => { const d = new Date(v); return isNaN(d.getTime()) ? v : d.toLocaleTimeString(); }} formatter={(v) => { const n = typeof v === 'number' ? v : 0; return [`${Math.round(n)}%`, 'Success Rate']; }} />
                   <Area type="monotone" dataKey="rate" stroke="#22C55E" strokeWidth={2} fill="url(#succ)" dot={false} {...CHART_PROPS} />
                 </AreaChart>
               </ResponsiveContainer>
@@ -239,7 +238,7 @@ export function Dashboard() {
                   <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" horizontal={false} />
                   <XAxis type="number" stroke="rgba(255,255,255,0.2)" fontSize={10} tickLine={false} axisLine={false} />
                   <YAxis type="category" dataKey="reason" stroke="rgba(255,255,255,0.4)" fontSize={10} tickLine={false} axisLine={false} width={130} />
-                  <Tooltip contentStyle={tooltipStyle} formatter={(v: number) => [v, 'Count']} />
+                  <Tooltip contentStyle={tooltipStyle} formatter={(v) => [v ?? 0, 'Count']} />
                   <Bar dataKey="count" fill="#3B82F6" radius={[0, 8, 8, 0]} {...CHART_PROPS} />
                 </BarChart>
               </ResponsiveContainer>

@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
 import pytest
 
 from app.schema import (
@@ -120,9 +119,33 @@ class TestEvaluationMetrics:
         from app.evaluation.models import EvaluationRecord
 
         records = [
-            EvaluationRecord(ticket_id="T1", schema_valid=True, repair_attempted=False, repair_success=False, retry_count=0, latency_ms=100, infra_error=False),
-            EvaluationRecord(ticket_id="T2", schema_valid=True, repair_attempted=False, repair_success=False, retry_count=0, latency_ms=100, infra_error=False),
-            EvaluationRecord(ticket_id="T3", schema_valid=False, repair_attempted=True, repair_success=False, retry_count=3, latency_ms=500, infra_error=False),
+            EvaluationRecord(
+                ticket_id="T1",
+                schema_valid=True,
+                repair_attempted=False,
+                repair_success=False,
+                retry_count=0,
+                latency_ms=100,
+                infra_error=False,
+            ),
+            EvaluationRecord(
+                ticket_id="T2",
+                schema_valid=True,
+                repair_attempted=False,
+                repair_success=False,
+                retry_count=0,
+                latency_ms=100,
+                infra_error=False,
+            ),
+            EvaluationRecord(
+                ticket_id="T3",
+                schema_valid=False,
+                repair_attempted=True,
+                repair_success=False,
+                retry_count=3,
+                latency_ms=500,
+                infra_error=False,
+            ),
         ]
         rate = calculate_schema_valid_rate(records)
         assert rate == pytest.approx(2 / 3, rel=1e-3)
@@ -137,8 +160,24 @@ class TestEvaluationMetrics:
         from app.evaluation.models import EvaluationRecord
 
         records = [
-            EvaluationRecord(ticket_id="T1", schema_valid=True, repair_attempted=False, repair_success=False, retry_count=0, latency_ms=100, infra_error=False),
-            EvaluationRecord(ticket_id="T2", schema_valid=True, repair_attempted=False, repair_success=False, retry_count=0, latency_ms=300, infra_error=False),
+            EvaluationRecord(
+                ticket_id="T1",
+                schema_valid=True,
+                repair_attempted=False,
+                repair_success=False,
+                retry_count=0,
+                latency_ms=100,
+                infra_error=False,
+            ),
+            EvaluationRecord(
+                ticket_id="T2",
+                schema_valid=True,
+                repair_attempted=False,
+                repair_success=False,
+                retry_count=0,
+                latency_ms=300,
+                infra_error=False,
+            ),
         ]
         avg = calculate_average_latency(records)
         assert avg == 200.0
@@ -148,8 +187,24 @@ class TestEvaluationMetrics:
         from app.evaluation.models import EvaluationRecord
 
         records = [
-            EvaluationRecord(ticket_id="T1", schema_valid=True, repair_attempted=False, repair_success=False, retry_count=0, latency_ms=100, infra_error=False),
-            EvaluationRecord(ticket_id="T2", schema_valid=True, repair_attempted=False, repair_success=False, retry_count=2, latency_ms=200, infra_error=False),
+            EvaluationRecord(
+                ticket_id="T1",
+                schema_valid=True,
+                repair_attempted=False,
+                repair_success=False,
+                retry_count=0,
+                latency_ms=100,
+                infra_error=False,
+            ),
+            EvaluationRecord(
+                ticket_id="T2",
+                schema_valid=True,
+                repair_attempted=False,
+                repair_success=False,
+                retry_count=2,
+                latency_ms=200,
+                infra_error=False,
+            ),
         ]
         avg = calculate_average_retries(records)
         assert avg == 1.0
@@ -218,8 +273,28 @@ class TestEvaluationRepository:
 
         path = tmp_data_dir / "stats_data.jsonl"
         repo = EvaluationRepository(path=path)
-        repo.save(EvaluationRecord(ticket_id="T1", schema_valid=True, repair_attempted=False, repair_success=False, retry_count=0, latency_ms=100, infra_error=False))
-        repo.save(EvaluationRecord(ticket_id="T2", schema_valid=False, repair_attempted=True, repair_success=False, retry_count=3, latency_ms=500, infra_error=False))
+        repo.save(
+            EvaluationRecord(
+                ticket_id="T1",
+                schema_valid=True,
+                repair_attempted=False,
+                repair_success=False,
+                retry_count=0,
+                latency_ms=100,
+                infra_error=False,
+            )
+        )
+        repo.save(
+            EvaluationRecord(
+                ticket_id="T2",
+                schema_valid=False,
+                repair_attempted=True,
+                repair_success=False,
+                retry_count=3,
+                latency_ms=500,
+                infra_error=False,
+            )
+        )
 
         stats = repo.statistics()
         assert stats["total"] == 2

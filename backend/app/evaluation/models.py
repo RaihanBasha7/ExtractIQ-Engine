@@ -16,11 +16,22 @@ class EvaluationRecord(BaseModel):
     failure_reason: str | None = Field(default=None, description="Categorised reason for failure, if any.")
     expected_category: str | None = Field(default=None, description="Ground-truth issue category.")
     predicted_category: str | None = Field(default=None, description="Category predicted by the model.")
-    field_accuracy: float | None = Field(default=None, ge=0.0, le=1.0, description="Fraction of expected fields that matched the prediction.")
-    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc), description="When this record was created.")
+    field_accuracy: float | None = Field(
+        default=None, ge=0.0, le=1.0, description="Fraction of expected fields that matched the prediction."
+    )
+    timestamp: datetime = Field(
+        default_factory=lambda: datetime.now(timezone.utc), description="When this record was created."
+    )
 
-    failure_stage: str | None = Field(default=None, description="Stage at which the failure occurred (validation, infrastructure, unexpected, configuration, or None if successful).")
-    field_breakdown: dict[str, str] | None = Field(default=None, description="Per-field match status keyed by dotted path.")
+    failure_stage: str | None = Field(
+        default=None,
+        description="Stage at which the failure occurred "
+        "(validation, infrastructure, unexpected, configuration, "
+        "or None if successful).",
+    )
+    field_breakdown: dict[str, str] | None = Field(
+        default=None, description="Per-field match status keyed by dotted path."
+    )
     processing_time: float | None = Field(default=None, description="Total end-to-end processing time in seconds.")
     model_name: str | None = Field(default=None, description="Name of the model used for extraction.")
     provider: str | None = Field(default=None, description="LLM provider used (groq, featherless, etc.).")

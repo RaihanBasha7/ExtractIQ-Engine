@@ -114,7 +114,9 @@ class MetricsResponse(BaseModel):
     average_retry_count: float = Field(description="Average number of retry attempts across all extractions.")
     average_processing_time: float = Field(description="Average processing time in seconds.")
     failure_breakdown: dict[str, int] = Field(description="Count of failures grouped by failure category.")
-    last_updated: datetime | None = Field(description="Timestamp of the most recent extraction result, or null if none exist.")
+    last_updated: datetime | None = Field(
+        description="Timestamp of the most recent extraction result, or null if none exist."
+    )
     latency_history: list[dict] = Field(default_factory=list, description="Time-series of latency values.")
     success_history: list[dict] = Field(default_factory=list, description="Time-series of success/failure.")
     retry_history: list[dict] = Field(default_factory=list, description="Time-series of retry counts.")

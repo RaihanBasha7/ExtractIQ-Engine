@@ -1,31 +1,26 @@
-import { useRef, useState, useCallback } from 'react';
+import { useRef, useState, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Layers,
   Upload,
   Play,
-  Save,
   CheckCircle2,
-  XCircle,
   Loader2,
-  Clock,
   FileText,
   AlertTriangle,
-  ChevronRight,
   FileUp,
   File,
   FileSpreadsheet,
   FileCode2,
   Trash2,
-  BarChart3,
   Download,
   SplitSquareHorizontal,
   Eye,
   EyeOff,
 } from 'lucide-react';
 import { GlassCard } from '../components/GlassCard';
-import { JsonBlock } from '../components/JsonBlock';
 import { api } from '../lib/api';
+import { useExtractionContext } from '../lib/extractionContext';
 import type { BatchUploadSummary } from '../lib/api';
 
 const FILE_ACCEPT = '.pdf,.txt,.docx,.csv,.json';
@@ -63,6 +58,7 @@ function formatCSVCell(v: unknown): string {
 }
 
 export function BatchExtract() {
+  const { batchResult, setBatchResult, clearBatch } = useExtractionContext();
   const [mode, setMode] = useState<'empty' | 'file' | 'segments' | 'running' | 'result'>('empty');
   const [file, setFile] = useState<File | null>(null);
   const [input, setInput] = useState('');
@@ -79,6 +75,16 @@ export function BatchExtract() {
   const fileRef = useRef<HTMLInputElement>(null);
   const dropRef = useRef<HTMLDivElement>(null);
   const [dragOver, setDragOver] = useState(false);
+  const restoredRef = useRef(false);
+
+  useEffect(() => {
+    if (batchResult && !restoredRef.current) {
+      restoredRef.current = true;
+      setSummary(batchResult);
+      setMode('result');
+      setShowResults(true);
+    }
+  }, [batchResult]);
 
   const getFileIcon = (type?: string | null) => {
     if (!type) return File;
@@ -221,7 +227,11 @@ export function BatchExtract() {
       const result = await api.extractBatchProcess(sessionId, tickets);
       clearInterval(timer);
       setStageIdx(PIPELINE_STAGES.length - 1);
-      setSummary((prev) => prev ? { ...prev, ...result, results: result.results } : result);
+      setSummary((prev) => {
+        const merged = prev ? { ...prev, ...result, results: result.results } : result;
+        setBatchResult(merged);
+        return merged;
+      });
       setMode('result');
       setTimeout(() => setShowResults(true), 300);
     } catch (err) {
@@ -231,7 +241,7 @@ export function BatchExtract() {
     } finally {
       setRunning(false);
     }
-  }, []);
+  }, [setBatchResult]);
 
   const processSegments = useCallback(() => {
     if (!summary?.session_id || !summary?.segments) return;
@@ -266,17 +276,17 @@ export function BatchExtract() {
     if (!summary?.results?.length) return;
     const headers = ['index', 'ticket', 'final_status', 'confidence_score', 'category', 'urgency', 'customer_name', 'order_ids', 'amounts'];
     const rows = summary.results.map((r, i) => {
-      const fj = r.final_json || {};
+      const fj: Record<string, unknown> = r.final_json || {};
       return [
         i + 1,
         r.ticket,
         r.final_status,
         r.confidence_score?.toFixed(1),
-        formatCSVCell((fj as any).category),
-        formatCSVCell((fj as any).urgency),
-        formatCSVCell((fj as any).customer?.name ?? (fj as any).customer),
-        formatCSVCell(Array.isArray((fj as any).entities?.order_ids) ? (fj as any).entities.order_ids.join(';') : ''),
-        formatCSVCell(Array.isArray((fj as any).entities?.amounts_mentioned) ? (fj as any).entities.amounts_mentioned.join(';') : ''),
+        formatCSVCell(fj.category as string),
+        formatCSVCell(fj.urgency as string),
+        formatCSVCell((fj.customer as Record<string, unknown>)?.name as string ?? fj.customer as string),
+        formatCSVCell(Array.isArray((fj.entities as Record<string, unknown>)?.order_ids) ? ((fj.entities as Record<string, unknown>).order_ids as string[]).join(';') : ''),
+        formatCSVCell(Array.isArray((fj.entities as Record<string, unknown>)?.amounts_mentioned) ? ((fj.entities as Record<string, unknown>).amounts_mentioned as string[]).join(';') : ''),
       ];
     });
     const csv = [headers.join(','), ...rows.map((r) => r.join(','))].join('\n');
@@ -586,7 +596,7 @@ export function BatchExtract() {
         </div>
       )}
 
-      {(mode === 'running' && mode !== 'segments' && summary?.segments?.length) && (
+      {(mode === 'running' && summary?.segments?.length) && (
         <GlassCard hover={false} className="p-5">
           <h3 className="text-sm font-semibold text-white mb-4 flex items-center gap-2">
             <Loader2 size={15} className="text-brand-blue animate-spin" /> Processing {validSegments.length} Tickets
@@ -671,7 +681,7 @@ export function BatchExtract() {
                 <CheckCircle2 size={15} className="text-brand-green" /> Results
               </h3>
               <div className="flex gap-2 relative">
-                <button onClick={() => { clearFile(); setMode('empty'); }} className="btn-ghost">
+                <button onClick={() => { clearBatch(); clearFile(); setMode('empty'); }} className="btn-ghost">
                   <Upload size={14} /> New Batch
                 </button>
                 <div className="relative">
@@ -845,6 +855,15 @@ export function BatchExtract() {
               )}
             </GlassCard>
           )}
+
+          <div className="flex justify-center pt-2">
+            <button
+              onClick={() => { clearBatch(); clearFile(); setMode('empty'); setDownloadMenu(false); }}
+              className="btn-primary"
+            >
+              <CheckCircle2 size={16} /> Extract Another Batch
+            </button>
+          </div>
         </div>
       )}
     </div>

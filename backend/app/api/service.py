@@ -11,8 +11,9 @@ that a single extraction can be correlated across the entire pipeline.
 import time
 
 from app.api.models import ExtractResponse
-from app.database.repository import ExtractionRepository, RawTicketRepository
 from app.confidence import ConfidenceMetrics, compute_confidence
+from app.config import ACTIVE_MODEL, ACTIVE_PROVIDER
+from app.database.repository import ExtractionRepository, RawTicketRepository
 from app.evaluation.collector import EvaluationCollector
 from app.evaluation.repository import EvaluationRepository
 from app.extraction import (
@@ -22,12 +23,9 @@ from app.extraction import (
     FINAL_STATUS_NETWORK_ERROR,
     FINAL_STATUS_PROVIDER_RATE_LIMIT,
     FINAL_STATUS_PROVIDER_TIMEOUT,
-    FINAL_STATUS_REPAIRED,
-    FINAL_STATUS_SUCCESS,
-    extract_ticket,
     ExtractionResult,
+    extract_ticket,
 )
-from app.config import ACTIVE_MODEL, ACTIVE_PROVIDER
 from app.logging import get_logger, log_event
 from app.metadata import build_metadata
 from app.preprocessing import preprocess
@@ -60,9 +58,24 @@ def _build_repair_attempts(result: ExtractionResult) -> list:
 
 
 def process_ticket(ticket_id: str, raw_text: str, request_id: str | None = None) -> ExtractResponse:
-    log_event(logger, event="preprocessing_started", stage="preprocessing", status="started", request_id=request_id, ticket_id=ticket_id)
+    log_event(
+        logger,
+        event="preprocessing_started",
+        stage="preprocessing",
+        status="started",
+        request_id=request_id,
+        ticket_id=ticket_id,
+    )
     pre = preprocess(raw_text)
-    log_event(logger, event="preprocessing_completed", stage="preprocessing", status="success", request_id=request_id, ticket_id=ticket_id, language=pre.language)
+    log_event(
+        logger,
+        event="preprocessing_completed",
+        stage="preprocessing",
+        status="success",
+        request_id=request_id,
+        ticket_id=ticket_id,
+        language=pre.language,
+    )
 
     raw_ticket_repo.save(
         ticket_id=ticket_id,
@@ -72,13 +85,32 @@ def process_ticket(ticket_id: str, raw_text: str, request_id: str | None = None)
     )
 
     start = time.monotonic()
-    log_event(logger, event="extraction_started", stage="extraction", status="started", request_id=request_id, ticket_id=ticket_id, provider=ACTIVE_PROVIDER, model=ACTIVE_MODEL)
+    log_event(
+        logger,
+        event="extraction_started",
+        stage="extraction",
+        status="started",
+        request_id=request_id,
+        ticket_id=ticket_id,
+        provider=ACTIVE_PROVIDER,
+        model=ACTIVE_MODEL,
+    )
     try:
         result = extract_ticket(ticket_id, pre.clean_text, request_id=request_id)
     except Exception as exc:
         elapsed = time.monotonic() - start
         category = _map_exception_category(exc)
-        log_event(logger, event="extraction_error", stage="extraction", status="failed", level="ERROR", exc_info=True, request_id=request_id, ticket_id=ticket_id, category=category)
+        log_event(
+            logger,
+            event="extraction_error",
+            stage="extraction",
+            status="failed",
+            level="ERROR",
+            exc_info=True,
+            request_id=request_id,
+            ticket_id=ticket_id,
+            category=category,
+        )
         extraction_repo.save(
             ticket_id=ticket_id,
             structured_json=None,
@@ -101,7 +133,16 @@ def process_ticket(ticket_id: str, raw_text: str, request_id: str | None = None)
         )
         record = evaluation_collector.add(eval_result)
         evaluation_repo.save(record)
-        log_event(logger, event="response_sent", stage="api", status="failed", request_id=request_id, ticket_id=ticket_id, latency_ms=round(elapsed * 1000), category=category)
+        log_event(
+            logger,
+            event="response_sent",
+            stage="api",
+            status="failed",
+            request_id=request_id,
+            ticket_id=ticket_id,
+            latency_ms=round(elapsed * 1000),
+            category=category,
+        )
         return ExtractResponse(
             ticket_id=ticket_id,
             success=False,
@@ -128,23 +169,47 @@ def process_ticket(ticket_id: str, raw_text: str, request_id: str | None = None)
         )
 
     elapsed = time.monotonic() - start
-    log_event(logger, event="extraction_completed", stage="extraction", status="success", request_id=request_id, ticket_id=ticket_id, retries=result.retry_count, latency_ms=round(elapsed * 1000))
+    log_event(
+        logger,
+        event="extraction_completed",
+        stage="extraction",
+        status="success",
+        request_id=request_id,
+        ticket_id=ticket_id,
+        retries=result.retry_count,
+        latency_ms=round(elapsed * 1000),
+    )
 
-    log_event(logger, event="persist_started", stage="extraction", status="started", request_id=request_id, ticket_id=ticket_id, action="persist")
+    log_event(
+        logger,
+        event="persist_started",
+        stage="extraction",
+        status="started",
+        request_id=request_id,
+        ticket_id=ticket_id,
+        action="persist",
+    )
     structured = result.data.model_dump() if result.data else None
 
     repair_attempts_data = _build_repair_attempts(result)
-    confidence = compute_confidence(ConfidenceMetrics(
-        success=result.success,
-        retry_count=result.retry_count,
-        data=result.data,
-    ))
+    confidence = compute_confidence(
+        ConfidenceMetrics(
+            success=result.success,
+            retry_count=result.retry_count,
+            data=result.data,
+        )
+    )
 
     validation_status = "passed" if result.success else "failed"
     needs_review_reason_str = "; ".join(result.needs_review_reasons) if result.needs_review_reasons else None
 
-    infra_statuses = {FINAL_STATUS_PROVIDER_RATE_LIMIT, FINAL_STATUS_PROVIDER_TIMEOUT,
-                       FINAL_STATUS_NETWORK_ERROR, FINAL_STATUS_MODEL_ERROR, FINAL_STATUS_FAILED}
+    infra_statuses = {
+        FINAL_STATUS_PROVIDER_RATE_LIMIT,
+        FINAL_STATUS_PROVIDER_TIMEOUT,
+        FINAL_STATUS_NETWORK_ERROR,
+        FINAL_STATUS_MODEL_ERROR,
+        FINAL_STATUS_FAILED,
+    }
     if result.success and confidence < 50 and result.final_status not in infra_statuses:
         result.final_status = FINAL_STATUS_NEEDS_REVIEW
         review_reasons = list(result.needs_review_reasons)
@@ -165,10 +230,26 @@ def process_ticket(ticket_id: str, raw_text: str, request_id: str | None = None)
         final_status=result.final_status,
         needs_review_reason=needs_review_reason_str,
     )
-    log_event(logger, event="persist_completed", stage="extraction", status="success", request_id=request_id, ticket_id=ticket_id, action="persist")
+    log_event(
+        logger,
+        event="persist_completed",
+        stage="extraction",
+        status="success",
+        request_id=request_id,
+        ticket_id=ticket_id,
+        action="persist",
+    )
     record = evaluation_collector.add(result, processing_time_seconds=elapsed)
     evaluation_repo.save(record)
-    log_event(logger, event="response_sent", stage="api", status="success", request_id=request_id, ticket_id=ticket_id, latency_ms=round(elapsed * 1000))
+    log_event(
+        logger,
+        event="response_sent",
+        stage="api",
+        status="success",
+        request_id=request_id,
+        ticket_id=ticket_id,
+        latency_ms=round(elapsed * 1000),
+    )
     return ExtractResponse(
         ticket_id=ticket_id,
         success=result.success,

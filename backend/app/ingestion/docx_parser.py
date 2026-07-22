@@ -59,5 +59,5 @@ def parse_docx(file_path: str, file_name: str, file_size_bytes: int, **kwargs) -
 def _count_tickets(text: str) -> int:
     if not text.strip():
         return 0
-    lines = [l.strip() for l in text.split("\n") if l.strip()]
+    lines = [line.strip() for line in text.split("\n") if line.strip()]
     return max(1, len(lines))

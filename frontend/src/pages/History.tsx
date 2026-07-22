@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Search, ChevronDown, CheckCircle2, XCircle, Clock, History as HistoryIcon, ChevronLeft, ChevronRight, AlertCircle, AlertTriangle } from 'lucide-react';
+import { Search, ChevronDown, CheckCircle2, XCircle, Clock, History as HistoryIcon, ChevronLeft, ChevronRight, AlertCircle } from 'lucide-react';
 import { api } from '../lib/api';
 import { GlassCard } from '../components/GlassCard';
 import { JsonBlock } from '../components/JsonBlock';

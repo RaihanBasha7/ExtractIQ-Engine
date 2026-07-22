@@ -65,5 +65,5 @@ def _read_text(file_path: str) -> str | None:
 def _count_tickets(text: str) -> int:
     if not text.strip():
         return 0
-    lines = [l.strip() for l in text.split("\n") if l.strip()]
+    lines = [line.strip() for line in text.split("\n") if line.strip()]
     return max(1, len(lines))

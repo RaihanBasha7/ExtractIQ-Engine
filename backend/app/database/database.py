@@ -13,7 +13,7 @@ class Base(DeclarativeBase):
 
 
 def create_database():
-    from app.database.models import RawTicket, ExtractionResult  # noqa: F401
+    from app.database.models import ExtractionResult, RawTicket  # noqa: F401
 
     # Always create tables first
     Base.metadata.create_all(bind=engine)
@@ -30,17 +30,9 @@ def create_database():
                 ("needs_review_reason", "TEXT"),
             ]:
                 result = conn.execute(
-                    text(
-                        f"SELECT COUNT(*) FROM pragma_table_info('extraction_results') "
-                        f"WHERE name='{col}'"
-                    )
+                    text(f"SELECT COUNT(*) FROM pragma_table_info('extraction_results') " f"WHERE name='{col}'")
                 )
                 if result.scalar() == 0:
-                    conn.execute(
-                        text(
-                            f"ALTER TABLE extraction_results "
-                            f"ADD COLUMN {col} {col_type}"
-                        )
-                    )
+                    conn.execute(text(f"ALTER TABLE extraction_results " f"ADD COLUMN {col} {col_type}"))
 
             conn.commit()

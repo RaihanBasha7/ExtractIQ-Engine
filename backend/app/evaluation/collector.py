@@ -22,9 +22,14 @@ _FAILURE_STAGE_MAP: dict[str, str] = {
     "unknown": "unexpected",
 }
 
-_INFRA_CATEGORIES: frozenset[str] = frozenset({
-    "rate_limit", "timeout", "api_error", "provider_error",
-})
+_INFRA_CATEGORIES: frozenset[str] = frozenset(
+    {
+        "rate_limit",
+        "timeout",
+        "api_error",
+        "provider_error",
+    }
+)
 
 
 def _compute_field_accuracy(
@@ -120,7 +125,17 @@ class EvaluationCollector:
         processing_time_seconds: float | None = None,
     ) -> EvaluationRecord:
         record = self.build_record(result, expected=expected, processing_time_seconds=processing_time_seconds)
-        log_event(logger, event="evaluation_record_created", stage="evaluation", status="success", ticket_id=record.ticket_id, schema_valid=record.schema_valid, retry_count=record.retry_count, latency_ms=record.latency_ms, processing_time=record.processing_time)
+        log_event(
+            logger,
+            event="evaluation_record_created",
+            stage="evaluation",
+            status="success",
+            ticket_id=record.ticket_id,
+            schema_valid=record.schema_valid,
+            retry_count=record.retry_count,
+            latency_ms=record.latency_ms,
+            processing_time=record.processing_time,
+        )
         return record
 
     def extend(
@@ -137,14 +152,10 @@ class EvaluationCollector:
     ) -> EvaluationRecord:
         predicted = result.data
         predicted_category = (
-            predicted.issue.category.value
-            if predicted and predicted.issue and predicted.issue.category
-            else None
+            predicted.issue.category.value if predicted and predicted.issue and predicted.issue.category else None
         )
         expected_category = (
-            expected.issue.category.value
-            if expected and expected.issue and expected.issue.category
-            else None
+            expected.issue.category.value if expected and expected.issue and expected.issue.category else None
         )
 
         failure_reason = result.failure_category

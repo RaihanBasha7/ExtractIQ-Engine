@@ -4,8 +4,6 @@ from __future__ import annotations
 
 from unittest.mock import MagicMock, patch
 
-import pytest
-
 
 class TestInvalidRequestBody:
     def test_invalid_json_body(self, client):

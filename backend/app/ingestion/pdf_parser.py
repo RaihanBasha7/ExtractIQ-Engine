@@ -5,9 +5,7 @@ Supports multi-page PDFs, page-by-page extraction, blank page skipping,
 and graceful degradation if a page fails.
 """
 
-import os
-import tempfile
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Any
 
 from app.ingestion import IngestionResult
@@ -108,6 +106,7 @@ def parse_pdf(file_path: str, file_name: str, file_size_bytes: int, **kwargs) ->
 def _try_open_pdf(file_path: str) -> _PdfHandle | None:
     try:
         import pdfplumber
+
         pdf = pdfplumber.open(file_path)
         if len(pdf.pages) > 0:
             return _PdfHandle(source=pdf, library="pdfplumber")
@@ -117,6 +116,7 @@ def _try_open_pdf(file_path: str) -> _PdfHandle | None:
 
     try:
         import fitz
+
         doc = fitz.open(file_path)
         if doc.page_count > 0:
             return _PdfHandle(source=doc, library="fitz")
@@ -129,8 +129,9 @@ def _try_open_pdf(file_path: str) -> _PdfHandle | None:
 
 def _ocr_page_fallback(file_path: str, page_idx: int) -> str | None:
     try:
-        from pdf2image import convert_from_path
         import pytesseract
+        from pdf2image import convert_from_path
+
         images = convert_from_path(file_path, first_page=page_idx + 1, last_page=page_idx + 1)
         if not images:
             return None
@@ -146,8 +147,9 @@ def _ocr_page_fallback(file_path: str, page_idx: int) -> str | None:
 
 def _ocr_fallback(file_path: str):
     try:
-        from pdf2image import convert_from_path
         import pytesseract
+        from pdf2image import convert_from_path
+
         images = convert_from_path(file_path)
         texts: list[str] = []
         for img in images:
@@ -173,5 +175,5 @@ def _merge_pages(pages: list[_PageResult]) -> str:
 def _count_tickets(text: str) -> int:
     if not text.strip():
         return 0
-    lines = [l.strip() for l in text.split("\n") if l.strip()]
+    lines = [line.strip() for line in text.split("\n") if line.strip()]
     return max(1, len(lines))

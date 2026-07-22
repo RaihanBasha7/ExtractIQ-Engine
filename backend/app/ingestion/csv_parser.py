@@ -83,8 +83,6 @@ def parse_csv(file_path: str, file_name: str, file_size_bytes: int, **kwargs) ->
 
 
 def _detect_text_column(fieldnames: list[str]) -> str:
-    lower_map = {c: c.lower() for c in fieldnames}
-
     for hint in _TEXT_COLUMN_HINTS:
         for original, lower in zip(fieldnames, [c.lower() for c in fieldnames]):
             if lower == hint:

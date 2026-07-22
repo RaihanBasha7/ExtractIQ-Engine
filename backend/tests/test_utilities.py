@@ -2,9 +2,7 @@
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
-
-import pytest
+from datetime import datetime
 
 
 class TestTextCleaning:
@@ -102,7 +100,7 @@ class TestPreprocessingPipeline:
         assert result.clean_text == ""
 
     def test_preprocess_result_dataclass(self):
-        from app.preprocessing import preprocess, PreprocessResult
+        from app.preprocessing import PreprocessResult, preprocess
 
         result = preprocess("Hello World")
         assert isinstance(result, PreprocessResult)
@@ -207,7 +205,9 @@ class TestConfidenceScoring:
         perfect = TicketExtraction(
             ticket_id="T001",
             customer=Customer(name="John", account_id="123"),
-            issue=Issue(category=IssueCategory.billing, subcategory="refund", product_or_service="service", urgency=Urgency.high),
+            issue=Issue(
+                category=IssueCategory.billing, subcategory="refund", product_or_service="service", urgency=Urgency.high
+            ),
             sentiment=Sentiment.frustrated,
             entities=Entities(order_ids=["ORD-1"], dates_mentioned=["2024-01-01"], amounts_mentioned=["$100"]),
             requested_action="refund",
@@ -238,7 +238,9 @@ class TestConfidenceScoring:
         repaired = TicketExtraction(
             ticket_id="T002",
             customer=Customer(name="Jane", account_id=None),
-            issue=Issue(category=IssueCategory.technical, subcategory=None, product_or_service=None, urgency=Urgency.medium),
+            issue=Issue(
+                category=IssueCategory.technical, subcategory=None, product_or_service=None, urgency=Urgency.medium
+            ),
             sentiment=Sentiment.neutral,
             entities=Entities(order_ids=[], dates_mentioned=[], amounts_mentioned=[]),
             requested_action=None,

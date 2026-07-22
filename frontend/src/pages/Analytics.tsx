@@ -127,7 +127,7 @@ export function Analytics() {
                   <Tooltip
                     contentStyle={tooltipStyle}
                     labelFormatter={(v) => { const d = new Date(v); return isNaN(d.getTime()) ? v : d.toLocaleString(); }}
-                    formatter={(v: number) => [v >= 1000 ? `${(v / 1000).toFixed(2)}s` : `${Math.round(v)}ms`, 'Latency']}
+                    formatter={(v) => { const n = typeof v === 'number' ? v : 0; return [n >= 1000 ? `${(n / 1000).toFixed(2)}s` : `${Math.round(n)}ms`, 'Latency']; }}
                   />
                   <Area type="monotone" dataKey="latency" stroke="#06B6D4" strokeWidth={2} fill="url(#a1)" dot={false} {...CHART_PROPS} />
                 </AreaChart>
@@ -156,7 +156,7 @@ export function Analytics() {
                   <Tooltip
                     contentStyle={tooltipStyle}
                     labelFormatter={(v) => { const d = new Date(v); return isNaN(d.getTime()) ? v : d.toLocaleString(); }}
-                    formatter={(v: number) => [`${Math.round(v)}%`, 'Success Rate']}
+                    formatter={(v) => { const n = typeof v === 'number' ? v : 0; return [`${Math.round(n)}%`, 'Success Rate']; }}
                   />
                   <Line type="monotone" dataKey="rate" stroke="#22C55E" strokeWidth={2} dot={false} {...CHART_PROPS} />
                 </LineChart>
@@ -222,7 +222,7 @@ export function Analytics() {
                   </Pie>
                   <Tooltip
                     contentStyle={tooltipStyle}
-                    formatter={(v: number) => [v, 'Failures']}
+                    formatter={(v) => [v ?? 0, 'Failures']}
                   />
                 </PieChart>
               </ResponsiveContainer>

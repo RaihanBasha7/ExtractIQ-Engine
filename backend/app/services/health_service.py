@@ -52,8 +52,12 @@ class HealthService:
         overall_elapsed = round((time.monotonic() - overall_start) * 1000, 2)
 
         log_event(
-            logger, event="health_check_completed", stage="api", status="success",
-            request_id=request_id, response_time_ms=overall_elapsed,
+            logger,
+            event="health_check_completed",
+            stage="api",
+            status="success",
+            request_id=request_id,
+            response_time_ms=overall_elapsed,
             overall_status=overall_status,
         )
 
@@ -78,28 +82,34 @@ class HealthService:
     # ── Internal helpers ──────────────────────────────────────────────────
 
     @staticmethod
-    def _run_check(
-        check_fn, request_id: str | None = None
-    ) -> HealthCheckDetail:
+    def _run_check(check_fn, request_id: str | None = None) -> HealthCheckDetail:
         start = time.monotonic()
         try:
             metadata = check_fn() if callable(check_fn) else {}
             elapsed = round((time.monotonic() - start) * 1000, 2)
             return HealthCheckDetail(
-                status="ok", response_time_ms=elapsed,
+                status="ok",
+                response_time_ms=elapsed,
                 checked_at=datetime.now(timezone.utc),
                 **{k: v for k, v in (metadata or {}).items() if v is not None},
             )
         except Exception as exc:
             elapsed = round((time.monotonic() - start) * 1000, 2)
             log_event(
-                logger, event="health_check_failed", stage="api", status="failed",
-                level="WARNING", request_id=request_id,
-                check=check_fn.__name__, error=str(exc),
+                logger,
+                event="health_check_failed",
+                stage="api",
+                status="failed",
+                level="WARNING",
+                request_id=request_id,
+                check=check_fn.__name__,
+                error=str(exc),
             )
             return HealthCheckDetail(
-                status="degraded", response_time_ms=elapsed,
-                error=str(exc), checked_at=datetime.now(timezone.utc),
+                status="degraded",
+                response_time_ms=elapsed,
+                error=str(exc),
+                checked_at=datetime.now(timezone.utc),
             )
 
     @staticmethod

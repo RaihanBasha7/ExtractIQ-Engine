@@ -47,15 +47,21 @@ logger = get_logger(__name__)
 # Lifespan
 # ---------------------------------------------------------------------------
 
+
 @asynccontextmanager
 async def lifespan(application: FastAPI):
     configure_logging()
     create_database()
     application.state.start_time = time.monotonic()
     log_event(
-        logger, event="service_startup", stage="api", status="started",
-        provider=ACTIVE_PROVIDER, model=ACTIVE_MODEL,
-        max_retries=MAX_REPAIR_RETRIES, version=APP_VERSION,
+        logger,
+        event="service_startup",
+        stage="api",
+        status="started",
+        provider=ACTIVE_PROVIDER,
+        model=ACTIVE_MODEL,
+        max_retries=MAX_REPAIR_RETRIES,
+        version=APP_VERSION,
     )
     yield
 
@@ -111,6 +117,7 @@ app.include_router(router)
 # Global exception handlers
 # ---------------------------------------------------------------------------
 
+
 def _error_response(
     request: Request,
     status_code: int,
@@ -133,7 +140,9 @@ def _error_response(
 @app.exception_handler(HTTPException)
 async def http_exception_handler(request: Request, exc: HTTPException):
     request_id = getattr(request.state, "request_id", None)
-    log_event(logger, event="http_error", stage="api", status="failed", request_id=request_id, status_code=exc.status_code)
+    log_event(
+        logger, event="http_error", stage="api", status="failed", request_id=request_id, status_code=exc.status_code
+    )
     return _error_response(
         request,
         status_code=exc.status_code,
@@ -171,7 +180,12 @@ async def pydantic_validation_handler(request: Request, exc: ValidationError):
 @app.exception_handler(Exception)
 async def generic_exception_handler(request: Request, exc: Exception):
     log_event(
-        logger, event="unhandled_exception", stage="api", status="failed", level="ERROR", exc_info=True,
+        logger,
+        event="unhandled_exception",
+        stage="api",
+        status="failed",
+        level="ERROR",
+        exc_info=True,
         request_id=getattr(request.state, "request_id", None),
         path=request.url.path,
         method=request.method,

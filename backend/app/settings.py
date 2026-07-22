@@ -15,7 +15,6 @@ Usage
 
 from __future__ import annotations
 
-from pathlib import Path
 from typing import Literal
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -34,9 +33,7 @@ class Settings(BaseSettings):
     APP_VERSION: str = "0.1.0"
     API_VERSION: str = "v1"
     ENVIRONMENT: Literal["development", "staging", "production", "test"] = "development"
-    APP_DESCRIPTION: str = (
-        "Extracts structured JSON from noisy support tickets with a model-driven repair loop."
-    )
+    APP_DESCRIPTION: str = "Extracts structured JSON from noisy support tickets with a model-driven repair loop."
 
     # ── LLM Provider ──────────────────────────────────────────────────────
     LLM_PROVIDER: Literal["groq", "featherless"] = "featherless"

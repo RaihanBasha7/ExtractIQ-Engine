@@ -5,10 +5,30 @@ from datetime import datetime, timezone
 from enum import Enum
 
 _LOG_RECORD_ATTRS = {
-    "args", "asctime", "created", "exc_info", "exc_text", "filename",
-    "funcName", "id", "levelname", "levelno", "lineno", "module", "msecs",
-    "message", "msg", "name", "pathname", "process", "processName",
-    "relativeCreated", "stack_info", "taskName", "thread", "threadName",
+    "args",
+    "asctime",
+    "created",
+    "exc_info",
+    "exc_text",
+    "filename",
+    "funcName",
+    "id",
+    "levelname",
+    "levelno",
+    "lineno",
+    "module",
+    "msecs",
+    "message",
+    "msg",
+    "name",
+    "pathname",
+    "process",
+    "processName",
+    "relativeCreated",
+    "stack_info",
+    "taskName",
+    "thread",
+    "threadName",
 }
 
 
@@ -40,11 +60,7 @@ class StructuredFormatter(logging.Formatter):
 
     def format(self, record: logging.LogRecord) -> str:
         event = {
-            "timestamp": (
-                datetime.fromtimestamp(record.created, tz=timezone.utc)
-                .isoformat()
-                .replace("+00:00", "Z")
-            ),
+            "timestamp": (datetime.fromtimestamp(record.created, tz=timezone.utc).isoformat().replace("+00:00", "Z")),
             "level": record.levelname,
         }
         for key, value in record.__dict__.items():

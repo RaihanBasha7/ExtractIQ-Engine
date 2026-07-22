@@ -17,7 +17,6 @@ import {
   Gauge,
   RefreshCw,
   Database,
-  Braces,
 } from 'lucide-react';
 
 /* ── Confidence Ring ── */
@@ -367,7 +366,7 @@ export function LiveExtractionInsights({ activeStage, held }: LiveInsightsProps)
 
   return (
     <div className="grid grid-cols-2 gap-2">
-      {insights.map((insight, i) => {
+      {insights.map((insight) => {
         const Icon = insight.icon;
         const stageReached = activeStage >= insight.stage;
         return (
@@ -402,7 +401,6 @@ export function LiveExtractionInsights({ activeStage, held }: LiveInsightsProps)
 interface ExplainabilityProps {
   json: Record<string, unknown>;
   ticket: string;
-  confidence: number;
 }
 
 interface ReasoningSection {
@@ -427,8 +425,9 @@ function extractStructuredReasoning(
   const isBilling = billingWords.some((w) => lower.includes(w));
   const hasDollar = /\$\d+/.test(ticket);
 
-  const sentiment = json.sentiment ?? (json as any).urgency;
-  const reqAction = json.requested_action ?? (json as any).action;
+  const j = json as Record<string, unknown>;
+  const sentiment = j.sentiment ?? j.urgency;
+  const reqAction = j.requested_action ?? j.action;
 
   if (hasUrgency) {
     sections.push({
@@ -508,7 +507,6 @@ function extractStructuredReasoning(
 export function ExplainabilityPanel({
   json,
   ticket,
-  confidence,
 }: ExplainabilityProps) {
   const sections = useMemo(() => extractStructuredReasoning(json, ticket), [json, ticket]);
 

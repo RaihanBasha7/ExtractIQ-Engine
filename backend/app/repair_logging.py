@@ -168,15 +168,14 @@ def record_attempt(
         Correlation ID from the originating HTTP request.
     """
     error_type, error_message = _parse_error(error)
-    log.add_entry(RepairLogEntry(
-        attempt=attempt,
-        status=status,
-        error_type=error_type,
-        error_message=error_message,
-        latency_ms=round(latency_seconds * 1000),
-        timestamp=timestamp or datetime.now(timezone.utc),
-        request_id=request_id,
-    ))
-
-
-
+    log.add_entry(
+        RepairLogEntry(
+            attempt=attempt,
+            status=status,
+            error_type=error_type,
+            error_message=error_message,
+            latency_ms=round(latency_seconds * 1000),
+            timestamp=timestamp or datetime.now(timezone.utc),
+            request_id=request_id,
+        )
+    )

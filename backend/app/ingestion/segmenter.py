@@ -147,7 +147,7 @@ def _extract_structured_tickets(text: str) -> tuple[list[str], int]:
     # Remove any tickets that are only remnants of separator lines
     cleaned: list[str] = []
     for t in tickets:
-        lines = [l for l in t.split("\n") if not _STANDALONE_RULER_RE.match(l)]
+        lines = [line for line in t.split("\n") if not _STANDALONE_RULER_RE.match(line)]
         cleaned_text = "\n".join(lines).strip()
         if cleaned_text:
             cleaned.append(cleaned_text)
@@ -266,6 +266,7 @@ def _ai_assisted_segmentation(text: str) -> list[tuple[str, str]] | None:
     try:
         from app.config import ACTIVE_MODEL
         from app.extraction import _get_client
+
         client = _get_client()
     except Exception as exc:
         logger.debug("AI segmentation unavailable: %s", exc)
@@ -328,8 +329,7 @@ def _validate_segments(segments: list[tuple[str, str]]) -> list[Segment]:
             merged[-1].char_count = len(merged[-1].text)
             merged[-1].boundary_type = f"{merged[-1].boundary_type}+merged"
             merged[-1].validation_message = (
-                f"Merged with adjacent segment (was {seg.char_count} chars, "
-                f"below min {MIN_SEGMENT_CHARS})"
+                f"Merged with adjacent segment (was {seg.char_count} chars, " f"below min {MIN_SEGMENT_CHARS})"
             )
         else:
             merged.append(seg)
@@ -344,9 +344,10 @@ def _validate_segments(segments: list[tuple[str, str]]) -> list[Segment]:
                     index=len(final),
                     boundary_type=f"{seg.boundary_type}+split",
                     validation_message=(
-                        f"Split from oversized segment (was {seg.char_count} chars, "
-                        f"max {MAX_SEGMENT_CHARS})"
-                    ) if j == 0 else None,
+                        (f"Split from oversized segment (was {seg.char_count} chars, " f"max {MAX_SEGMENT_CHARS})")
+                        if j == 0
+                        else None
+                    ),
                 )
                 final.append(s)
         else:
@@ -356,14 +357,10 @@ def _validate_segments(segments: list[tuple[str, str]]) -> list[Segment]:
     for seg in final:
         if seg.char_count < MIN_SEGMENT_CHARS:
             seg.valid = False
-            seg.validation_message = (
-                f"Below minimum size ({seg.char_count} < {MIN_SEGMENT_CHARS})"
-            )
+            seg.validation_message = f"Below minimum size ({seg.char_count} < {MIN_SEGMENT_CHARS})"
         if seg.char_count > MAX_SEGMENT_CHARS * 1.5:
             seg.valid = False
-            seg.validation_message = (
-                f"Exceeds maximum size ({seg.char_count} > {MAX_SEGMENT_CHARS})"
-            )
+            seg.validation_message = f"Exceeds maximum size ({seg.char_count} > {MAX_SEGMENT_CHARS})"
 
     return final
 

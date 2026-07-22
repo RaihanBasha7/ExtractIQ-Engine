@@ -41,7 +41,8 @@ from app.config import (
     MAX_REPAIR_RETRIES,
 )
 from app.logging import get_logger, log_event
-from app.repair_logging import RepairLog, create_repair_log, record_attempt as _record_repair_entry
+from app.repair_logging import RepairLog, create_repair_log
+from app.repair_logging import record_attempt as _record_repair_entry
 from app.schema import TicketExtraction
 
 logger = get_logger(__name__)
@@ -141,13 +142,7 @@ def _is_non_retryable(error_msg: str) -> bool:
     """Provider-side errors (rate limits, timeouts, 5xx) that won't be fixed by
     re-prompting. Fail fast instead of burning retries on infrastructure problems."""
     lower = error_msg.lower()
-    return (
-        "rate_limit" in lower
-        or "429" in lower
-        or "503" in lower
-        or "timeout" in lower
-        or "connection" in lower
-    )
+    return "rate_limit" in lower or "429" in lower or "503" in lower or "timeout" in lower or "connection" in lower
 
 
 def _map_infra_to_status(error_msg: str) -> str:
@@ -214,9 +209,15 @@ def _call_llm(
     last_exc: Exception | None = None
     for attempt in range(max_rate_retries + 1):
         try:
-            log_event(logger, event="llm_request", stage="llm", status="sending",
-                      request_id=request_id, model=model_name,
-                      messages=[{"role": m["role"], "content_preview": m["content"][:200]} for m in messages])
+            log_event(
+                logger,
+                event="llm_request",
+                stage="llm",
+                status="sending",
+                request_id=request_id,
+                model=model_name,
+                messages=[{"role": m["role"], "content_preview": m["content"][:200]} for m in messages],
+            )
 
             result = client.chat.completions.create(
                 model=model_name,
@@ -226,24 +227,37 @@ def _call_llm(
                 temperature=0,
             )
 
-            log_event(logger, event="llm_response", stage="llm", status="received",
-                      request_id=request_id, model=model_name,
-                      response_preview=str(result)[:500] if result else "EMPTY")
+            log_event(
+                logger,
+                event="llm_response",
+                stage="llm",
+                status="received",
+                request_id=request_id,
+                model=model_name,
+                response_preview=str(result)[:500] if result else "EMPTY",
+            )
 
             return result
 
         except (GroqRateLimitError, OpenAIRateLimitError) as e:
             last_exc = e
             if attempt < max_rate_retries:
-                delay = (2 ** attempt) + random.uniform(0, 1)
-                log_event(logger, event="llm_rate_retry", stage="llm", status="retrying",
-                          request_id=request_id, model=model_name,
-                          attempt=attempt + 1, delay_seconds=round(delay, 2))
+                delay = (2**attempt) + random.uniform(0, 1)
+                log_event(
+                    logger,
+                    event="llm_rate_retry",
+                    stage="llm",
+                    status="retrying",
+                    request_id=request_id,
+                    model=model_name,
+                    attempt=attempt + 1,
+                    delay_seconds=round(delay, 2),
+                )
                 time.sleep(delay)
                 continue
             raise
 
-    raise last_exc  # type:ignore[misc]
+    raise last_exc  # type: ignore[misc]
 
 
 def _record_extraction_attempt(
@@ -257,7 +271,9 @@ def _record_extraction_attempt(
 ) -> None:
     attempts.append(ExtractionAttempt(attempt_number=attempt_num, success=success, error=error))
     status = "success" if success else "failed"
-    _record_repair_entry(repair_log, attempt_num, status, error, time.monotonic() - attempt_start, request_id=request_id)
+    _record_repair_entry(
+        repair_log, attempt_num, status, error, time.monotonic() - attempt_start, request_id=request_id
+    )
 
 
 def _build_repair_prompt(
@@ -316,21 +332,38 @@ def extract_ticket(
 
     start = time.monotonic()
     last_error: str | None = None
-    previous_response: str | None = None
 
     for attempt_num in range(1, MAX_REPAIR_RETRIES + 2):
         attempt_start = time.monotonic()
-        log_event(logger, event="extraction_attempt", stage="extraction", status="started",
-                  request_id=request_id, ticket_id=ticket_id, attempt=attempt_num,
-                  provider=ACTIVE_PROVIDER, model=model_name)
+        log_event(
+            logger,
+            event="extraction_attempt",
+            stage="extraction",
+            status="started",
+            request_id=request_id,
+            ticket_id=ticket_id,
+            attempt=attempt_num,
+            provider=ACTIVE_PROVIDER,
+            model=model_name,
+        )
 
         try:
             result_obj = _call_llm(client, model_name, messages, request_id=request_id)
             elapsed = time.monotonic() - start
-            _record_extraction_attempt(repair_log, attempts, attempt_num, attempt_start, success=True, request_id=request_id)
+            _record_extraction_attempt(
+                repair_log, attempts, attempt_num, attempt_start, success=True, request_id=request_id
+            )
             attempt_latency = round((time.monotonic() - attempt_start) * 1000)
-            log_event(logger, event="extraction_success", stage="extraction", status="success",
-                      request_id=request_id, ticket_id=ticket_id, attempt=attempt_num, latency_ms=attempt_latency)
+            log_event(
+                logger,
+                event="extraction_success",
+                stage="extraction",
+                status="success",
+                request_id=request_id,
+                ticket_id=ticket_id,
+                attempt=attempt_num,
+                latency_ms=attempt_latency,
+            )
 
             first_attempt = len(attempts) <= 1
             needs_review = _check_needs_review(result_obj)
@@ -355,31 +388,72 @@ def extract_ticket(
 
         except ValidationError as e:
             last_error = str(e)
-            _record_extraction_attempt(repair_log, attempts, attempt_num, attempt_start, success=False, error=last_error, request_id=request_id)
+            _record_extraction_attempt(
+                repair_log, attempts, attempt_num, attempt_start, success=False, error=last_error, request_id=request_id
+            )
             attempt_latency = round((time.monotonic() - attempt_start) * 1000)
-            log_event(logger, event="validation_failed", stage="validation", status="failed",
-                      request_id=request_id, ticket_id=ticket_id, attempt=attempt_num,
-                      validation_error=last_error, latency_ms=attempt_latency)
+            log_event(
+                logger,
+                event="validation_failed",
+                stage="validation",
+                status="failed",
+                request_id=request_id,
+                ticket_id=ticket_id,
+                attempt=attempt_num,
+                validation_error=last_error,
+                latency_ms=attempt_latency,
+            )
 
             if attempt_num > MAX_REPAIR_RETRIES:
-                log_event(logger, event="retries_exhausted", stage="extraction", status="failed",
-                          request_id=request_id, ticket_id=ticket_id, attempt=attempt_num, reason="exhausted_retries")
+                log_event(
+                    logger,
+                    event="retries_exhausted",
+                    stage="extraction",
+                    status="failed",
+                    request_id=request_id,
+                    ticket_id=ticket_id,
+                    attempt=attempt_num,
+                    reason="exhausted_retries",
+                )
                 break
 
-            log_event(logger, event="repair_retry", stage="repair", status="retrying",
-                      request_id=request_id, ticket_id=ticket_id, attempt=attempt_num)
+            log_event(
+                logger,
+                event="repair_retry",
+                stage="repair",
+                status="retrying",
+                request_id=request_id,
+                ticket_id=ticket_id,
+                attempt=attempt_num,
+            )
 
             messages.append(_build_repair_prompt(last_error, clean_text))
 
-        except (GroqRateLimitError, GroqAPITimeoutError, GroqAPIStatusError,
-                OpenAIRateLimitError, OpenAIAPITimeoutError, OpenAIAPIStatusError) as e:
+        except (
+            GroqRateLimitError,
+            GroqAPITimeoutError,
+            GroqAPIStatusError,
+            OpenAIRateLimitError,
+            OpenAIAPITimeoutError,
+            OpenAIAPIStatusError,
+        ) as e:
             last_error = str(e)
-            _record_extraction_attempt(repair_log, attempts, attempt_num, attempt_start, success=False, error=last_error, request_id=request_id)
+            _record_extraction_attempt(
+                repair_log, attempts, attempt_num, attempt_start, success=False, error=last_error, request_id=request_id
+            )
             reason = _INFRA_REASON.get(type(e), "provider_error")
             attempt_latency = round((time.monotonic() - attempt_start) * 1000)
-            log_event(logger, event="infrastructure_failure", stage="extraction", status="failed",
-                      request_id=request_id, ticket_id=ticket_id, attempt=attempt_num,
-                      reason=reason, latency_ms=attempt_latency)
+            log_event(
+                logger,
+                event="infrastructure_failure",
+                stage="extraction",
+                status="failed",
+                request_id=request_id,
+                ticket_id=ticket_id,
+                attempt=attempt_num,
+                reason=reason,
+                latency_ms=attempt_latency,
+            )
             elapsed = time.monotonic() - start
             return ExtractionResult(
                 ticket_id=ticket_id,
@@ -396,16 +470,34 @@ def extract_ticket(
 
         except Exception as e:
             last_error = str(e)
-            _record_extraction_attempt(repair_log, attempts, attempt_num, attempt_start, success=False, error=last_error, request_id=request_id)
+            _record_extraction_attempt(
+                repair_log, attempts, attempt_num, attempt_start, success=False, error=last_error, request_id=request_id
+            )
             reason = _classify_failure(last_error)
             attempt_latency = round((time.monotonic() - attempt_start) * 1000)
-            log_event(logger, event="extraction_error", stage="extraction", status="failed",
-                      request_id=request_id, ticket_id=ticket_id, attempt=attempt_num,
-                      reason=reason, latency_ms=attempt_latency)
+            log_event(
+                logger,
+                event="extraction_error",
+                stage="extraction",
+                status="failed",
+                request_id=request_id,
+                ticket_id=ticket_id,
+                attempt=attempt_num,
+                reason=reason,
+                latency_ms=attempt_latency,
+            )
 
             if _is_non_retryable(last_error):
-                log_event(logger, event="extraction_aborted", stage="extraction", status="failed",
-                          request_id=request_id, ticket_id=ticket_id, attempt=attempt_num, reason="non_retryable")
+                log_event(
+                    logger,
+                    event="extraction_aborted",
+                    stage="extraction",
+                    status="failed",
+                    request_id=request_id,
+                    ticket_id=ticket_id,
+                    attempt=attempt_num,
+                    reason="non_retryable",
+                )
                 elapsed = time.monotonic() - start
                 return ExtractionResult(
                     ticket_id=ticket_id,
@@ -421,12 +513,27 @@ def extract_ticket(
                 )
 
             if attempt_num > MAX_REPAIR_RETRIES:
-                log_event(logger, event="retries_exhausted", stage="extraction", status="failed",
-                          request_id=request_id, ticket_id=ticket_id, attempt=attempt_num, reason="exhausted_retries")
+                log_event(
+                    logger,
+                    event="retries_exhausted",
+                    stage="extraction",
+                    status="failed",
+                    request_id=request_id,
+                    ticket_id=ticket_id,
+                    attempt=attempt_num,
+                    reason="exhausted_retries",
+                )
                 break
 
-            log_event(logger, event="repair_retry", stage="repair", status="retrying",
-                      request_id=request_id, ticket_id=ticket_id, attempt=attempt_num)
+            log_event(
+                logger,
+                event="repair_retry",
+                stage="repair",
+                status="retrying",
+                request_id=request_id,
+                ticket_id=ticket_id,
+                attempt=attempt_num,
+            )
 
             messages.append(_build_repair_prompt(last_error, clean_text))
 
@@ -437,8 +544,16 @@ def extract_ticket(
     if last_error:
         reasons.append(f"Validation failed: {_classify_failure(last_error)}")
 
-    log_event(logger, event="extraction_failed", stage="extraction", status="failed",
-              request_id=request_id, ticket_id=ticket_id, reason=category, latency_ms=round(elapsed * 1000))
+    log_event(
+        logger,
+        event="extraction_failed",
+        stage="extraction",
+        status="failed",
+        request_id=request_id,
+        ticket_id=ticket_id,
+        reason=category,
+        latency_ms=round(elapsed * 1000),
+    )
 
     if category in ("rate_limit", "timeout", "provider_error"):
         final_status = _map_infra_to_status(last_error or "")
@@ -469,10 +584,20 @@ def _check_needs_review(data: TicketExtraction) -> list[str]:
     so only truly ambiguous extractions should trigger NEEDS_REVIEW.
     """
     reasons = []
-    if data.customer.name is None and data.customer.account_id is None and data.issue.subcategory is None and data.issue.product_or_service is None:
+    if (
+        data.customer.name is None
+        and data.customer.account_id is None
+        and data.issue.subcategory is None
+        and data.issue.product_or_service is None
+    ):
         reasons.append("Insufficient customer, product, or issue details")
     if data.issue.category.value == "other" and data.issue.subcategory is None and data.requested_action is None:
         reasons.append("Category is 'other' with no clarifying details")
-    if data.issue.category.value == "other" and data.issue.subcategory is None and data.customer.name is None and data.customer.account_id is None:
+    if (
+        data.issue.category.value == "other"
+        and data.issue.subcategory is None
+        and data.customer.name is None
+        and data.customer.account_id is None
+    ):
         reasons.append("No actionable information extracted")
     return reasons

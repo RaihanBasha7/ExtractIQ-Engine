@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Play,
@@ -11,7 +11,7 @@ import {
   Target,
   Calendar,
   Recycle,
-  RotateCcw,
+  CheckCircle2,
   DollarSign,
   Truck,
   Wifi,
@@ -21,6 +21,7 @@ import {
 import { SAMPLE_TICKETS } from '../lib/sampleTicket';
 import type { SampleTicket } from '../lib/sampleTicket';
 import { useExtraction } from '../lib/useExtraction';
+import { useExtractionContext } from '../lib/extractionContext';
 import { GlassCard } from '../components/GlassCard';
 import { JsonBlock } from '../components/JsonBlock';
 import { ErrorCard } from '../components/ErrorCard';
@@ -43,9 +44,18 @@ const CATEGORY_ICONS: Record<string, typeof DollarSign> = {
 export function ExtractTicket() {
   const [ticket, setTicket] = useState('');
   const { state, activeStage, inRepair, result, error, run, reset } = useExtraction();
+  const { singleResult, setSingleResult, clearSingle } = useExtractionContext();
   const running = state === 'running';
 
+  const displayResult = result || (state === 'idle' ? singleResult : null);
+
   const charCount = ticket.length;
+
+  useEffect(() => {
+    if (state === 'done' && result) {
+      setSingleResult(result);
+    }
+  }, [state, result, setSingleResult]);
 
   const loadSample = useCallback((sample: SampleTicket) => {
     setTicket(sample.ticket);
@@ -58,8 +68,17 @@ export function ExtractTicket() {
   }, [reset]);
 
   const handleRun = useCallback(() => {
-    if (ticket.trim()) run(ticket);
-  }, [ticket, run]);
+    if (ticket.trim()) {
+      clearSingle();
+      run(ticket);
+    }
+  }, [ticket, run, clearSingle]);
+
+  const handleResetAll = useCallback(() => {
+    reset();
+    clearSingle();
+    setTicket('');
+  }, [reset, clearSingle]);
 
   return (
     <div className="space-y-6">
@@ -141,16 +160,18 @@ export function ExtractTicket() {
               <BrainCircuit size={15} className="text-brand-blue" /> Pipeline
             </h3>
             <span className="text-[11px] text-white/40">
-              {activeStage >= 0 && activeStage < 7
-                ? `Stage ${activeStage + 1} / 7`
-                : state === 'done'
-                  ? 'Complete'
-                  : 'Idle'}
+              {displayResult && !result
+                ? 'Complete'
+                : activeStage >= 0 && activeStage < 7
+                  ? `Stage ${activeStage + 1} / 7`
+                  : state === 'done'
+                    ? 'Complete'
+                    : 'Idle'}
             </span>
           </div>
 
           <AnimatePresence mode="wait">
-            {running || result ? (
+            {running || displayResult ? (
               <motion.div
                 key="flow"
                 initial={{ opacity: 0 }}
@@ -158,9 +179,9 @@ export function ExtractTicket() {
                 exit={{ opacity: 0 }}
               >
                 <NodeFlow
-                  activeIndex={activeStage}
+                  activeIndex={displayResult && !result ? 5 : activeStage}
                   inRepair={inRepair}
-                  completed={state === 'done'}
+                  completed={state === 'done' || (state === 'idle' && !!singleResult)}
                 />
               </motion.div>
             ) : (
@@ -205,10 +226,10 @@ export function ExtractTicket() {
 
       {/* Output panel - always render when result exists */}
       <AnimatePresence>
-        {result && (
+        {displayResult && (
           <motion.div
-            key={result.id}
-            initial={{ opacity: 0, y: 20 }}
+            key="extraction-output"
+            initial={result ? { opacity: 0, y: 20 } : false}
             animate={{ opacity: 1, y: 0 }}
             className="space-y-4"
           >
@@ -217,10 +238,7 @@ export function ExtractTicket() {
                 <Sparkles size={18} className="text-brand-green" /> Extraction Output
               </h2>
               <div className="flex gap-2">
-                <button onClick={clear} className="btn-ghost">
-                  <RotateCcw size={14} /> Reset
-                </button>
-                <DownloadButton data={result.final_json} filename={`extraction-${result.id}.json`} />
+                <DownloadButton data={displayResult.final_json} filename={`extraction-${displayResult.id}.json`} />
               </div>
             </div>
 
@@ -228,21 +246,21 @@ export function ExtractTicket() {
               <div className="lg:col-span-2 space-y-3">
                 <OutputSection title="Original Ticket" icon={<FileText size={14} className="text-white/50" />}>
                   <pre className="text-xs text-white/70 whitespace-pre-wrap font-mono leading-relaxed bg-[#0a0e1a] rounded-lg p-3 border border-white/[0.05]">
-                    {result.ticket}
+                    {displayResult.ticket}
                   </pre>
                 </OutputSection>
                 <OutputSection title="Cleaned Text" icon={<Eraser size={14} className="text-white/50" />}>
                   <pre className="text-xs text-white/70 whitespace-pre-wrap font-mono leading-relaxed bg-[#0a0e1a] rounded-lg p-3 border border-white/[0.05]">
-                    {result.cleaned_text}
+                    {displayResult.cleaned_text}
                   </pre>
                 </OutputSection>
                 <OutputSection title="Structured Extraction" defaultOpen icon={<BrainCircuit size={14} className="text-white/50" />}>
-                  <JsonBlock data={result.structured_extraction} maxHeight="300px" />
+                  <JsonBlock data={displayResult.structured_extraction} maxHeight="300px" />
                 </OutputSection>
-                {result.repair_attempts.length > 0 && (
-                  <OutputSection title={`Repair Attempts (${result.repair_attempts.length})`} icon={<Recycle size={14} className="text-white/50" />}>
+                {displayResult.repair_attempts.length > 0 && (
+                  <OutputSection title={`Repair Attempts (${displayResult.repair_attempts.length})`} icon={<Recycle size={14} className="text-white/50" />}>
                     <div className="space-y-2">
-                      {result.repair_attempts.map((a) => (
+                      {displayResult.repair_attempts.map((a) => (
                         <div key={a.attempt} className="rounded-lg bg-[#0a0e1a] border border-white/[0.05] p-3">
                           <div className="flex items-center gap-2 mb-1">
                             <span className={`chip ${
@@ -265,7 +283,7 @@ export function ExtractTicket() {
                   </OutputSection>
                 )}
                 <OutputSection title="Final Guaranteed JSON" defaultOpen icon={<Sparkles size={14} className="text-brand-green" />}>
-                  <JsonBlock data={result.final_json} maxHeight="400px" />
+                  <JsonBlock data={displayResult.final_json} maxHeight="400px" />
                 </OutputSection>
               </div>
 
@@ -273,18 +291,24 @@ export function ExtractTicket() {
               <GlassCard hover={false} className="p-5 h-fit lg:sticky lg:top-24">
                 <h3 className="text-sm font-semibold text-white mb-4">Metadata</h3>
                 <div className="space-y-3">
-                  <MetaRow icon={<Cpu size={13} />} label="Provider" value={result.metadata.provider} />
-                  <MetaRow icon={<BrainCircuit size={13} />} label="Model" value={result.metadata.model} />
-                  <MetaRow icon={<Clock size={13} />} label="Latency" value={`${result.metadata.latency_ms} ms`} />
-                  <MetaRow icon={<Target size={13} />} label="Confidence" value={`${(result.metadata.confidence * 100).toFixed(1)}%`} />
-                  <MetaRow icon={<Recycle size={13} />} label="Repair attempts" value={String(result.metadata.repair_attempts)} />
-                  <MetaRow icon={<Calendar size={13} />} label="Timestamp" value={new Date(result.metadata.timestamp).toLocaleString()} />
+                  <MetaRow icon={<Cpu size={13} />} label="Provider" value={displayResult.metadata.provider} />
+                  <MetaRow icon={<BrainCircuit size={13} />} label="Model" value={displayResult.metadata.model} />
+                  <MetaRow icon={<Clock size={13} />} label="Latency" value={`${displayResult.metadata.latency_ms} ms`} />
+                  <MetaRow icon={<Target size={13} />} label="Confidence" value={`${(displayResult.metadata.confidence * 100).toFixed(1)}%`} />
+                  <MetaRow icon={<Recycle size={13} />} label="Repair attempts" value={String(displayResult.metadata.repair_attempts)} />
+                  <MetaRow icon={<Calendar size={13} />} label="Timestamp" value={new Date(displayResult.metadata.timestamp).toLocaleString()} />
                 </div>
                 <div className="mt-5 p-3 rounded-xl bg-brand-green/[0.06] border border-brand-green/20 flex items-center gap-2">
                   <Sparkles size={14} className="text-brand-green" />
                   <span className="text-xs text-brand-green font-medium">Schema validated &amp; guaranteed</span>
                 </div>
               </GlassCard>
+            </div>
+
+            <div className="flex justify-center pt-2">
+              <button onClick={handleResetAll} className="btn-primary">
+                <CheckCircle2 size={16} /> Extract Another Ticket
+              </button>
             </div>
           </motion.div>
         )}

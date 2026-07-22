@@ -1,6 +1,7 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { SettingsProvider } from './lib/settingsContext';
+import { ExtractionProvider } from './lib/extractionContext';
 import { Layout } from './components/Layout';
 import { Dashboard } from './pages/Dashboard';
 import { ExtractTicket } from './pages/ExtractTicket';
@@ -22,6 +23,7 @@ export default function App() {
     <QueryClientProvider client={queryClient}>
       <SettingsProvider>
         <BrowserRouter>
+          <ExtractionProvider>
           <Layout>
             <Routes>
               <Route path="/" element={<Dashboard />} />
@@ -34,6 +36,7 @@ export default function App() {
               <Route path="/settings" element={<SettingsPage />} />
             </Routes>
           </Layout>
+          </ExtractionProvider>
         </BrowserRouter>
       </SettingsProvider>
     </QueryClientProvider>

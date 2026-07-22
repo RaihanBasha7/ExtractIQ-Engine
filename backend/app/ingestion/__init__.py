@@ -68,18 +68,23 @@ def ingest_file(file_path: str, file_name: str, file_size_bytes: int, **kwargs) 
 
     if file_type == "PDF":
         from app.ingestion.pdf_parser import parse_pdf
+
         result = parse_pdf(file_path, file_name, file_size_bytes, **kwargs)
     elif file_type == "DOCX":
         from app.ingestion.docx_parser import parse_docx
+
         result = parse_docx(file_path, file_name, file_size_bytes, **kwargs)
     elif file_type == "TXT":
         from app.ingestion.txt_parser import parse_txt
+
         result = parse_txt(file_path, file_name, file_size_bytes, **kwargs)
     elif file_type == "CSV":
         from app.ingestion.csv_parser import parse_csv
+
         result = parse_csv(file_path, file_name, file_size_bytes, **kwargs)
     elif file_type == "JSON":
         from app.ingestion.json_parser import parse_json
+
         result = parse_json(file_path, file_name, file_size_bytes, **kwargs)
     else:
         raise ValueError(f"Unsupported file type: {ext}")
@@ -88,6 +93,7 @@ def ingest_file(file_path: str, file_name: str, file_size_bytes: int, **kwargs) 
     if result.text.strip():
         try:
             from app.ingestion.segmenter import segment_document
+
             seg_result = segment_document(result.text, use_ai=True)
             result.segments = [
                 SegmentInfo(
