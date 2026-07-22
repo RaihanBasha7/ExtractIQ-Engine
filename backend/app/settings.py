@@ -44,7 +44,7 @@ class Settings(BaseSettings):
     # Featherless AI (default provider)
     FEATHERLESS_API_KEY: str = ""
     FEATHERLESS_BASE_URL: str = "https://api.featherless.ai/v1"
-    FEATHERLESS_MODEL: str = "deepseek-ai/DeepSeek-V4-Pro"
+    FEATHERLESS_MODEL: str = "google/gemma-4-31B-it"
 
     # Groq (optional alternate provider)
     GROQ_API_KEY: str = ""

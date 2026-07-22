@@ -86,7 +86,7 @@ jobs:
         env:
           LLM_PROVIDER: featherless
           FEATHERLESS_API_KEY: test-featherless-key
-          FEATHERLESS_MODEL: deepseek-ai/DeepSeek-V4-Pro
+          FEATHERLESS_MODEL: google/gemma-4-31B-it
           FEATHERLESS_BASE_URL: https://api.featherless.ai/v1
           MAX_REPAIR_RETRIES: "3"
           DB_PATH: ":memory:"
@@ -147,7 +147,7 @@ jobs:
           docker run -d --name extractiq-test \
             -e LLM_PROVIDER=featherless \
             -e FEATHERLESS_API_KEY=test-featherless-key \
-            -e FEATHERLESS_MODEL=deepseek-ai/DeepSeek-V4-Pro \
+            -e FEATHERLESS_MODEL=google/gemma-4-31B-it \
             -e FEATHERLESS_BASE_URL=https://api.featherless.ai/v1 \
             -e MAX_REPAIR_RETRIES=3 \
             -e DB_PATH=data/extractions.db \

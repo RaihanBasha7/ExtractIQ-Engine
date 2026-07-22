@@ -1,0 +1,19 @@
+=== TICKET 01 ===
+Hello Support,
+My order ORD-10482 was delivered today, but the laptop charger is
+missing from the package. Please send a replacement charger as soon as
+possible.
+Thanks, Rahul Sharma
+
+=== TICKET 02 ===
+Hi Team,
+Order ORD-20815 arrived yesterday, but the monitor screen is cracked. I
+would like a full refund or a replacement.
+Regards, Priya
+
+=== TICKET 03 === 
+Hello,
+My payment of ₹2,499 was deducted successfully, but the order was never
+created. Please check the transaction and issue a refund if the order
+cannot be processed.
+Thank you.
