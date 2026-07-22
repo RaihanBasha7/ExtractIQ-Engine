@@ -174,7 +174,6 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: backend
-          file: Dockerfile
           push: false
           tags: extractiq-engine-backend:ci
           cache-from: type=gha
