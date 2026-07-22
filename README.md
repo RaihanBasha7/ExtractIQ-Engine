@@ -5,7 +5,15 @@
 ### AI-Powered Structured Information Extraction Engine for Noisy Customer Support Data
 
 <p align="center">
-<img src="docs/banner.png" width="100%">
+
+🌐 Live Demo • 📄 Documentation • ⚡ API Docs • 🎥 Demo Video
+
+</p>
+
+<p align="center">
+
+<img src="docs/screenshots/dashboard.png" width="95%"/>
+
 </p>
 
 [![Python](https://img.shields.io/badge/Python-3.12+-blue.svg)]()
@@ -13,6 +21,21 @@
 [![React](https://img.shields.io/badge/React-19-61DAFB.svg)]()
 [![Pydantic](https://img.shields.io/badge/Pydantic-v2-red.svg)]()
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)]()
+
+## 📊 Project Highlights
+
+- ✅ Production-ready deployment
+- 🤖 AI-Powered Structured Extraction
+- 🔄 Model-Driven Repair Loop
+- 📄 Strict Pydantic Schema Validation
+- 🛡️ PII Redaction
+- 📦 Batch Extraction
+- 📈 Analytics Dashboard
+- 📜 Extraction History
+- ❤️ Health Monitoring
+- 🌐 Render + Vercel Deployment
+- 🗄️ Supabase Database
+- ⚡ Featherless AI + Google Gemma 4 31B
 
 ---
 
@@ -208,7 +231,7 @@ JSON Validation (Pydantic TicketExtraction)
 ### AI / LLM
 | Technology | Purpose |
 |-----------|---------|
-| Featherless AI | Primary LLM provider (default: deepseek-ai/DeepSeek-V4-Pro) |
+| Featherless AI | Primary LLM provider (default: google/gemma-4-31B-it) |
 | Groq       | Optional alternate provider (llama-3.3-70b-versatile) |
 
 ### Frontend
@@ -354,6 +377,16 @@ ExtractIQ-Engine/
 ├── README.md                 # This file
 └── LICENSE                   # MIT License
 ```
+
+---
+
+## 💡 Why ExtractIQ?
+
+Traditional regex pipelines fail on noisy customer support data.
+
+ExtractIQ replaces brittle extraction with an AI-first validation pipeline where every response is validated against a strict schema and automatically repaired until it becomes structurally valid.
+
+This makes the system significantly more reliable for production-oriented AI workflows.
 
 ---
 
@@ -682,6 +715,30 @@ This starts:
 4. **Single-worker** — The repair loop runs synchronously. For high throughput, implement Celery workers.
 5. **Language detection** — Uses `langdetect` which may not detect all languages accurately.
 6. **No authentication** — API endpoints are currently open. Add authentication before production deployment.
+
+---
+
+## 🏆 Production Features
+
+✔ Global Error Handling
+
+✔ Request Correlation IDs
+
+✔ Structured Logging
+
+✔ Health Monitoring
+
+✔ Version Endpoint
+
+✔ Analytics
+
+✔ Batch Processing
+
+✔ Docker Support
+
+✔ CI/CD
+
+✔ Environment-based Configuration
 
 ---
 
